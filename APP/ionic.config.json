@@ -1,0 +1,8 @@
+{
+  "name": "mobi-locator",
+  "integrations": {
+    "cordova": {},
+    "capacitor": {}
+  },
+  "type": "angular"
+}

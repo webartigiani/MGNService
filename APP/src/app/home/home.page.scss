@@ -1,0 +1,26 @@
+.center {
+  text-align: center;
+}
+
+#geoLocator {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height:100%;
+  transform: translateY(-50%);
+}
+  #geoLocator img.ani {
+    width: 50%;
+    max-width: 200px;
+  }
+  #geoLocator p {
+    font-size: 16px;
+    line-height: 22px;
+    color: #8c8c8c;
+    margin: 0;
+  }
+  #geoLocator a {
+    text-decoration: none;
+  }

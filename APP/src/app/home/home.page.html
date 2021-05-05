@@ -1,0 +1,96 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      GeoLocator
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- form iniziale -->
+  <div id="startingForm"
+    *ngIf="!isLocating()"
+    >
+    <ion-list>
+      <ion-item>
+        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->
+        <ion-select value=""
+          interface="action-sheet"
+          cancel-text="Annulla"
+          [(ngModel)]="operator"
+          >
+          <ion-select-option *ngFor="let op of this.operators" [value]="op">{{ op.name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->
+        <ion-select value=""
+          interface="action-sheet"
+          cancel-text="Annulla"
+          [(ngModel)]="veichle"
+          >
+          <ion-select-option *ngFor="let v of this.veichles" [value]="v">{{ v.title }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    {{ UUID }}
+  </div>
+
+  <!-- geoLocaiton div -->
+  <div id="geoLocator"
+    *ngIf="isLocating()"
+    >
+
+    <!-- results -->
+    <div id="results"
+      *ngIf="error_code === 0"
+    >
+      <br><br><br>
+      <img src="assets/ani/locator.gif" class="ani">
+      <br><br>
+      <p>Procedi verso la tua destinazione...</p>
+
+      <br>
+      <p>{{ geoData.latitude }}<br>{{ geoData.longitude }}</p>
+      <br><p>accuracy: {{ geoData.accuracy }} mt</p>
+      <br><p>{{ timestampToDateTime(geoData.timestamp) }}</p>
+      <br><p>{{ locationProgress }}</p>
+    </div>
+
+    <!-- error -->
+    <div id="error"
+      *ngIf="error_code > 0"
+      >
+      <p>{{ error_code }}</p>
+      <p>{{ error_message }}</p>
+    </div>
+  </div>
+</ion-content>
+
+
+<!-- Footer -->
+<ion-footer class="ion-no-border">
+  <ion-grid>
+    <ion-row no-padding no-margin>
+        <ion-col col-12 no-padding class="center">
+
+          <!-- start button -->
+          <ion-button
+            *ngIf="!isLocating()"
+            (click)="startLocating()"
+            shape="round"
+          >Avvia</ion-button>
+
+          <!-- stop button -->
+          <ion-button
+            *ngIf="isLocating()"
+            (click)="stopLocating()"
+            shape="round"
+          >Stop</ion-button>
+
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

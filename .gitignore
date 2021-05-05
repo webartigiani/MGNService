@@ -1,0 +1,7 @@
+.DS_Store
+APP.zip
+www.zip
+APP/platforms/
+APP/node_modules/
+www/node_modules/
+www/tests/
