@@ -32,8 +32,11 @@ class UserController extends BaseController
         }
         // $this->authorize('isAdmin');
 
-        $users = User::latest()->paginate(10);
-
+        if (Gate::allows('isWebMaster')) {
+            $users = User::latest()->paginate(10);          // web master see al users
+        } else {
+            $users = User::where('type','<>','webmaster')->latest()->paginate(10);
+        }
         return $this->sendResponse($users, 'Users list');
     }
 
@@ -55,7 +58,6 @@ class UserController extends BaseController
             'password' => Hash::make($request['password']),
             'type' => $request['type'],
         ]);
-
         return $this->sendResponse($user, 'User Created Successfully');
     }
 
@@ -77,7 +79,6 @@ class UserController extends BaseController
         }
 
         $user->update($request->all());
-
         return $this->sendResponse($user, 'User Information has been updated');
     }
 
@@ -89,14 +90,12 @@ class UserController extends BaseController
      */
     public function destroy($id)
     {
-
         $this->authorize('isAdmin');
 
         $user = User::findOrFail($id);
         // delete the user
 
         $user->delete();
-
         return $this->sendResponse([$user], 'User has been Deleted');
     }
 }

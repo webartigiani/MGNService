@@ -33,7 +33,16 @@
 .green {color: $green;}
 .teal {color: $teal;}
 .cyan {color: $cyan;}
+.gray {color: $gray;}
+.light_gray {color: $light_gray;}
+.facebook_gray {color: $facebook_gray;}
 
+.btn-green {
+    background-color: $green
+}
+.btn-green:hover {
+    background-color: #40da81;
+}
 
 // .content-header{
 //   padding: 10px 0.5rem !important;

@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class ProductController extends BaseController
 {
-
     protected $product = '';
 
     /**

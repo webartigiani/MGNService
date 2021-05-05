@@ -20,11 +20,12 @@ class CreateWorkersTable extends Migration
             $table->string('cognome', 64);
             $table->string('nome', 64);
             $table->string('codice_fiscale', 16)->unique();
-            $table->timestamp('data_assunzione');
-            $table->timestamp('data_cessazione')->nullable();
+            $table->date('data_assunzione');
+            $table->date('data_cessazione')->nullable();
             $table->integer('modo_timbratura')->default(0);
             $table->string('matricola', 30)->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

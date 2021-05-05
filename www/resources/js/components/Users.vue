@@ -6,13 +6,13 @@
 
             <div class="card" v-if="$gate.isAdminOrWebMaster()">
               <div class="card-header">
-                <h3 class="card-title">User List</h3>
+                <h3 class="card-title">Staff</h3>
 
                 <div class="card-tools">
 
                   <button type="button" class="btn btn-sm btn-primary" @click="newModal">
                       <i class="fa fa-plus-square"></i>
-                      Add New
+                      Aggiungi
                   </button>
                 </div>
               </div>
@@ -22,34 +22,31 @@
                   <thead>
                     <tr>
                       <th>ID</th>
-                      <th>Type</th>
-                      <th>Name</th>
+                      <th>Tipo</th>
+                      <th>Nome</th>
                       <th>Email</th>
-                      <th>Email Verified?</th>
-                      <th>Created</th>
-                      <th>Action</th>
+                      <th>Creato</th>
+                      <th>Azioni</th>
                     </tr>
                   </thead>
                   <tbody>
-                     <tr v-for="user in users.data" :key="user.id">
+                     <tr v-for="item in items" :key="item.id">
 
-                      <td>{{user.id}}</td>
-                      <td class="text-capitalize">{{user.type}}</td>
-                      <td class="text-capitalize">{{user.name}}</td>
-                      <td>{{user.email}}</td>
-                      <td :inner-html.prop="user.email_verified_at | yesno"></td>
-                      <td>{{user.created_at}}</td>
-
+                      <td>{{ item.id }}</td>
+                      <td class="text-capitalize">{{ item.type }}</td>
+                      <td class="text-capitalize">{{ item.name }}</td>
+                      <td>{{ item.email }}</td>
+                      <td>{{ formatDate(item.created_at) }}</td>
                       <td>
-                        <a href="#" @click="editModal(user)"
-                            v-if="user.type != 'webmaster'"
+                        <a href="#" @click="editModal(item)"
+                            v-if="item.type != 'webmaster'"
                             >
-                            <i class="fa fa-edit blue"></i>
+                            <i class="fa fa-edit green"></i>
                         </a>
-                        <a href="#" @click="deleteUser(user.id)"
-                            v-if="user.type != 'webmaster'"
+                        <a href="#" @click="deleteItem(item.id)"
+                            v-if="item.type != 'webmaster'"
                             >
-                            <i class="fa fa-trash red"></i>
+                            <i class="fa fa-trash gray"></i>
                         </a>
                       </td>
                     </tr>
@@ -58,7 +55,7 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
-                  <pagination :data="users" @pagination-change-page="getResults"></pagination>
+                  <pagination :data="items" @pagination-change-page="getResults"></pagination>
               </div>
             </div>
             <!-- /.card -->
@@ -75,18 +72,18 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" v-show="!editmode">Create New User</h5>
-                    <h5 class="modal-title" v-show="editmode">Update User's Info</h5>
+                    <h5 class="modal-title" v-show="!editmode">Crea nuovo Utente</h5>
+                    <h5 class="modal-title" v-show="editmode">Modifica Utente</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
                 <!-- <form @submit.prevent="createUser"> -->
-                <form @submit.prevent="editmode ? updateUser() : createUser()">
+                <form @submit.prevent="editmode ? updateItem() : createItem()">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Nome</label>
                             <input v-model="form.name" type="text" name="name"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
                             <has-error :form="form" field="name"></has-error>
@@ -97,7 +94,6 @@
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('email') }">
                             <has-error :form="form" field="email"></has-error>
                         </div>
-
                         <div class="form-group">
                             <label>Password</label>
                             <input v-model="form.password" type="password" name="password"
@@ -106,19 +102,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label>User Role</label>
+                            <label>Ruolo Utente</label>
                             <select name="type" v-model="form.type" id="type" class="form-control" :class="{ 'is-invalid': form.errors.has('type') }">
-                                <option value="">Select User Role</option>
-                                <option value="admin">Admin</option>
-                                <option value="user">Standard User</option>
+                                <option value="">Seleziona Ruolo</option>
+                                <option value="admin">Amministratore</option>
+                                <option value="user">Utente Standard</option>
                             </select>
                             <has-error :form="form" field="type"></has-error>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
-                        <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">Aggiorna</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Chiudi</button>
                     </div>
                   </form>
                 </div>
@@ -129,121 +125,137 @@
 </template>
 
 <script>
-    export default {
-        data () {
-            return {
-                editmode: false,
-                users : {},
-                form: new Form({
-                    id : '',
-                    type : '',
-                    name: '',
-                    email: '',
-                    password: '',
-                    email_verified_at: '',
-                })
-            }
-        },
-        methods: {
-            getResults(page = 1) {
-                  this.$Progress.start();
-                  axios.get('api/user?page=' + page).then(({ data }) => (this.users = data.data));
-                  this.$Progress.finish();
-            },
-            updateUser(){
-                this.$Progress.start();
-                // console.log('Editing data');
-                this.form.put('api/user/'+this.form.id)
-                .then((response) => {
-                    // success
-                    $('#addNew').modal('hide');
-                    Toast.fire({
-                      icon: 'success',
-                      title: response.data.message
-                    });
-                    this.$Progress.finish();
-                        //  Fire.$emit('AfterCreate');
+import Vue from 'vue'
+import VueMoment from 'vue-moment'
 
-                    this.loadUsers();
-                })
-                .catch(() => {
-                    this.$Progress.fail();
-                });
+Vue.use(VueMoment)
 
-            },
-            editModal(user){
-                this.editmode = true;
-                this.form.reset();
-                $('#addNew').modal('show');
-                this.form.fill(user);
-            },
-            newModal(){
-                this.editmode = false;
-                this.form.reset();
-                $('#addNew').modal('show');
-            },
-            deleteUser(id){
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        // Send request to the server
-                         if (result.value) {
-                                this.form.delete('api/user/'+id).then(()=>{
-                                        Swal.fire(
-                                        'Deleted!',
-                                        'Your file has been deleted.',
-                                        'success'
-                                        );
-                                    // Fire.$emit('AfterCreate');
-                                    this.loadUsers();
-                                }).catch((data)=> {
-                                  Swal.fire("Failed!", data.message, "warning");
-                              });
-                         }
-                    })
-            },
-          loadUsers(){
-            this.$Progress.start();
-
-            if(this.$gate.isAdminOrWebMaster()){
-              axios.get("api/user").then(({ data }) => (this.users = data.data));
-            }
-            this.$Progress.finish();
-          },
-
-          createUser(){
-              this.form.post('api/user')
-              .then((response)=>{
-                  $('#addNew').modal('hide');
-                  Toast.fire({
-                        icon: 'success',
-                        title: response.data.message
-                  });
-                  this.$Progress.finish();
-                  this.loadUsers();
-
-              })
-              .catch(()=>{
-                  Toast.fire({
-                      icon: 'error',
-                      title: 'Some error occured! Please try again'
-                  });
-              })
-          }
-
-        },
-        mounted() {
-            console.log('User Component mounted.')
-        },
-        created() {
-            this.$Progress.start();
-            this.loadUsers();
-            this.$Progress.finish();
+export default {
+    data () {
+        return {
+            editmode: false,
+            items :[],
+            form: new Form({
+                id : '',
+                type : '',
+                name: '',
+                email: '',
+                password: '',
+                email_verified_at: '',
+            })
         }
+    },
+    methods: {
+        getResults(page = 1) {
+                this.$Progress.start();
+                axios.get('api/user?page=' + page).then(({ data }) => (this.items = data.data.data));
+                this.$Progress.finish();
+        },
+
+        // #region Modal Functions
+        newModal(){
+            this.editmode = false;
+            this.form.reset();
+            $('#addNew').modal('show');
+        },
+        editModal(user){
+            this.editmode = true;
+            this.form.reset();
+            $('#addNew').modal('show');
+            this.form.fill(user);
+        },
+        // #endregion Modal Functions
+
+        // #region CRUD functions
+        list(){
+            // lists users
+            this.$Progress.start();
+            if(this.$gate.isAdminOrWebMaster()){
+                axios.get("api/user").then(({ data }) => (this.items = data.data.data));
+            }
+            this.$Progress.finish();
+        },
+
+        updateItem(){
+            this.$Progress.start();
+            this.form.put('api/user/'+this.form.id)
+            .then((response) => {
+                // success
+                $('#addNew').modal('hide');
+                Toast.fire({
+                    icon: 'success',
+                    title: response.data.message
+                });
+                this.$Progress.finish();
+                    //  Fire.$emit('AfterCreate');
+
+                this.list();
+            })
+            .catch(() => {
+                this.$Progress.fail();
+            });
+
+        },
+
+        deleteItem(id){
+            Swal.fire({
+                title: 'Conferma',
+                text: "Prego, conferma la cancellazione dell'utente.",
+                showCancelButton: true,
+                confirmButtonText: 'Si, elimina',
+                cancelButtonText: 'Annulla'
+                }).then((result) => {
+                }).then((result) => {
+                    // Send request to the server
+                        if (result.value) {
+                            this.form.delete('api/user/'+id).then(()=>{
+                                    Swal.fire(
+                                    'Eliminato!',
+                                    'Utente correttamente eliminato.',
+                                    'success'
+                                    );
+                                // Fire.$emit('AfterCreate');
+                                this.list();
+                            }).catch((data)=> {
+                                Swal.fire("Failed!", data.message, "warning");
+                            });
+                        }
+                })
+        },
+
+        createUser(){
+            this.form.post('api/user')
+            .then((response)=>{
+                $('#addNew').modal('hide');
+                Toast.fire({
+                    icon: 'success',
+                    title: response.data.message
+                });
+                this.$Progress.finish();
+                this.list();
+
+            })
+            .catch(()=>{
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Some error occured! Please try again'
+                });
+            })
+        },
+        // #endregion CRUD functions
+
+        formatDate(date) {
+            if (date==null) return ''
+            return this.$moment(date).format('DD/MM/YYYY HH:mm:ss')
+        }
+    },
+    mounted() {
+        console.log('User Component mounted.')
+    },
+    created() {
+        this.$Progress.start();
+        this.list();
+        this.$Progress.finish();
     }
+}
 </script>

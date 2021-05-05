@@ -29,6 +29,14 @@ class UserRequest extends FormRequest
             return $this->updateRules();
         }
     }
+    public function messages()
+    {
+        return [
+            'required' => 'Il campo è obbligatorio',
+            'unique' => 'Indirizzo email già in uso',
+            'min' => 'Richiesti min. 6 caratteri'
+        ];
+    }
 
     /**
      * Define validation rules to store method for resource creation

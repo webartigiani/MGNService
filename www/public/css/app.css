@@ -70498,3 +70498,23 @@ body.swal2-toast-column .swal2-toast .swal2-validation-message {
   color: #6cb2eb;
 }
 
+.gray {
+  color: #555;
+}
+
+.light_gray {
+  color: #888;
+}
+
+.facebook_gray {
+  color: #f7f7f7;
+}
+
+.btn-green {
+  background-color: #38c172;
+}
+
+.btn-green:hover {
+  background-color: #40da81;
+}
+

@@ -29,6 +29,7 @@ class CreateDevicesTable extends Migration
             $table->integer('accuracy')->nullable();
             $table->timestamp('last_position')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -23,6 +23,7 @@ class CreateVerichlesTable extends Migration
             $table->integer('device')->nullable();
             $table->integer('worker')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
