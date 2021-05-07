@@ -70518,3 +70518,21 @@ body.swal2-toast-column .swal2-toast .swal2-validation-message {
   background-color: #40da81;
 }
 
+/* text classes */
+
+.capital {
+  text-transform: capitalize;
+}
+
+.lower {
+  text-transform: lowercase;
+}
+
+.upper {
+  text-transform: uppercase;
+}
+
+img.brand-image.header {
+  max-width: 48px;
+}
+

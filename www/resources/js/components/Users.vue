@@ -38,15 +38,19 @@
                       <td>{{ item.email }}</td>
                       <td>{{ formatDate(item.created_at) }}</td>
                       <td>
-                        <a href="#" @click="editModal(item)"
+                        <a href="#"
+                            class="action"
+                            @click="editModal(item)"
                             v-if="item.type != 'webmaster'"
                             >
-                            <i class="fa fa-edit green"></i>
+                            <i class="fa fa-pen blue"></i>
                         </a>
-                        <a href="#" @click="deleteItem(item.id)"
+                        <a href="#"
+                            class="action"
+                            @click="deleteItem(item.id)"
                             v-if="item.type != 'webmaster'"
                             >
-                            <i class="fa fa-trash gray"></i>
+                            <i class="fa fa-trash blue"></i>
                         </a>
                       </td>
                     </tr>
@@ -67,7 +71,7 @@
             <not-found></not-found>
         </div>
 
-        <!-- Modal -->
+        <!-- Modal/Form -->
         <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="addNew" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -123,6 +127,12 @@
     </div>
   </section>
 </template>
+
+<style scoped>
+a.action {
+    margin-right:5px!important;
+}
+</style>
 
 <script>
 import Vue from 'vue'

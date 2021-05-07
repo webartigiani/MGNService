@@ -22,11 +22,14 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
+                      <th></th>
                       <th>ID</th>
                       <th>Nome</th>
                       <th>Cognome</th>
+                      <th>Matricola</th>
                       <th>Codice Fiscale</th>
                       <th>Modo Timbrata</th>
+                      <th>Codice Timbrata</th>
                       <th>Data Assunzione</th>
                       <th>Data Cessazione</th>
                       <th>Azioni</th>
@@ -34,19 +37,50 @@
                   </thead>
                   <tbody>
                      <tr v-for="item in items" :key="item.id">
-
+                      <td>
+                          <i class="fa fa-dot-circle"
+                            :title="(item.stato==1 ? 'presente' : 'non presente')"
+                            :class="(item.stato==1 ? 'green' : 'orange')"></i>
+                      </td>
                       <td>{{ item.id}}</td>
                       <td>{{ item.nome}}</td>
                       <td>{{ item.cognome}}</td>
+                      <td>{{ item.matricola}}</td>
                       <td>{{ item.codice_fiscale}}</td>
-                      <td>{{ item.modo_timbratura }}</td>
+                      <td>
+                          <span class="badge"
+                          :class="modoTimbraturaToClass(item.modo_timbratura)"
+                          >{{ modoTimbraturaToString(item.modo_timbratura) }}</span>
+                      </td>
+                      <td>{{ item.password_timbratura}}</td>
                       <td>{{ formatDate(item.data_assunzione) }}</td>
                       <td>{{ formatDate(item.data_cessazione) }}</td>
+                      <!-- geo-localizza il dipendente -->
                       <td>
-                        <a href="#" @click="editModal(item)">
-                            <i class="fa fa-edit green"></i>
+                        <a href="#"
+                            class="action"
+                            :disabled="item.stato==0"
+                            title="Localizza"
+                            @click="deleteItem(0)">
+                            <i class="fas fa-map-marker-alt"
+                            :class="(item.stato==1 ? 'red' : 'gray')"></i>
                         </a>
-                        <a href="#" @click="deleteItem(item.id)">
+                        <a href="#"
+                            class="action"
+                            title="Visualizza Timbrate"
+                            >
+                            <i class="fa fa-tag blue"></i>
+                        </a>
+                        <a href="#"
+                            class="action"
+                            title="Modifica"
+                            @click="editModal(item)">
+                            <i class="fa fa-pen blue"></i>
+                        </a>
+                        <a href="#"
+                            class="action"
+                            title="Elimina"
+                            @click="deleteItem(item.id)">
                             <i class="fa fa-trash blue"></i>
                         </a>
                       </td>
@@ -63,7 +97,7 @@
           </div>
         </div>
 
-        <!-- Modal -->
+    <!-- Modal/Form -->
         <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="addNew" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -80,7 +114,7 @@
                         <div class="form-group">
                             <label>Nome</label>
                             <input v-model="form.nome" type="text" name="nome"
-                                class="form-control" :class="{ 'is-invalid': form.errors.has('nome') }"
+                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('nome') }"
                                 :maxlength="64" :readonly="editmode"
                                 >
                             <has-error :form="form" field="nome"></has-error>
@@ -88,7 +122,7 @@
                         <div class="form-group">
                             <label>Cognome</label>
                             <input v-model="form.cognome" type="text" name="cognome"
-                                class="form-control" :class="{ 'is-invalid': form.errors.has('cognome') }"
+                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('cognome') }"
                                 :maxlength="64" :readonly="editmode"
                                 >
                             <has-error :form="form" field="cognome"></has-error>
@@ -96,10 +130,18 @@
                         <div class="form-group">
                             <label>Codice Fiscale</label>
                             <input v-model="form.codice_fiscale" type="text" name="codice_fiscale"
-                                class="form-control" :class="{ 'is-invalid': form.errors.has('codice_fiscale') }"
+                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('codice_fiscale') }"
                                 :maxlength="16" :readonly="editmode"
                                 >
                             <has-error :form="form" field="codice_fiscale"></has-error>
+                        </div>
+                        <div class="form-group">
+                            <label>Matricola</label>
+                            <input v-model="form.matricola" type="text" name="matricola"
+                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('matricola') }"
+                                :maxlength="16" :readonly="editmode"
+                                >
+                            <has-error :form="form" field="matricola"></has-error>
                         </div>
                         <div class="form-group">
                             <label>Modalità Timbrata</label>
@@ -109,14 +151,20 @@
                                 >
                                 <option value="0">Tutte</option>
                                 <option value="1">Su veicolo</option>
-                                <option value="2">Senza veicolo</option>
+                                <option value="2">Manuale</option>
                             </select>
                         </div>
                         <div class="form-group">
+                            <!--
+                                data_assunzione
+                                between date-7 => date+7
+                            -->
                             <label>Data Assunzione</label>
                             <input v-model="form.data_assunzione" type="date" name="data_assunzione"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('data_assunzione') }"
                                 :readonly="editmode"
+                                :min="formatDateISO(dateAddDays(new Date(), -7))"
+                                :max="formatDateISO(dateAddDays(new Date(), 7))"
                                 >
                             <has-error :form="form" field="data_assunzione"></has-error>
                         </div>
@@ -127,6 +175,8 @@
                             <input v-model="form.data_cessazione" type="date" name="data_cessazione"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('data_cessazione') }"
                                 :readonly="(form.data_cessazione != null)"
+                                :min="formatDateISO(form.data_assunzione)"
+                                :max="formatDateISO(dateAddDays(new Date(), 7))"
                                 >
                             <has-error :form="form" field="data_cessazione"></has-error>
                         </div>
@@ -143,6 +193,12 @@
     </div>
   </section>
 </template>
+
+<style scoped>
+a.action {
+    margin-right:5px!important;
+}
+</style>
 
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
@@ -165,6 +221,7 @@ export default {
                 nome: '',
                 cognome: '',
                 codice_fiscale: '',
+                matricola: '',
                 modo_timbratura: 0,
                 data_assunzione: '',
                 data_cessazione: ''
@@ -281,9 +338,36 @@ export default {
 
         // #region Utils
         formatDate(date) {
-            // formats date by moment
+            // formats date by moment DD/MM/YYY
             if (date==null) return ''
             return this.$moment(date).format('DD/MM/YYYY')
+        },
+        dateAddDays(fromDate, days) {
+            if (fromDate == null) return ''
+            let ret = new Date()
+            ret.setDate(fromDate.getDate() + days)
+            return ret;
+        },
+        formatDateISO(date) {
+            // formats date by moment
+            if (date==null) return ''
+            return this.$moment(date).format('YYYY-MM-DD')
+        },
+        modoTimbraturaToString(modo) {
+            // returns modo-timbtratura description
+            switch (modo) {
+                case 0: return 'tutte';
+                case 1: return 'su veicolo';
+                case 2: return 'manule';
+            }
+        },
+        modoTimbraturaToClass(modo) {
+            // returns modo-timbtratura description
+            switch (modo) {
+                case 0: return 'badge-success';
+                case 1: return 'badge-warning';
+                case 2: return 'badge-info';
+            }
         }
         // #endregion utils
     },

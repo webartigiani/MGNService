@@ -17,7 +17,14 @@
           </p>
         </router-link>
       </li>
-
+      <li class="nav-item">
+        <router-link to="/tags" class="nav-link">
+          <i class="nav-icon fas fa-tags white"></i>
+          <p>
+            Timbrate
+          </p>
+        </router-link>
+      </li>
       @can('isAdmin')
 
       @endcan

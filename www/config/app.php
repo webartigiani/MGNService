@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'MGN Accounts'),
+    'name' => env('APP_NAME', 'Gestionale MGN Multiservice'),
+    'company' => env('APP_COMPANY', 'MGN Multiservie'),
     'version' => env('APP_VERSION', '0.0.1'),
 
     /*
@@ -121,7 +122,6 @@ return [
     */
 
     'key' => env('APP_KEY'),
-
     'cipher' => 'AES-256-CBC',
 
     /*

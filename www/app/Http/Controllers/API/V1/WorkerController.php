@@ -41,15 +41,22 @@ class WorkerController extends BaseController
      */
     public function store(WorkerRequest $request)
     {
+        // get form normalized data
+        $data = $this->normalizeData($request->all());
+
+        // inserts data
         $worker = $this->worker->create([
-            'nome' => $request->get('nome'),
-            'cognome' => $request->get('cognome'),
-            'codice_fiscale' => $request->get('codice_fiscale'),
-            'modo_timbratura' => $request->get('modo_timbratura'),
-            'data_assunzione' => $request->get('data_assunzione'),
-            'data_cessazione' => $request->get('data_cessazione'),
+            'codice_azienda' => env('CODICE_AZIENDA'),
+            'denominazione_azienda' => env('DENOMINAZIONE_AZIENDA'),
+            'nome' => $data['nome'],
+            'cognome' => $data['cognome'],
+            'codice_fiscale' => $data['codice_fiscale'],
+            'matricola' => $data['matricola'],
+            'modo_timbratura' => $data['modo_timbratura'],
+            'data_assunzione' => $data['data_assunzione'],
+            'data_cessazione' => $data['data_cessazione']
         ]);
-        return $this->sendResponse($worker, 'Dipendente Creato con successo');
+        return $this->sendResponse($worker, 'Nuovo dipendente Creato');
     }
 
     /**
@@ -74,7 +81,12 @@ class WorkerController extends BaseController
     public function update(WorkerRequest $request, $id)
     {
         $worker = $this->worker->findOrFail($id);
-        $worker->update($request->all());
+
+        // get form normalized data
+        $data = $this->normalizeData($request->all());
+
+        // Updates data
+        $worker->update($data);
         return $this->sendResponse($worker, 'Dipendente aggiornato');
     }
 
@@ -89,5 +101,16 @@ class WorkerController extends BaseController
         $worker = $this->worker->findOrFail($id);
         $worker->delete();
         return $this->sendResponse($worker, 'Il dipendente è stato eliminato');
+    }
+
+    /*
+     * Normalizes worker data
+     */
+    public function normalizeData($data) {
+        $data['nome'] =  strtoupper(trim($data['nome']));
+        $data['cognome'] =  strtoupper(trim($data['cognome']));
+        $data['codice_fiscale'] =  strtoupper(trim($data['codice_fiscale']));
+        $data['matricola'] =  strtoupper(trim($data['matricola']));
+        return $data;
     }
 }

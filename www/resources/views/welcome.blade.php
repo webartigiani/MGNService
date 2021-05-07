@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{config('app.name')}}</title>
+        <title>{{config('app.company')}}</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -70,13 +70,12 @@
                     @auth
                         <a href="{{ url('/home') }}">Home</a>
                     @else
-                        <a href="{{ route('login') }}">Login</a>
+                        <a href="{{ route('login') }}">Login Amministrazione</a>
                     @endauth
                 </div>
             @endif
 
             <div class="content">
-
                 <div class="title m-b-md">
                     <img src="{{ asset('/images/logo.png') }}" alt="" class="brand-image img-circle elevation-3" style="opacity: .8; max-width:400px;">
                 </div>

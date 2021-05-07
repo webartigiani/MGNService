@@ -44,6 +44,20 @@
     background-color: #40da81;
 }
 
+/* text classes */
+.capital {
+    text-transform: capitalize;
+}
+.lower {
+    text-transform: lowercase;
+}
+.upper {
+    text-transform: uppercase;
+}
+
+img.brand-image.header {
+    max-width: 48px;
+}
 // .content-header{
 //   padding: 10px 0.5rem !important;
 // }
