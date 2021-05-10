@@ -14,19 +14,18 @@ class VeichlesTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('verichles')->where('licence_plate', 'XX123XX')->delete();
-        DB::table('verichles')->where('licence_plate', 'YY000YY')->delete();
+        DB::table('verichles')->truncate();
 
         DB::table('verichles')->insert([
             'manufacter' => 'Citroen',
-            'model' => 'Demo',
+            'model' => 'C3',
             'licence_plate' => 'XX123XX',
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
         ]);
         DB::table('verichles')->insert([
             'manufacter' => 'Fiat',
-            'model' => 'Demo',
+            'model' => 'Punto',
             'licence_plate' => 'YY000YY',
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()

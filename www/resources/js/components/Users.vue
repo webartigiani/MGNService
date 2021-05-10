@@ -141,6 +141,7 @@ import VueMoment from 'vue-moment'
 Vue.use(VueMoment)
 
 export default {
+    // #region Properties
     data () {
         return {
             editmode: false,
@@ -155,11 +156,13 @@ export default {
             })
         }
     },
+    // #endregion Properties
+
     methods: {
         getResults(page = 1) {
-                this.$Progress.start();
-                axios.get('api/user?page=' + page).then(({ data }) => (this.items = data.data.data));
-                this.$Progress.finish();
+            this.$Progress.start();
+            axios.get('api/user?page=' + page).then(({ data }) => (this.items = data.data.data));
+            this.$Progress.finish();
         },
 
         // #region Modal Functions
@@ -185,7 +188,25 @@ export default {
             }
             this.$Progress.finish();
         },
+        createItem(){
+            this.form.post('api/user')
+            .then((response)=>{
+                $('#addNew').modal('hide');
+                Toast.fire({
+                    icon: 'success',
+                    title: response.data.message
+                });
+                this.$Progress.finish();
+                this.list();
 
+            })
+            .catch(()=>{
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Si è verificato un errore. Prego, riprova'
+                });
+            })
+        },
         updateItem(){
             this.$Progress.start();
             this.form.put('api/user/'+this.form.id)
@@ -206,7 +227,6 @@ export default {
             });
 
         },
-
         deleteItem(id){
             Swal.fire({
                 title: 'Conferma',
@@ -215,50 +235,33 @@ export default {
                 confirmButtonText: 'Si, elimina',
                 cancelButtonText: 'Annulla'
                 }).then((result) => {
-                }).then((result) => {
                     // Send request to the server
-                        if (result.value) {
-                            this.form.delete('api/user/'+id).then(()=>{
-                                    Swal.fire(
-                                    'Eliminato!',
-                                    'Utente correttamente eliminato.',
-                                    'success'
-                                    );
-                                // Fire.$emit('AfterCreate');
-                                this.list();
-                            }).catch((data)=> {
-                                Swal.fire("Failed!", data.message, "warning");
-                            });
-                        }
+                    if (result.value) {
+                        this.form.delete('api/user/'+id).then(()=>{
+                                Swal.fire(
+                                'Eliminato!',
+                                'Utente correttamente eliminato.',
+                                'success'
+                                );
+                            // Fire.$emit('AfterCreate');
+                            this.list();
+                        }).catch((data)=> {
+                            Swal.fire("Failed!", data.message, "warning");
+                        });
+                    }
                 })
-        },
-
-        createUser(){
-            this.form.post('api/user')
-            .then((response)=>{
-                $('#addNew').modal('hide');
-                Toast.fire({
-                    icon: 'success',
-                    title: response.data.message
-                });
-                this.$Progress.finish();
-                this.list();
-
-            })
-            .catch(()=>{
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Some error occured! Please try again'
-                });
-            })
         },
         // #endregion CRUD functions
 
+        // #region Utils Functions
         formatDate(date) {
             if (date==null) return ''
             return this.$moment(date).format('DD/MM/YYYY HH:mm:ss')
         }
+        // #endregion Utils Functions
     },
+
+    // #region Life Cycle
     mounted() {
         console.log('User Component mounted.')
     },
@@ -267,5 +270,6 @@ export default {
         this.list();
         this.$Progress.finish();
     }
+    // #endregion Life Cycle
 }
 </script>

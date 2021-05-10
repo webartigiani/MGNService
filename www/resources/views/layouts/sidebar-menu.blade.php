@@ -1,7 +1,7 @@
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       <li class="nav-item">
-        <router-link to="/dashboard" class="nav-link">
+        <router-link to="/dashboard/" class="nav-link">
           <i class="nav-icon fas fa-tachometer-alt white"></i>
           <p>
             Dashboard
@@ -18,7 +18,7 @@
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link to="/tags" class="nav-link">
+        <router-link to="/timbrate" class="nav-link">
           <i class="nav-icon fas fa-tags white"></i>
           <p>
             Timbrate
@@ -41,7 +41,7 @@
         <ul class="nav nav-treeview">
 
           <li class="nav-item">
-            <router-link to="/product/category" class="nav-link">
+            <router-link to="/veichles" class="nav-link">
               <i class="nav-icon fas fa-car white"></i>
               <p>
                 Veicoli
@@ -49,7 +49,7 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/product/tag" class="nav-link">
+            <router-link to="/devices" class="nav-link">
               <i class="nav-icon fas fa-mobile-alt white"></i>
               <p>
                 Dispositivi

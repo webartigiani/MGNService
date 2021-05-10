@@ -47,13 +47,11 @@ class ProfileController extends Controller
     public function updateProfile(ProfileUpdateRequest $request)
     {
         $user = auth('api')->user();
-
         $user->update($request->all());
-
         $response = [
             'success' => true,
             'data'    => $user,
-            'message' => 'Profile has been updated',
+            'message' => 'Profilo utente aggiornato con successo',
         ];
         return response()->json($response, 200);
     }
@@ -69,11 +67,10 @@ class ProfileController extends Controller
     public function changePassword(ChangePasswordRequest $request)
     {
         User::find(auth('api')->user()->id)->update(['password' => Hash::make($request->new_password)]);
-
         $response = [
             'success' => true,
             'data'    => [],
-            'message' => 'Password Has been updated',
+            'message' => 'Password modificata con successo',
         ];
         return response()->json($response, 200);
     }

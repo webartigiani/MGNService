@@ -23,17 +23,8 @@
         </li>
         </ul>
 
-        <!-- SEARCH FORM -->
-        <form class="form-inline ml-3">
-        <div class="input-group input-group-sm">
-            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-            <div class="input-group-append">
-            <button class="btn btn-navbar" type="submit">
-                <i class="fa fa-search"></i>
-            </button>
-            </div>
-        </div>
-        </form>
+        <!-- search form -->
+        @include('layouts.search-form')
 
     </nav>
     <!-- /.navbar -->
@@ -48,14 +39,13 @@
 
         <!-- Sidebar -->
         <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
+            <!-- Sidebar user panel (optional) -->
             <router-link to="/profile">
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
                     <img src="{{ auth()->user()->photo }}" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-
                     {{ Auth::user()->name }}
                     <span class="d-block text-muted">
                         {{ Ucfirst(Auth::user()->type) }}

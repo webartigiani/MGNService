@@ -28,11 +28,13 @@
         "@johmun/vue-tags-input": "^2.1.0",
         "admin-lte": "^3.1.0",
         "laravel-vue-pagination": "^2.3.1",
+        "leaflet": "^1.7.1",
         "moment": "^2.29.1",
         "sweetalert2": "^9.17.2",
         "vform": "^1.0.1",
         "vue-moment": "^4.1.0",
         "vue-progressbar": "^0.7.5",
-        "vue-router": "^3.4.9"
+        "vue-router": "^3.4.9",
+        "vue2-leaflet": "^2.7.0"
     }
 }

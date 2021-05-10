@@ -58,7 +58,7 @@ class UserController extends BaseController
             'password' => Hash::make($request['password']),
             'type' => $request['type'],
         ]);
-        return $this->sendResponse($user, 'User Created Successfully');
+        return $this->sendResponse($user, 'Utente creato con successo');
     }
 
     /**
@@ -79,7 +79,7 @@ class UserController extends BaseController
         }
 
         $user->update($request->all());
-        return $this->sendResponse($user, 'User Information has been updated');
+        return $this->sendResponse($user, 'Utente aggiornato con successo');
     }
 
     /**
@@ -96,6 +96,6 @@ class UserController extends BaseController
         // delete the user
 
         $user->delete();
-        return $this->sendResponse([$user], 'User has been Deleted');
+        return $this->sendResponse([$user], 'Utente cancellato');
     }
 }

@@ -42,7 +42,7 @@
                             :title="(item.stato==1 ? 'presente' : 'non presente')"
                             :class="(item.stato==1 ? 'green' : 'orange')"></i>
                       </td>
-                      <td>{{ item.id}}</td>
+                      <td>{{ item.id }}</td>
                       <td>{{ item.nome}}</td>
                       <td>{{ item.cognome}}</td>
                       <td>{{ item.matricola}}</td>
@@ -65,7 +65,7 @@
                             <i class="fas fa-map-marker-alt"
                             :class="(item.stato==1 ? 'red' : 'gray')"></i>
                         </a>
-                        <a href="#"
+                        <a :href="'timbrate/?w=' + item.id"
                             class="action"
                             title="Visualizza Timbrate"
                             >
@@ -211,6 +211,7 @@ export default {
     components: {
         VueTagsInput,
     },
+
     // #region Properties
     data () {
         return {
@@ -228,6 +229,18 @@ export default {
             }),
             autocompleteItems: [],
         }
+    },
+    filters: {
+        truncate: function (text, length, suffix) {
+            return text.substring(0, length) + suffix;
+        },
+    },
+    computed: {
+        filteredItems() {
+        return this.autocompleteItems.filter(i => {
+            return i.text.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1;
+        });
+        },
     },
     // #endregion Properties
 
@@ -263,32 +276,30 @@ export default {
             this.$Progress.start();
 
             this.form.post('api/worker')
-            .then((data)=>{
-            if(data.data.success){
-                $('#addNew').modal('hide');
+                .then((data)=>{
+                    if(data.data.success){
+                        $('#addNew').modal('hide');
 
-                Toast.fire({
-                    icon: 'success',
-                    title: data.data.message
-                });
-                this.$Progress.finish();
-                this.list();
-
-            } else {
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Si è verificato un errore! Prego, riprova'
-                });
-
-                this.$Progress.failed();
-            }
-            })
-            .catch(()=>{
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Si è verificato un errore! Prego, riprova'
-                });
-            })
+                        Toast.fire({
+                            icon: 'success',
+                            title: data.data.message
+                        });
+                        this.$Progress.finish();
+                        this.list();
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Si è verificato un errore! Prego, riprova'
+                        });
+                        this.$Progress.failed();
+                    }
+                    })
+                    .catch(()=>{
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Si è verificato un errore! Prego, riprova'
+                        });
+                })
         },
         updateItem(){
             this.$Progress.start();
@@ -297,11 +308,11 @@ export default {
                 // success
                 $('#addNew').modal('hide');
                 Toast.fire({
-                icon: 'success',
-                title: response.data.message
+                    icon: 'success',
+                    title: response.data.message
                 });
                 this.$Progress.finish();
-                    //  Fire.$emit('AfterCreate');
+                //  Fire.$emit('AfterCreate');
                 this.list();
             })
             .catch(() => {
@@ -317,20 +328,19 @@ export default {
                 confirmButtonText: 'Si, elimina',
                 cancelButtonText: 'Annulla'
                 }).then((result) => {
-
                     // Send request to the server
                     if (result.value) {
-                            this.form.delete('api/worker/'+id).then(()=>{
-                                    Swal.fire(
-                                    'Eliminato!',
-                                    'Dipendente correttamente eliminato.',
-                                    'success'
-                                    );
-                                // Fire.$emit('AfterCreate');
-                                this.list();
-                            }).catch((data)=> {
-                                Swal.fire("Failed!", data.message, "warning");
-                            });
+                        this.form.delete('api/worker/'+id).then(()=>{
+                            Swal.fire(
+                                'Eliminato!',
+                                'Dipendente correttamente eliminato.',
+                                'success'
+                            );
+                            // Fire.$emit('AfterCreate');
+                            this.list();
+                        }).catch((data)=> {
+                            Swal.fire("Failed!", data.message, "warning");
+                        });
                     }
                 })
         },
@@ -381,18 +391,5 @@ export default {
         this.$Progress.finish();
     },
     // #endregion Component Life Cycle
-
-    filters: {
-        truncate: function (text, length, suffix) {
-            return text.substring(0, length) + suffix;
-        },
-    },
-    computed: {
-        filteredItems() {
-        return this.autocompleteItems.filter(i => {
-            return i.text.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1;
-        });
-        },
-    },
 }
 </script>

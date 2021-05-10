@@ -1,22 +1,13 @@
 <template>
     <section class="content">
         <div class="container-fluid">
+
             <div class="row">
+                <!-- timbrate recenti -->
                 <div class="col-md-8">
-                    <!-- MAP & BOX PANE -->
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Timbrate Recenti</h3>
-                            <!-- disattiva tools
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            -->
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -26,7 +17,7 @@
                                         <th>Dipendente</th>
                                         <th>Data/Ora</th>
                                         <th>Timbrata</th>
-                                        <th>Posizione</th>
+                                        <th>Veicolo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -34,7 +25,7 @@
                                         <td><a href="pages/examples/invoice.html">OR9842</a></td>
                                         <td>07/05/2021 08:01:59</td>
                                         <td><span class="badge badge-success">Entrata</span></td>
-                                        <td>41.1369472,16.8132608</td>
+                                        <td>senza</td>
                                     </tr>
                                     <tr>
                                         <td><a href="pages/examples/invoice.html">OR7429</a></td>
@@ -72,7 +63,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-4">
                     <!-- dipendenti presenti -->
                     <div class="info-box mb-3 bg-success">
@@ -108,9 +98,15 @@
 </template>
 
 <script>
-    export default {
-        mounted() {
-            console.log('Component mounted.')
-        }
+
+
+export default {
+  name: "Example",
+  data() {
+    return {
     }
+  },
+  methods: {
+  }
+}
 </script>
