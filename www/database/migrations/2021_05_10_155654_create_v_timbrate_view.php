@@ -22,9 +22,9 @@ class CreateVTimbrateView extends Migration
                 `timb`.`veichle` AS `veichle_id`, concat(`v`.`manufacter`,' ',`v`.`model`) AS `veichle_model`,`v`.`licence_plate` AS `veichle_targa`,
                 `timb`.`device` AS `device_id`, concat(`d`.`manufacter`,' ',`d`.`model`) AS `device_model`,lower(`d`.`platform`) AS `device_os`
                 from
-                (((`mgn_service`.`timbrate` `timb` join `mgn_service`.`workers` `w` on((`timb`.`worker` = `w`.`id`)))
-                left join `mgn_service`.`devices` `d` on((`timb`.`device` = `d`.`id`)))
-                left join `mgn_service`.`veichles` `v` on((`timb`.`veichle` = `v`.`id`)))
+                (((`timbrate` `timb` join `workers` `w` on((`timb`.`worker` = `w`.`id`)))
+                left join `devices` `d` on((`timb`.`device` = `d`.`id`)))
+                left join `veichles` `v` on((`timb`.`veichle` = `v`.`id`)))
                 order by `timb`.`date_time` desc
         ");
     }
