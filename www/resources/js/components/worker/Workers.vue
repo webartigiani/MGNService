@@ -37,7 +37,7 @@
                   </thead>
                   <tbody>
                      <tr v-for="item in items" :key="item.id">
-                      <td>
+                      <td style="width:20px;">
                           <i class="fa fa-dot-circle"
                             :title="(item.stato==1 ? 'presente' : 'non presente')"
                             :class="(item.stato==1 ? 'green' : 'orange')"></i>

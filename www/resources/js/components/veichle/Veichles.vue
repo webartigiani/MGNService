@@ -29,7 +29,7 @@
                   </thead>
                   <tbody>
                      <tr v-for="item in items" :key="item.id">
-                      <td>
+                      <td style="width:20px;">
                           <i class="fa fa-dot-circle"
                             :title="(item.status==1 ? 'in circolazione' : 'in rimessa')"
                             :class="(item.status==1 ? 'green' : 'orange')"></i>
