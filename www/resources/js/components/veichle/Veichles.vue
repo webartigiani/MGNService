@@ -20,14 +20,10 @@
                     <tr>
                       <th></th>
                       <th>ID</th>
-                      <th>Nome</th>
-                      <th>Cognome</th>
-                      <th>Matricola</th>
-                      <th>Codice Fiscale</th>
-                      <th>Modo Timbrata</th>
-                      <th>Codice Timbrata</th>
-                      <th>Data Assunzione</th>
-                      <th>Data Cessazione</th>
+                      <th>Marca</th>
+                      <th>Modello</th>
+                      <th>Targa</th>
+                      <th>Abilitato</th>
                       <th>Azioni</th>
                     </tr>
                   </thead>
@@ -35,22 +31,21 @@
                      <tr v-for="item in items" :key="item.id">
                       <td>
                           <i class="fa fa-dot-circle"
-                            :title="(item.stato==1 ? 'presente' : 'non presente')"
-                            :class="(item.stato==1 ? 'green' : 'orange')"></i>
+                            :title="(item.status==1 ? 'in circolazione' : 'in rimessa')"
+                            :class="(item.status==1 ? 'green' : 'orange')"></i>
                       </td>
                       <td>{{ item.id }}</td>
-                      <td>{{ item.nome}}</td>
-                      <td>{{ item.cognome}}</td>
-                      <td>{{ item.matricola}}</td>
-                      <td>{{ item.codice_fiscale}}</td>
+                      <td>{{ item.manufacter }}</td>
+                      <td>{{ item.model }}</td>
+                      <td>{{ item.licence_plate }}</td>
                       <td>
-                          <span class="badge"
-                          :class="modoTimbraturaToClass(item.modo_timbratura)"
-                          >{{ modoTimbraturaToString(item.modo_timbratura) }}</span>
+                          <i class="fa fa-check green"
+                            v-if="item.enabled==1"
+                            :title="`Abilitato`"></i>
+                          <i class="fa fa-minus-circle red"
+                            v-if="item.enabled==0"
+                            :title="`Non abilitato`"></i>
                       </td>
-                      <td>{{ item.password_timbratura}}</td>
-                      <td>{{ formatDate(item.data_assunzione) }}</td>
-                      <td>{{ formatDate(item.data_cessazione) }}</td>
                       <!-- geo-localizza il dipendente -->
                       <td>
                         <a href="#"
@@ -59,13 +54,7 @@
                             title="Localizza"
                             @click="deleteItem(0)">
                             <i class="fas fa-map-marker-alt"
-                            :class="(item.stato==1 ? 'red' : 'gray')"></i>
-                        </a>
-                        <a :href="'timbrate/?w=' + item.id"
-                            class="action"
-                            title="Visualizza Timbrate"
-                            >
-                            <i class="fa fa-tag blue"></i>
+                            :class="(item.status==1 ? 'red' : 'gray')"></i>
                         </a>
                         <a href="#"
                             class="action"
@@ -265,7 +254,7 @@ export default {
         // #region CRUD Functions
         list(){
         // if(this.$gate.isAdmin()){
-            axios.get("api/worker").then(({ data }) => (this.items = data.data));
+            axios.get("api/veicolo").then(({ data }) => (this.items = data.data));
         // }
         },
         createItem(){

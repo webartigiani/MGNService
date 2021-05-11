@@ -14,16 +14,16 @@ class VeichlesTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('verichles')->truncate();
+        DB::table('veichles')->truncate();
 
-        DB::table('verichles')->insert([
+        DB::table('veichles')->insert([
             'manufacter' => 'Citroen',
             'model' => 'C3',
             'licence_plate' => 'XX123XX',
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
         ]);
-        DB::table('verichles')->insert([
+        DB::table('veichles')->insert([
             'manufacter' => 'Fiat',
             'model' => 'Punto',
             'licence_plate' => 'YY000YY',
