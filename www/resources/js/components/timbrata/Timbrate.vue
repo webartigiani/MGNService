@@ -5,7 +5,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Timbrate</h3>
+                <h3 class="card-title">Presenze</h3>
                 <div class="card-tools">
                   <button type="button" class="btn btn-sm btn-primary" @click="newModal()">
                       <i class="fa fa-plus-square"></i>
@@ -222,10 +222,9 @@ export default {
         // #endregion Modals
 
         // #region CRUD Functions
-        list(){
-        // if(this.$gate.isAdmin()){
-            axios.get("api/timbrata").then(({ data }) => (this.items = data.data));
-        // }
+        list() {
+            const params = 'order_by=date_time&order_dir=desc'
+            axios.get("api/timbrata/?" + params).then(({ data }) => (this.items = data.data));
         },
         createItem(){
             this.$Progress.start();

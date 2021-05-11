@@ -150,8 +150,8 @@
                                 class="form-control"
                                 >
                                 <option value="0">Tutte</option>
-                                <option value="1">Su veicolo</option>
-                                <option value="2">Manuale</option>
+                                <option value="1">Veicolo Aziendale</option>
+                                <option value="2">Veicolo Proprio</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -367,8 +367,8 @@ export default {
             // returns modo-timbtratura description
             switch (modo) {
                 case 0: return 'tutte';
-                case 1: return 'su veicolo';
-                case 2: return 'manule';
+                case 1: return 'veicolo aziendale';
+                case 2: return 'veicolo proprio';
             }
         },
         modoTimbraturaToClass(modo) {

@@ -27,35 +27,24 @@ class TimbrataController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        /*
-        v_timbrate:
-
-        SELECT
-            `timb`.`id` AS `id`,
-            `timb`.`date_time` AS `date_time`,
-            `w`.`id` AS `worker_id`,
-            concat(`w`.`nome`, ' ', `w`.`cognome`) AS `worker_nome_cognome`,
-            `timb`.`type` AS `type`,
-            `timb`.`mode` AS `mode`,
-            `timb`.`tracking_session` AS `tracking_session`,
-            `timb`.`veichle` AS `veichle`,
-            concat(`v`.`manufacter`, ' ', `v`.`model`) AS `veichle_model`,
-            `v`.`licence_plate` AS `veichle_targa`,
-            `timb`.`device` AS `device_id`,
-            concat(`d`.`manufacter`, ' ', `d`.`model`) AS `device`,
-            lower(`d`.`platform`) AS `os`
-        FROM (((`mgn_service`.`timbrate` `timb`
-                    JOIN `mgn_service`.`workers` `w` ON ((`timb`.`worker` = `w`.`id`)))
-                LEFT JOIN `mgn_service`.`devices` `d` ON ((`timb`.`device` = `d`.`id`)))
-            LEFT JOIN `mgn_service`.`verichles` `v` ON ((`timb`.`veichle` = `v`.`id`)))
-        ORDER BY
-            `timb`.`date_time` DESC
+    public function index(Request $request)
+    {   /*
+        v_timbrate: see migration
         */
+
+        // order by and limit
+        $order_by = trim(strtolower($request->order_by));
+        $order_dir = trim(strtolower($request->order_dir));
+        $limit = intval(trim(strtolower($request->limit)));
+
+        if ($order_by == '') $order_by = 'date_time';
+        if ($order_dir != 'desc') $order_dir = 'asc';
+        if ($limit <= 0) $limit = 999999999;
+
         $data = DB::table('v_timbrate')
-        ->orderBy('date_time', 'desc')
-        ->get();
+            ->take($limit)
+            ->orderBy('date_time', 'desc')
+            ->get();
         return $this->sendResponse($data, 'Timbrate List');
     }
 

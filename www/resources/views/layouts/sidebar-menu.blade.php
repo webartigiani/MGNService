@@ -21,7 +21,7 @@
         <router-link to="/timbrate" class="nav-link">
           <i class="nav-icon fas fa-tags white"></i>
           <p>
-            Timbrate
+            Presenze
           </p>
         </router-link>
       </li>
