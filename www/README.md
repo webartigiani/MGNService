@@ -17,6 +17,11 @@
 php artisan serve
 npm run watch
 
+## Ionic APP API
+- get   api/app/workers/list/
+- get   api/app/veichles/list/
+- post  api/app/devices/add/
+
 ## Tech Specification
 - Laravel 8
 - Vue 2 + VueRouter + vue-progressbar + sweetalert2 + laravel-vue-pagination

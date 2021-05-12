@@ -18,10 +18,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+/**
+ * IonicAPP API
+ * require
+ *      Authorization:Bearer env('IONIC_APP_TOKEN')
+ */
+Route::namespace('App\\Http\\Controllers\\API\\APP')->group(function () {
+    Route::get('api/app/workers/list/', 'ApiController@listWorkers');
+    Route::get('api/app/veichles/list/', 'ApiController@listVeichles');
+    Route::post('api/app/devices/add/', 'ApiController@registerDevice');
+});
+
+
+
 Auth::routes(['verify' => true]);
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 Route::get('home', function () {
     return redirect('/dashboard');
 });
