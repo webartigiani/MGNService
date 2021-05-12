@@ -40,7 +40,7 @@ class WorkerRequest extends FormRequest
             'nome' => 'required|string|max:64',
             'cognome' => 'required|string|max:64',
             'codice_fiscale' => 'required|string|max:16',
-            'matricola' => 'required|string|max:30',
+            'matricola' => 'required|string|max:30|unique:workers',
             'data_assunzione' => 'required|date'
         ];
     }
@@ -58,6 +58,19 @@ class WorkerRequest extends FormRequest
             'codice_fiscale' => 'required|string|max:16',
             'matricola' => 'required|string|max:30',
             'data_assunzione' => 'required|date'
+        ];
+    }
+
+    /**
+     * validation messages
+     */
+    public function messages()
+    {
+        return [
+            'required' => 'Il campo è obbligatorio',
+            'unique' => 'Numero di targa già in uso',
+            'min' => 'Richiesti min. caratteri',
+            'max' => 'Lunghezza eccessiva'
         ];
     }
 }

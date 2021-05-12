@@ -29,6 +29,7 @@ class VeicoloRequest extends FormRequest
             return $this->updateRules();
         }
     }
+
     /**
      * Define validation rules to store method for resource creation
      *
@@ -39,7 +40,7 @@ class VeicoloRequest extends FormRequest
         return [
             'manufacter' => 'required|string|max:128',
             'model' => 'required|string|max:128',
-            'licence_plate' => 'required|string|max:10',
+            'licence_plate' => 'required|string|max:10|unique:veichles',
             'enabled' => 'required'
         ];
     }
@@ -56,6 +57,19 @@ class VeicoloRequest extends FormRequest
             'model' => 'required|string|max:128',
             'licence_plate' => 'required|string|max:10',
             'enabled' => 'required'
+        ];
+    }
+
+    /**
+     * validation messages
+     */
+    public function messages()
+    {
+        return [
+            'required' => 'Il campo è obbligatorio',
+            'unique' => 'Numero di targa già in uso',
+            'min' => 'Richiesti min. caratteri',
+            'max' => 'Lunghezza eccessiva'
         ];
     }
 }

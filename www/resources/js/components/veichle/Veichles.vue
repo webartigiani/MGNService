@@ -99,7 +99,7 @@
                             <label>Marca</label>
                             <input v-model="form.manufacter" type="text" name="manufacter"
                                 class="form-control upper" :class="{ 'is-invalid': form.errors.has('manufacter') }"
-                                :maxlength="64" :readonly="editmode"
+                                :maxlength="128" :readonly="editmode"
                                 >
                             <has-error :form="form" field="manufacter"></has-error>
                         </div>
@@ -107,7 +107,7 @@
                             <label>Modello</label>
                             <input v-model="form.model" type="text" name="model"
                                 class="form-control upper" :class="{ 'is-invalid': form.errors.has('model') }"
-                                :maxlength="64" :readonly="editmode"
+                                :maxlength="128" :readonly="editmode"
                                 >
                             <has-error :form="form" field="model"></has-error>
                         </div>
@@ -115,7 +115,7 @@
                             <label>Targa</label>
                             <input v-model="form.licence_plate" type="text" name="licence_plate"
                                 class="form-control upper" :class="{ 'is-invalid': form.errors.has('licence_plate') }"
-                                :maxlength="16" :readonly="editmode"
+                                :maxlength="10" :readonly="editmode"
                                 >
                             <has-error :form="form" field="licence_plate"></has-error>
                         </div>
@@ -207,7 +207,6 @@ export default {
             this.editmode = true;
             this.form.reset();
             $('#addNew').modal('show');
-            console.log(item)
             this.form.fill(item);
         },
         // #endregion Modals

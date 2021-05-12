@@ -29,14 +29,6 @@ class UserRequest extends FormRequest
             return $this->updateRules();
         }
     }
-    public function messages()
-    {
-        return [
-            'required' => 'Il campo è obbligatorio',
-            'unique' => 'Indirizzo email già in uso',
-            'min' => 'Richiesti min. 6 caratteri'
-        ];
-    }
 
     /**
      * Define validation rules to store method for resource creation
@@ -64,6 +56,18 @@ class UserRequest extends FormRequest
             'type' => 'sometimes|in:admin,user',
             'name' => 'sometimes|string|max:191',
             'email' => 'sometimes|string|email|max:191|unique:users,email,' . $this->get('id')
+        ];
+    }
+
+    /**
+     * validation messages
+     */
+    public function messages()
+    {
+        return [
+            'required' => 'Il campo è obbligatorio',
+            'unique' => 'Indirizzo email già in uso',
+            'min' => 'Richiesti min. 6 caratteri'
         ];
     }
 }
