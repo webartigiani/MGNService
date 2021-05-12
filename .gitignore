@@ -1,9 +1,9 @@
 .DS_Store
-mount_MGN.command
-open_source.command
-rsynch.command
-APP.zip
-www.zip
+_mount.command
+_open_source_www.command
+_open_source_APP.command
+_rsynch.command
+_backup/
 
 APP/platforms/
 APP/node_modules/

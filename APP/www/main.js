@@ -7,7 +7,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/Mobile/mobiLocator (ionic-angular)/mobi-locator/src/main.ts */"zUnb");
+module.exports = __webpack_require__(/*! /Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/MGN/APP/src/main.ts */"zUnb");
 
 
 /***/ }),

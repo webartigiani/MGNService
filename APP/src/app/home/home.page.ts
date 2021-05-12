@@ -96,11 +96,35 @@ export class HomePage {
       // gets operators list
       this.apiGet('/users/').then((result) => {
         if (result != undefined) {
+
+          // overwrites operatori
+          result = [
+            {
+              name: 'BRANCHINI GIOVANNI MARIA'
+            },
+            {
+              name: 'ALBERTI LIDIA'
+            },
+            {
+              name: 'BICOCCHI STEFANIA'
+            }
+          ]
           this.operators = result
 
           // gets veichles list
           this.apiGet('/todos/').then((result) => {
             if (result != undefined) {
+
+              // overwrites veichles
+              result = [
+                {
+                  title: 'CITROEN C3 (XX123XX)'
+                },
+                {
+                  title: 'Fiat Punto (YY000YY)'
+                }
+              ]
+
               this.veichles = result
             } else {
               // API Error

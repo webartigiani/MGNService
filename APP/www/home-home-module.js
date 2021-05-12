@@ -46,7 +46,7 @@ HomePageRoutingModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      GeoLocator\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"!isLocating()\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"operator\"\n          >\n          <ion-select-option *ngFor=\"let op of this.operators\" [value]=\"op\">{{ op.name }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let v of this.veichles\" [value]=\"v\">{{ v.title }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n    </ion-list>\n\n    {{ UUID }}\n  </div>\n\n  <!-- geoLocaiton div -->\n  <div id=\"geoLocator\"\n    *ngIf=\"isLocating()\"\n    >\n\n    <!-- results -->\n    <div id=\"results\"\n      *ngIf=\"error_code === 0\"\n    >\n      <br><br><br>\n      <img src=\"assets/ani/locator.gif\" class=\"ani\">\n      <br><br>\n      <p>Procedi verso la tua destinazione...</p>\n\n      <br>\n      <p>{{ geoData.latitude }}<br>{{ geoData.longitude }}</p>\n      <br><p>accuracy: {{ geoData.accuracy }} mt</p>\n      <br><p>{{ timestampToDateTime(geoData.timestamp) }}</p>\n      <br><p>{{ locationProgress }}</p>\n    </div>\n\n    <!-- error -->\n    <div id=\"error\"\n      *ngIf=\"error_code > 0\"\n      >\n      <p>{{ error_code }}</p>\n      <p>{{ error_message }}</p>\n    </div>\n  </div>\n</ion-content>\n\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            *ngIf=\"!isLocating()\"\n            (click)=\"startLocating()\"\n            shape=\"round\"\n          >Avvia</ion-button>\n\n          <!-- stop button -->\n          <ion-button\n            *ngIf=\"isLocating()\"\n            (click)=\"stopLocating()\"\n            shape=\"round\"\n          >Stop</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      MGN Service\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"!isLocating()\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"operator\"\n          >\n          <ion-select-option *ngFor=\"let op of this.operators\" [value]=\"op\">{{ op.name }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let v of this.veichles\" [value]=\"v\">{{ v.title }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n    </ion-list>\n  </div>\n\n  <!-- geoLocaiton div -->\n  <div id=\"geoLocator\"\n    *ngIf=\"isLocating()\"\n    >\n\n    <!-- results -->\n    <div id=\"results\"\n      *ngIf=\"error_code === 0\"\n    >\n      <br><br><br>\n      <img src=\"assets/ani/locator.gif\" class=\"ani\">\n      <br><br>\n      <p>Procedi verso la tua destinazione...</p>\n\n      <br>\n      <p>{{ geoData.latitude }}<br>{{ geoData.longitude }}</p>\n      <br><p>accuracy: {{ geoData.accuracy }} mt</p>\n      <br><p>{{ timestampToDateTime(geoData.timestamp) }}</p>\n      <br><p>{{ locationProgress }}</p>\n    </div>\n\n    <!-- error -->\n    <div id=\"error\"\n      *ngIf=\"error_code > 0\"\n      >\n      <p>{{ error_code }}</p>\n      <p>{{ error_message }}</p>\n    </div>\n  </div>\n</ion-content>\n\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            *ngIf=\"!isLocating()\"\n            (click)=\"startLocating()\"\n            shape=\"round\"\n          >Avvia</ion-button>\n\n          <!-- stop button -->\n          <ion-button\n            *ngIf=\"isLocating()\"\n            (click)=\"stopLocating()\"\n            shape=\"round\"\n          >Stop</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ }),
 
@@ -101,7 +101,7 @@ HomePageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (".center {\n  text-align: center;\n}\n\n#geoLocator {\n  text-align: center;\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 50%;\n  height: 100%;\n  transform: translateY(-50%);\n}\n\n#geoLocator img.ani {\n  width: 50%;\n  max-width: 200px;\n}\n\n#geoLocator p {\n  font-size: 16px;\n  line-height: 22px;\n  color: #8c8c8c;\n  margin: 0;\n}\n\n#geoLocator a {\n  text-decoration: none;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2hvbWUucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0Usa0JBQUE7QUFDRjs7QUFFQTtFQUNFLGtCQUFBO0VBQ0Esa0JBQUE7RUFDQSxPQUFBO0VBQ0EsUUFBQTtFQUNBLFFBQUE7RUFDQSxZQUFBO0VBQ0EsMkJBQUE7QUFDRjs7QUFDRTtFQUNFLFVBQUE7RUFDQSxnQkFBQTtBQUVKOztBQUFFO0VBQ0UsZUFBQTtFQUNBLGlCQUFBO0VBQ0EsY0FBQTtFQUNBLFNBQUE7QUFHSjs7QUFERTtFQUNFLHFCQUFBO0FBSUoiLCJmaWxlIjoiaG9tZS5wYWdlLnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuY2VudGVyIHtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuXG4jZ2VvTG9jYXRvciB7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBsZWZ0OiAwO1xuICByaWdodDogMDtcbiAgdG9wOiA1MCU7XG4gIGhlaWdodDoxMDAlO1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoLTUwJSk7XG59XG4gICNnZW9Mb2NhdG9yIGltZy5hbmkge1xuICAgIHdpZHRoOiA1MCU7XG4gICAgbWF4LXdpZHRoOiAyMDBweDtcbiAgfVxuICAjZ2VvTG9jYXRvciBwIHtcbiAgICBmb250LXNpemU6IDE2cHg7XG4gICAgbGluZS1oZWlnaHQ6IDIycHg7XG4gICAgY29sb3I6ICM4YzhjOGM7XG4gICAgbWFyZ2luOiAwO1xuICB9XG4gICNnZW9Mb2NhdG9yIGEge1xuICAgIHRleHQtZGVjb3JhdGlvbjogbm9uZTtcbiAgfVxuIl19 */");
+/* harmony default export */ __webpack_exports__["default"] = (".center {\n  text-align: center;\n}\n\nimg.title-icon {\n  max-width: 32px;\n}\n\n#geoLocator {\n  text-align: center;\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 50%;\n  height: 100%;\n  transform: translateY(-50%);\n}\n\n#geoLocator img.ani {\n  width: 50%;\n  max-width: 200px;\n}\n\n#geoLocator p {\n  font-size: 16px;\n  line-height: 22px;\n  color: #8c8c8c;\n  margin: 0;\n}\n\n#geoLocator a {\n  text-decoration: none;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2hvbWUucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0Usa0JBQUE7QUFDRjs7QUFFQTtFQUNFLGVBQUE7QUFDRjs7QUFFQTtFQUNFLGtCQUFBO0VBQ0Esa0JBQUE7RUFDQSxPQUFBO0VBQ0EsUUFBQTtFQUNBLFFBQUE7RUFDQSxZQUFBO0VBQ0EsMkJBQUE7QUFDRjs7QUFDRTtFQUNFLFVBQUE7RUFDQSxnQkFBQTtBQUVKOztBQUFFO0VBQ0UsZUFBQTtFQUNBLGlCQUFBO0VBQ0EsY0FBQTtFQUNBLFNBQUE7QUFHSjs7QUFERTtFQUNFLHFCQUFBO0FBSUoiLCJmaWxlIjoiaG9tZS5wYWdlLnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuY2VudGVyIHtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuXG5pbWcudGl0bGUtaWNvbiB7XG4gIG1heC13aWR0aDozMnB4O1xufVxuXG4jZ2VvTG9jYXRvciB7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBsZWZ0OiAwO1xuICByaWdodDogMDtcbiAgdG9wOiA1MCU7XG4gIGhlaWdodDoxMDAlO1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoLTUwJSk7XG59XG4gICNnZW9Mb2NhdG9yIGltZy5hbmkge1xuICAgIHdpZHRoOiA1MCU7XG4gICAgbWF4LXdpZHRoOiAyMDBweDtcbiAgfVxuICAjZ2VvTG9jYXRvciBwIHtcbiAgICBmb250LXNpemU6IDE2cHg7XG4gICAgbGluZS1oZWlnaHQ6IDIycHg7XG4gICAgY29sb3I6ICM4YzhjOGM7XG4gICAgbWFyZ2luOiAwO1xuICB9XG4gICNnZW9Mb2NhdG9yIGEge1xuICAgIHRleHQtZGVjb3JhdGlvbjogbm9uZTtcbiAgfVxuIl19 */");
 
 /***/ }),
 
@@ -201,10 +201,31 @@ let HomePage = class HomePage {
         // gets operators list
         this.apiGet('/users/').then((result) => {
             if (result != undefined) {
+                // overwrites operatori
+                result = [
+                    {
+                        name: 'BRANCHINI GIOVANNI MARIA'
+                    },
+                    {
+                        name: 'ALBERTI LIDIA'
+                    },
+                    {
+                        name: 'BICOCCHI STEFANIA'
+                    }
+                ];
                 this.operators = result;
                 // gets veichles list
                 this.apiGet('/todos/').then((result) => {
                     if (result != undefined) {
+                        // overwrites veichles
+                        result = [
+                            {
+                                title: 'CITROEN C3 (XX123XX)'
+                            },
+                            {
+                                title: 'Fiat Punto (YY000YY)'
+                            }
+                        ];
                         this.veichles = result;
                     }
                     else {
