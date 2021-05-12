@@ -46,15 +46,14 @@
                             v-if="item.enabled==0"
                             :title="`Non abilitato`"></i>
                       </td>
-                      <!-- geo-localizza il dipendente -->
+                      <!-- geo-localizza il veicolo -->
                       <td>
-                        <a href="#"
+                        <a :href="'tracking/?session_id=' + item.tracking_session"
+                            v-if="item.status == 1"
                             class="action"
-                            :disabled="item.stato==0"
-                            title="Localizza"
-                            @click="deleteItem(0)">
-                            <i class="fas fa-map-marker-alt"
-                            :class="(item.status==1 ? 'red' : 'gray')"></i>
+                            title="Visualizza Tragitto"
+                            >
+                            <i class="fas fa-map-marker-alt red" />
                         </a>
                         <a href="#"
                             class="action"
@@ -87,8 +86,8 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" v-show="!editmode">Nuovo Dipentente</h5>
-                    <h5 class="modal-title" v-show="editmode">Modifca Dipendente</h5>
+                    <h5 class="modal-title" v-show="!editmode">Nuovo Veicolo</h5>
+                    <h5 class="modal-title" v-show="editmode">Modifca Veicolo</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -97,79 +96,44 @@
                 <form @submit.prevent="editmode ? updateItem() : createItem()">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>Nome</label>
-                            <input v-model="form.nome" type="text" name="nome"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('nome') }"
+                            <label>Marca</label>
+                            <input v-model="form.manufacter" type="text" name="manufacter"
+                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('manufacter') }"
                                 :maxlength="64" :readonly="editmode"
                                 >
-                            <has-error :form="form" field="nome"></has-error>
+                            <has-error :form="form" field="manufacter"></has-error>
                         </div>
                         <div class="form-group">
-                            <label>Cognome</label>
-                            <input v-model="form.cognome" type="text" name="cognome"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('cognome') }"
+                            <label>Modello</label>
+                            <input v-model="form.model" type="text" name="model"
+                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('model') }"
                                 :maxlength="64" :readonly="editmode"
                                 >
-                            <has-error :form="form" field="cognome"></has-error>
+                            <has-error :form="form" field="model"></has-error>
                         </div>
                         <div class="form-group">
-                            <label>Codice Fiscale</label>
-                            <input v-model="form.codice_fiscale" type="text" name="codice_fiscale"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('codice_fiscale') }"
+                            <label>Targa</label>
+                            <input v-model="form.licence_plate" type="text" name="licence_plate"
+                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('licence_plate') }"
                                 :maxlength="16" :readonly="editmode"
                                 >
-                            <has-error :form="form" field="codice_fiscale"></has-error>
+                            <has-error :form="form" field="licence_plate"></has-error>
                         </div>
                         <div class="form-group">
-                            <label>Matricola</label>
-                            <input v-model="form.matricola" type="text" name="matricola"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('matricola') }"
-                                :maxlength="16" :readonly="editmode"
-                                >
-                            <has-error :form="form" field="matricola"></has-error>
-                        </div>
-                        <div class="form-group">
-                            <label>Modalità Timbrata</label>
-                            <select name="modo_timbratura"
-                                v-model="form.modo_timbratura"
+                            <label>Abilitato</label>
+                            <select name="enabled"
+                                v-model="form.enabled"
                                 class="form-control"
                                 >
-                                <option value="0">Tutte</option>
-                                <option value="1">Veicolo Aziendale</option>
-                                <option value="2">Veicolo Proprio</option>
+                                <option value="1">Si</option>
+                                <option value="0">No</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <!--
-                                data_assunzione
-                                between date-7 => date+7
-                            -->
-                            <label>Data Assunzione</label>
-                            <input v-model="form.data_assunzione" type="date" name="data_assunzione"
-                                class="form-control" :class="{ 'is-invalid': form.errors.has('data_assunzione') }"
-                                :readonly="editmode"
-                                :min="formatDateISO(dateAddDays(new Date(), -7))"
-                                :max="formatDateISO(dateAddDays(new Date(), 7))"
-                                >
-                            <has-error :form="form" field="data_assunzione"></has-error>
-                        </div>
-                        <div class="form-group"
-                            v-if="editmode"
-                            >
-                            <label>Data Cessazione</label>
-                            <input v-model="form.data_cessazione" type="date" name="data_cessazione"
-                                class="form-control" :class="{ 'is-invalid': form.errors.has('data_cessazione') }"
-                                :readonly="(form.data_cessazione != null)"
-                                :min="formatDateISO(form.data_assunzione)"
-                                :max="formatDateISO(dateAddDays(new Date(), 7))"
-                                >
-                            <has-error :form="form" field="data_cessazione"></has-error>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
-                        <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">Salva</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Salva</button>
                     </div>
                   </form>
                 </div>
@@ -204,13 +168,10 @@ export default {
             items : {},
             form: new Form({
                 id : '',
-                nome: '',
-                cognome: '',
-                codice_fiscale: '',
-                matricola: '',
-                modo_timbratura: 0,
-                data_assunzione: '',
-                data_cessazione: ''
+                manufacter: '',
+                model: '',
+                licence_plate: '',
+                enabled: 1
             }),
             autocompleteItems: [],
         }
@@ -260,7 +221,7 @@ export default {
         createItem(){
             this.$Progress.start();
 
-            this.form.post('api/worker')
+            this.form.post('api/veicolo')
                 .then((data)=>{
                     if(data.data.success){
                         $('#addNew').modal('hide');
@@ -288,7 +249,7 @@ export default {
         },
         updateItem(){
             this.$Progress.start();
-            this.form.put('api/worker/'+this.form.id)
+            this.form.put('api/veicolo/' + this.form.id)
             .then((response) => {
                 // success
                 $('#addNew').modal('hide');
@@ -308,14 +269,15 @@ export default {
         deleteItem(id){
             Swal.fire({
                 title: 'Conferma',
-                text: "Prego, conferma la cancellazione del dipendente.",
+                icon:'question',
+                html: "Il veicolo verrà disabilitato, ma non eliminato, per consentire l'accesso ai dati di tracciamento acquisiti. Prego, conferma la disattivazione del veicolo.",
                 showCancelButton: true,
-                confirmButtonText: 'Si, elimina',
+                confirmButtonText: 'Si, procedi',
                 cancelButtonText: 'Annulla'
                 }).then((result) => {
                     // Send request to the server
                     if (result.value) {
-                        this.form.delete('api/worker/'+id).then(()=>{
+                        this.form.delete('api/veicolo/' + id).then(()=>{
                             Swal.fire(
                                 'Eliminato!',
                                 'Dipendente correttamente eliminato.',

@@ -37,11 +37,10 @@ class VeicoloRequest extends FormRequest
     public function createRules(): array
     {
         return [
-            'nome' => 'required|string|max:64',
-            'cognome' => 'required|string|max:64',
-            'codice_fiscale' => 'required|string|max:16',
-            'matricola' => 'required|string|max:30',
-            'data_assunzione' => 'required|date'
+            'manufacter' => 'required|string|max:128',
+            'model' => 'required|string|max:128',
+            'licence_plate' => 'required|string|max:10',
+            'enabled' => 'required'
         ];
     }
 
@@ -53,11 +52,10 @@ class VeicoloRequest extends FormRequest
     public function updateRules(): array
     {
         return [
-            'nome' => 'required|string|max:64',
-            'cognome' => 'required|string|max:64',
-            'codice_fiscale' => 'required|string|max:16',
-            'matricola' => 'required|string|max:30',
-            'data_assunzione' => 'required|date'
+            'manufacter' => 'required|string|max:128',
+            'model' => 'required|string|max:128',
+            'licence_plate' => 'required|string|max:10',
+            'enabled' => 'required'
         ];
     }
 }

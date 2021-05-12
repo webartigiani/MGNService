@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\Veicoli\VeicoloRequest;
-use App\Models\Veicolo;
+use App\Models\Veichle;
 use Illuminate\Http\Request;
 use DB;
 
@@ -16,7 +16,7 @@ class VeicoloController extends BaseController
      *
      * @return void
      */
-    public function __construct(Veicolo $veicolo)
+    public function __construct(Veichle $veicolo)
     {
         $this->middleware('auth:api');
         $this->veicolo = $veicolo;
@@ -46,15 +46,12 @@ class VeicoloController extends BaseController
 
         // inserts data
         $veicolo = $this->veicolo->create([
-            'codice_azienda' => env('CODICE_AZIENDA'),
-            'denominazione_azienda' => env('DENOMINAZIONE_AZIENDA'),
-            'nome' => $data['nome'],
-            'cognome' => $data['cognome'],
-            'codice_fiscale' => $data['codice_fiscale'],
-            'matricola' => $data['matricola'],
-            'modo_timbratura' => $data['modo_timbratura'],
-            'data_assunzione' => $data['data_assunzione'],
-            'data_cessazione' => $data['data_cessazione']
+            'manufacter' => $data['manufacter'],
+            'model' => $data['model'],
+            'licence_plate' => $data['licence_plate'],
+            'status' => 0,
+            'status_date' => \Carbon\Carbon::now(),
+            'enabled' => $data['enabled']
         ]);
         return $this->sendResponse($veicolo, 'Nuovo Veicolo Creato');
     }
@@ -107,10 +104,9 @@ class VeicoloController extends BaseController
      * Normalizes veicolo data
      */
     public function normalizeData($data) {
-        $data['nome'] =  strtoupper(trim($data['nome']));
-        $data['cognome'] =  strtoupper(trim($data['cognome']));
-        $data['codice_fiscale'] =  strtoupper(trim($data['codice_fiscale']));
-        $data['matricola'] =  strtoupper(trim($data['matricola']));
+        $data['manufacter'] =  strtoupper(trim($data['manufacter']));
+        $data['model'] =  strtoupper(trim($data['model']));
+        $data['licence_plate'] =  strtoupper(trim($data['licence_plate']));
         return $data;
     }
 }

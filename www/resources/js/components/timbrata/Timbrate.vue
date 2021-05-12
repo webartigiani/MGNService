@@ -11,7 +11,9 @@
                       <i class="fa fa-plus-square"></i>
                       Aggiungi
                   </button>
-                  <button type="button" class="btn btn-sm btn-primary btn-green" @click="newModal()">
+                  <button type="button"
+                    class="btn btn-sm btn-primary btn-green"
+                    @click="exportData()">
                       <i class="fa fa-file-excel"></i>
                       Esporta
                   </button>
@@ -208,11 +210,17 @@ export default {
 
         // #region Modals
         newModal() {
+            alert('Questa funzione sarà disponibile a breve.')
+            return
+
             this.editmode = false;
             this.form.reset();
             $('#addNew').modal('show');
         },
         editModal(item) {
+            alert('Questa funzione sarà disponibile a breve.')
+            return
+
             this.editmode = true;
             this.form.reset();
             $('#addNew').modal('show');
@@ -297,6 +305,10 @@ export default {
                         });
                     }
                 })
+        },
+        exportData() {
+            alert('Questa funzione sarà disponibile a breve.')
+            return
         },
         // #endregion CRUD Functions
 

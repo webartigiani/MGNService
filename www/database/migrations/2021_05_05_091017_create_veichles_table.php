@@ -24,7 +24,7 @@ class CreateVeichlesTable extends Migration
             $table->integer('device')->nullable()->comment('device attualmente in uso: devices.id');
             $table->integer('worker')->nullable()->comment('dipendente a bordo. workers.id');
             $table->boolean('enabled')->default(true)->comment('abilitato/disabilitato da Admin');
-            $table->string('tracking_session', 20)->default('')->comment('id sessione geo-localizzazione. geo_tracking.session_id');
+            $table->string('tracking_session', 20)->nullable()->default('')->comment('id sessione geo-localizzazione. geo_tracking.session_id');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -116,9 +116,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                        <button v-show="editmode" type="submit" class="btn btn-success">Aggiorna</button>
-                        <button v-show="!editmode" type="submit" class="btn btn-primary">Chiudi</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">Salva</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Salva</button>
                     </div>
                   </form>
                 </div>
@@ -230,9 +230,10 @@ export default {
         deleteItem(id){
             Swal.fire({
                 title: 'Conferma',
-                text: "Prego, conferma la cancellazione dell'utente.",
+                icon:'question',
+                html: "Confermi la cancellazione dell'utente?",
                 showCancelButton: true,
-                confirmButtonText: 'Si, elimina',
+                confirmButtonText: 'Si, procedi',
                 cancelButtonText: 'Annulla'
                 }).then((result) => {
                     // Send request to the server
