@@ -3,9 +3,15 @@
     <div class="container-fluid">
         <div class="row">
           <div class="col-12">
+
+            <h3>Dipendenti</h3>
+
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Dipendenti</h3>
+                <div class="card-title">
+
+                </div>
+
                 <div class="card-tools">
                   <button type="button" class="btn btn-sm btn-primary" @click="newModal()">
                       <i class="fa fa-plus-square"></i>
@@ -57,19 +63,11 @@
                       <td>{{ item.password_timbratura}}</td>
                       <td>{{ formatDate(item.data_assunzione) }}</td>
                       <td>{{ formatDate(item.data_cessazione) }}</td>
-                      <!-- geo-localizza il dipendente -->
                       <td>
                         <a href="#"
                             class="action"
-                            :disabled="item.stato==0"
-                            title="Localizza"
-                            @click="deleteItem(0)">
-                            <i class="fas fa-map-marker-alt"
-                            :class="(item.stato==1 ? 'red' : 'gray')"></i>
-                        </a>
-                        <a :href="'timbrate/?w=' + item.id"
-                            class="action"
                             title="Visualizza Timbrate"
+                            @click="functionNotAvailable()"
                             >
                             <i class="fa fa-tag blue"></i>
                         </a>
@@ -385,6 +383,10 @@ export default {
                 case 1: return 'badge-warning';
                 case 2: return 'badge-info';
             }
+        },
+        functionNotAvailable() {
+            alert('Questa funzione sarà disponibile a breve.')
+            return
         }
         // #endregion utils
     },

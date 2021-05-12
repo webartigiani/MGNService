@@ -96,10 +96,10 @@
     <footer class="main-footer">
         {{-- To the right --}}
         <div class="float-right d-none d-sm-block">
-        <b>Version</b> {{config('app.version')}}
+        <b>Versione</b> {{config('app.version')}}
         </div>
         {{-- Default to the left --}}
-        <strong>Copyright &copy; 2021 <a href="https://www.webartigiani.it/">WebArtigiani</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2021 <a href="https://www.webartigiani.it/">WebArtigiani</a>.</strong> Tutti i diritti sono riservati.
     </footer>
     </div>
 {{-- ./wrapper --}}

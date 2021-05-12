@@ -3,9 +3,15 @@
     <div class="container-fluid">
         <div class="row">
           <div class="col-12">
+
+            <h3>Veicoli</h3>
+
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Veicoli</h3>
+                <div class="card-title">
+
+                </div>
+
                 <div class="card-tools">
                   <button type="button" class="btn btn-sm btn-primary" @click="newModal()">
                       <i class="fa fa-plus-square"></i>
@@ -46,7 +52,6 @@
                             v-if="item.enabled==0"
                             :title="`Non abilitato`"></i>
                       </td>
-                      <!-- geo-localizza il veicolo -->
                       <td>
                         <a :href="'tracking/?session_id=' + item.tracking_session"
                             v-if="item.status == 1"
@@ -265,7 +270,7 @@ export default {
             });
 
         },
-        deleteItem(id){
+        deleteItem(id) {
             Swal.fire({
                 title: 'Conferma',
                 icon:'question',

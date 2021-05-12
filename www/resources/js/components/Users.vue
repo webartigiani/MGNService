@@ -1,12 +1,17 @@
 <template>
   <section class="content">
     <div class="container-fluid">
+
+        <h3>Staff</h3>
+
         <div class="row">
           <div class="col-12">
 
             <div class="card" v-if="$gate.isAdminOrWebMaster()">
               <div class="card-header">
-                <h3 class="card-title">Staff</h3>
+                <div class="card-title">
+
+                </div>
 
                 <div class="card-tools">
 

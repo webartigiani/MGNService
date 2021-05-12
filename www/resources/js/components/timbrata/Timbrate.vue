@@ -3,17 +3,31 @@
     <div class="container-fluid">
         <div class="row">
           <div class="col-12">
+
+            <h3>Presenze</h3>
+
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Presenze</h3>
+                <div class="card-title">
+                    <input v-model="filters.date" type="date" name="data_assunzione"
+                        class="form-control"
+                        :readonly="editmode"
+                        :min="`2021-05-03`"
+                        :max="formatDateISO(new Date())"
+                        @change="list()"
+                        title="Seleziona Data"
+                    />
+                </div>
+
                 <div class="card-tools">
-                  <button type="button" class="btn btn-sm btn-primary" @click="newModal()">
+                  <button type="button" class="btn btn-sm btn-primary"
+                    @click="functionNotAvailable()">
                       <i class="fa fa-plus-square"></i>
                       Aggiungi
                   </button>
                   <button type="button"
                     class="btn btn-sm btn-primary btn-green"
-                    @click="exportData()">
+                    @click="functionNotAvailable()">
                       <i class="fa fa-file-excel"></i>
                       Esporta
                   </button>
@@ -36,7 +50,7 @@
                   <tbody>
                      <tr v-for="item in items" :key="item.id">
                       <td>{{ item.id }}</td>
-                      <td>{{ formatDate(item.date_time) }}</td>
+                      <td>{{ formatDateTime(item.date_time) }}</td>
                       <td>{{ item.worker_nome_cognome }}</td>
                       <td>
                           <span class="badge"
@@ -57,8 +71,19 @@
                           ></i>
                           {{ item.device_model }}
                       </td>
-                      <!-- geo-localizza il dipendente -->
                       <td>
+                        <a href="#"
+                            class="action"
+                            title="Modifica"
+                            @click="functionNotAvailable(item)">
+                            <i class="fa fa-pen blue"></i>
+                        </a>
+                        <a href="#"
+                            class="action"
+                            title="Elimina"
+                            @click="functionNotAvailable(item.id)">
+                            <i class="fa fa-trash blue"></i>
+                        </a>
                         <a :href="'tracking/?session_id=' + item.tracking_session_id"
                             v-if="item.mode == 2"
                             class="action"
@@ -184,6 +209,9 @@ export default {
                 data_assunzione: '',
                 data_cessazione: ''
             }),
+            filters: {
+                date: this.formatDateISO(new Date())
+            },
             autocompleteItems: [],
         }
     },
@@ -204,23 +232,17 @@ export default {
     methods: {
         getResults(page = 1) {
             this.$Progress.start();
-            axios.get('api/worker?page=' + page).then(({ data }) => (this.items = data.data));
+            axios.get('api/timbrata?page=' + page).then(({ data }) => (this.items = data.data));
             this.$Progress.finish();
         },
 
         // #region Modals
         newModal() {
-            alert('Questa funzione sarà disponibile a breve.')
-            return
-
             this.editmode = false;
             this.form.reset();
             $('#addNew').modal('show');
         },
         editModal(item) {
-            alert('Questa funzione sarà disponibile a breve.')
-            return
-
             this.editmode = true;
             this.form.reset();
             $('#addNew').modal('show');
@@ -231,13 +253,14 @@ export default {
 
         // #region CRUD Functions
         list() {
-            const params = 'order_by=date_time&order_dir=desc'
-            axios.get("api/timbrata/?" + params).then(({ data }) => (this.items = data.data));
+            const filters = 'filters_date=' + this.filters.date
+            const order = 'order_by=date_time&order_dir=desc'
+            axios.get("api/timbrata/?" + filters + '&' + order).then(({ data }) => (this.items = data.data));
         },
         createItem(){
             this.$Progress.start();
 
-            this.form.post('api/worker')
+            this.form.post('api/timbrata')
                 .then((data)=>{
                     if(data.data.success){
                         $('#addNew').modal('hide');
@@ -265,7 +288,7 @@ export default {
         },
         updateItem(){
             this.$Progress.start();
-            this.form.put('api/worker/'+this.form.id)
+            this.form.put('api/timbrata/' + this.form.id)
             .then((response) => {
                 // success
                 $('#addNew').modal('hide');
@@ -292,7 +315,7 @@ export default {
                 }).then((result) => {
                     // Send request to the server
                     if (result.value) {
-                        this.form.delete('api/worker/'+id).then(()=>{
+                        this.form.delete('api/timbrata/' + id).then(()=>{
                             Swal.fire(
                                 'Eliminato!',
                                 'Dipendente correttamente eliminato.',
@@ -318,6 +341,11 @@ export default {
             if (date==null) return ''
             return this.$moment(date).format('DD/MM/YYYY')
         },
+        formatDateTime(date) {
+            // formats date by moment DD/MM/YYY
+            if (date==null) return ''
+            return this.$moment(date).format('DD/MM/YYYY hh:mm:ss')
+        },
         formatDateISO(date) {
             // formats date by moment
             if (date==null) return ''
@@ -336,6 +364,10 @@ export default {
                 case 'E': return 'badge-success';
                 case 'U': return 'badge-warning';
             }
+        },
+        functionNotAvailable() {
+            alert('Questa funzione sarà disponibile a breve.')
+            return
         }
         // #endregion utils
     },

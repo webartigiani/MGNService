@@ -22,8 +22,19 @@ class DevicesTableSeeder extends Seeder
             'manufacter' => 'Dogee',
             'model' => 'N20',
             'is_virtual' =>  false,
-            'serial' => '123',
-            'uuid' => '123',
+            'serial' => '20c8bef9-3f86-4ddc-a8c6-c496428a05b7',
+            'uuid' => 'aae5ba8eed5a',
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+        ]);
+        DB::table('devices')->insert([
+            'platform' => 'Android',
+            'version' => '6.1.0',
+            'manufacter' => 'HomTom',
+            'model' => 'HT16',
+            'is_virtual' =>  false,
+            'serial' => 'a2799c9f-1895-4135-bca0-bcdfb46a3c02',
+            'uuid' => '12c11323',
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
         ]);

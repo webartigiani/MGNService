@@ -14,7 +14,7 @@ class CreateVDevicesView extends Migration
     public function up()
     {   // creates DB view v_devices
         DB::statement("CREATE VIEW v_devices AS
-            select d.id, d.platform, d.`version`, d.manufacter, d.model, d.is_virtual, d.is_online, d.enabled from devices d
+            select d.id, d.platform, d.`version`, d.manufacter, d.model, d.is_virtual, d.is_online, d.enabled, d.uuid, d.serial from devices d
         ");
     }
 

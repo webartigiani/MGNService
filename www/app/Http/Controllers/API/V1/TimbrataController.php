@@ -32,7 +32,8 @@ class TimbrataController extends BaseController
         v_timbrate: see migration
         */
 
-        // order by and limit
+        // filters, order by, order direction, limit
+        $filter_date = trim(strtolower($request->filters_date));
         $order_by = trim(strtolower($request->order_by));
         $order_dir = trim(strtolower($request->order_dir));
         $limit = intval(trim(strtolower($request->limit)));
@@ -41,7 +42,17 @@ class TimbrataController extends BaseController
         if ($order_dir != 'desc') $order_dir = 'asc';
         if ($limit <= 0) $limit = 999999999;
 
+        // normalizes filters
+        $dateFrom = '';
+        $dateTo = '';
+
+        if ($filter_date != '') {
+            $dateFrom = $filter_date . ' 00:00:00';
+            $dateTo = $filter_date . ' 23:59:59';
+        }
+
         $data = DB::table('v_timbrate')
+            ->whereBetween('date_time', [$dateFrom, $dateTo])
             ->take($limit)
             ->orderBy('date_time', 'desc')
             ->get();

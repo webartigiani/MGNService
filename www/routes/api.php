@@ -36,5 +36,6 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
         'worker' => 'WorkerController',
         'timbrata' => 'TimbrataController',
         'veicolo' => 'VeicoloController',
+        'device' => 'DeviceController',
     ]);
 });
