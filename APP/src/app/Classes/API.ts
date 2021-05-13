@@ -51,6 +51,17 @@ export class ApiService {
    *      })
    */
 
+   async ping(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.get('/ping/').then((result) => {
+        if (result != undefined) {
+          resolve(result.data)
+        } else {
+          // API Error
+        }
+      })
+    })
+  }
   async listWorkers(): Promise<any> {
     return new Promise((resolve, reject) => {
 
@@ -113,7 +124,8 @@ export class ApiService {
               resolve(response);
           }, (err) => {
               if (environment.API_LOGGER_ENABLED) console.error('API Debug LOG', uri, JSON.stringify(err))
-              reject(this.envelopeError(err));
+              let xErr = this.envelopeError(err)
+              reject(xErr);
           })
       })
     }

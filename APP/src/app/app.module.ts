@@ -26,6 +26,10 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 // http requests
 import { HttpClientModule } from '@angular/common/http';
 
+// Network
+// see  https://ionicframework.com/docs/native/network
+import { Network } from '@ionic-native/network/ngx';
+
 // WebArtigiani Classes
 import { ApiService } from './Classes/API';
 import { UtilsService } from './Classes/Utils';
@@ -60,6 +64,7 @@ enableProdMode()
     },
     Device,
     ScreenOrientation,
+    Network,
     /*
     UniqueDeviceID,
     Uid,

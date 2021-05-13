@@ -28,13 +28,12 @@ export class HomePage {
       private api: ApiService,
       private utils: UtilsService,
       private components: ComponentsService,
-      private geolocation: GeoLocationService,
+      private geolocation: GeoLocationService
     ) {
       // Constructor
 
       // clears console
       console.clear()
-
 
       // lists workers and veichles
       this.api.listWorkers().then((result) => {
@@ -54,6 +53,9 @@ export class HomePage {
         console.error(error)
       })
 
+      this.geolocation.checkService().then((data) => {
+      }).catch((err) => {
+      })
     }
   // #endregion Constructors
 

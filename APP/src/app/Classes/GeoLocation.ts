@@ -57,10 +57,15 @@ export class GeoLocationService {
     return new Promise((resolve, reject) => {
       this.geolocation.getCurrentPosition(geoLocationOptions)
       .then((data) => {
-        // getCurrentPosition result
+        // result
         resolve(data)
       }).catch((error) => {
-        // getCurrentPosition error
+        /* error
+            possible errors
+              {code: 1, message: "User denied Geolocation"}       // on WebBrowser
+              {code: 1, message: "Illegal Access"}                // on Android
+              {code: 2, message: "Network location provider at 'https://www.googleapis.com/' : No response received."}
+        */
         reject(error)
       })
     })

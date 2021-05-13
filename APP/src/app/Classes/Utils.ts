@@ -31,6 +31,10 @@ import { Platform } from '@ionic/angular';
 // NOTES: requires  npm install --save @ionic-native/device@latest
 import { Device } from '@ionic-native/device/ngx';
 
+// Network
+// see  https://ionicframework.com/docs/native/network
+import { Network } from '@ionic-native/network/ngx';
+
 // ScreenOrientation
 // see https://ionicframework.com/docs/native/screen-orientation
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
@@ -53,6 +57,7 @@ export class UtilsService {
    constructor(
       private platform: Platform,
       private device: Device,
+      private network: Network,
       private screenOrientation: ScreenOrientation,
       /*
       private uniqueDeviceID: UniqueDeviceID,
@@ -78,6 +83,7 @@ export class UtilsService {
      // returns true if App is running on local webbrowser
      return (!this.platform.is('cordova'))
    }
+
    platformIs(platform) {
     // returns true if the platform is the one specified
     return (this.platform.is(platform))
@@ -98,7 +104,8 @@ export class UtilsService {
         'manufacturer': 'manufacturer',
         'isVirtual': false,
         'serial': 'unknown',
-        'uuid': 'debug_browser'
+        'uuid': 'debug_browser',
+        'connection_type': 'ethernet'
       }
     } else {
       // running on device: returns device data
@@ -109,13 +116,18 @@ export class UtilsService {
         'manufacturer': this.device.manufacturer,
         'isVirtual': this.device.isVirtual,
         'serial': this.device.serial,
-        'uuid': this.device.uuid
+        'uuid': this.device.uuid,
+        'connection_type': this.network.type.toLocaleLowerCase()
       }
     }
     console.log('getDeviceData()', ret)
     return ret
    }
 
+   isDeviceOnLine() {
+     // returns true if the device is online
+     return (this.network.type.toLocaleLowerCase() !== 'none')
+   }
    openMapByAPP(latitude: any, longitude: any) {
      // open the Map APP (depending on the platform)
      // pointing to the specified coords

@@ -386,6 +386,20 @@ let ApiService = class ApiService {
      *        console.error(error)
      *      })
      */
+    ping() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.get('/ping/').then((result) => {
+                    if (result != undefined) {
+                        resolve(result.data);
+                    }
+                    else {
+                        // API Error
+                    }
+                });
+            });
+        });
+    }
     listWorkers() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
@@ -451,7 +465,8 @@ let ApiService = class ApiService {
                 }, (err) => {
                     if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
                         console.error('API Debug LOG', uri, JSON.stringify(err));
-                    reject(this.envelopeError(err));
+                    let xErr = this.envelopeError(err);
+                    reject(xErr);
                 });
             });
         });
@@ -521,10 +536,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
 /* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
 
 /*
 app.module.ts
@@ -546,6 +562,9 @@ src/app.module.ts
 // ScreenOrientation (see https://ionicframework.com/docs/native/screen-orientation)
 
 // http requests
+
+// Network
+// see  https://ionicframework.com/docs/native/network
 
 // WebArtigiani Classes
 
@@ -581,16 +600,17 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             },
             _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_9__["Device"],
             _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_10__["ScreenOrientation"],
+            _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_12__["Network"],
             /*
             UniqueDeviceID,
             Uid,
             AndroidPermissions,
             */
             // WebArtigiani
-            _Classes_API__WEBPACK_IMPORTED_MODULE_12__["ApiService"],
-            _Classes_Utils__WEBPACK_IMPORTED_MODULE_13__["UtilsService"],
-            _Classes_Components__WEBPACK_IMPORTED_MODULE_14__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_15__["GeoLocationService"]
+            _Classes_API__WEBPACK_IMPORTED_MODULE_13__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_14__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_15__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_16__["GeoLocationService"]
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })
@@ -903,10 +923,15 @@ let GeoLocationService = class GeoLocationService {
             return new Promise((resolve, reject) => {
                 this.geolocation.getCurrentPosition(geoLocationOptions)
                     .then((data) => {
-                    // getCurrentPosition result
+                    // result
                     resolve(data);
                 }).catch((error) => {
-                    // getCurrentPosition error
+                    /* error
+                        possible errors
+                          {code: 1, message: "User denied Geolocation"}       // on WebBrowser
+                          {code: 1, message: "Illegal Access"}                // on Android
+                          {code: 2, message: "Network location provider at 'https://www.googleapis.com/' : No response received."}
+                    */
                     reject(error);
                 });
             });
