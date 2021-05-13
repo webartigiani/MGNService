@@ -9,6 +9,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
+      "id": "cordova-plugin-device.device",
+      "file": "plugins/cordova-plugin-device/www/device.js",
+      "pluginId": "cordova-plugin-device",
+      "clobbers": [
+        "device"
+      ]
+    },
+    {
       "id": "cordova-plugin-dreamover-uid.uid",
       "file": "plugins/cordova-plugin-dreamover-uid/www/uid.js",
       "pluginId": "cordova-plugin-dreamover-uid",
@@ -77,19 +85,12 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "merges": [
         "window.plugins.uniqueDeviceID"
       ]
-    },
-    {
-      "id": "cordova-plugin-device.device",
-      "file": "plugins/cordova-plugin-device/www/device.js",
-      "pluginId": "cordova-plugin-device",
-      "clobbers": [
-        "device"
-      ]
     }
   ];
   module.exports.metadata = {
     "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-android-permissions": "1.1.2",
+    "cordova-plugin-device": "2.0.3",
     "cordova-plugin-dreamover-uid": "1.3.0",
     "cordova-plugin-geolocation": "4.1.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
@@ -98,7 +99,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-statusbar": "2.4.2",
     "cordova-plugin-unique-device-id2": "2.0.0",
-    "cordova-plugin-whitelist": "1.3.3",
-    "cordova-plugin-device": "2.0.3"
+    "cordova-plugin-whitelist": "1.3.3"
   };
 });

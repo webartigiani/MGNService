@@ -389,7 +389,7 @@ let ApiService = class ApiService {
     listWorkers() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                this.apiGet('/workers/list/').then((result) => {
+                this.get('/workers/list/').then((result) => {
                     if (result != undefined) {
                         resolve(result.data);
                     }
@@ -404,7 +404,7 @@ let ApiService = class ApiService {
     listVeichles() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                this.apiGet('/veichles/list/').then((result) => {
+                this.get('/veichles/list/').then((result) => {
                     if (result != undefined) {
                         resolve(result.data);
                     }
@@ -436,29 +436,55 @@ let ApiService = class ApiService {
     }
     // //#endregion Private Methods
     // #region Http Base Functions
-    apiGet(uri) {
+    get(uri) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                let url = this.endPoint() + uri;
-                alert(url);
                 const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpHeaders"]()
                     .set('Access-Control-Allow-Origin', '*')
                     .set('Content-Type', 'application/json; charset=utf-8')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_TOKEN);
-                this.httpClient.get(url, { 'headers': headers }).subscribe((response) => {
+                this.httpClient.get(this.endPoint() + uri, { 'headers': headers }).subscribe((response) => {
                     if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
                         console.warn('API Debugger LOG', uri, JSON.stringify(response));
-                    alert(JSON.stringify(response));
                     resolve(response);
                 }, (err) => {
                     if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
                         console.error('API Debug LOG', uri, JSON.stringify(err));
-                    alert(JSON.stringify(err));
-                    reject(err);
+                    reject(this.envelopeError(err));
                 });
             });
         });
+    }
+    envelopeError(err) {
+        /* returns an error object
+        {
+          "http_status":{
+            "code":403,
+            "text":"Forbidden",
+            "message":"Http failure response for http://127.0.0.1:8000/api/app/workers/list/: 403 Forbidden"
+          },
+          "message":"messaggio",
+          "message_details":"dettaglio1, dettaglio2"
+        }
+        */
+        let errObj = {
+            "http_status": {
+                'code': err.status,
+                'text': err.statusText,
+                'message': err.message
+            },
+            'message': (err.error.message == undefined) ? '' : err.error.message,
+            'message_details': ''
+        };
+        if ((typeof err.error.data) == 'object') {
+            err.error.data.forEach(element => {
+                if (errObj.message_details != '')
+                    errObj.message_details += ', ';
+                errObj.message_details += element;
+            });
+        }
+        return errObj;
     }
 };
 ApiService.ctorParameters = () => [

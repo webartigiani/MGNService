@@ -86,14 +86,14 @@ export class ApiService {
      //           environment.production
 
      if (this.platform.is('cordova')) {
-       // running on device
-       return environment.API_END_POINT
-     } else {
-       // running on localhost or public domain, depending on API_USE_LOCAL
-       if (environment.API_USE_LOCAL)
-        return environment.API_END_POINT_LOCAL
-       else
+        // running on device
         return environment.API_END_POINT
+     } else {
+        // running on localhost or public domain, depending on API_USE_LOCAL
+        if (environment.API_USE_LOCAL)
+          return environment.API_END_POINT_LOCAL
+        else
+          return environment.API_END_POINT
      }
    }
   // //#endregion Private Methods
