@@ -12,6 +12,147 @@ module.exports = __webpack_require__(/*! /Users/simonescigliuzzi/Documents/WebAr
 
 /***/ }),
 
+/***/ "1ZYi":
+/*!**********************************!*\
+  !*** ./src/app/Classes/Utils.ts ***!
+  \**********************************/
+/*! exports provided: UtilsService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UtilsService", function() { return UtilsService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
+/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
+/*
+  UtilsService Class
+  interacts with http://gestionale.mgnservice.it/ APIs
+
+  USAGE:
+    > in your "component" TS
+      import {UtilsService} from "../Classes/Utils";
+
+    > in your "component" TS constructor, add
+      private api: UtilsService
+
+    > in src/app.module.ts, add your provider
+        providers: [
+          ...,
+          ScreenOrientation,
+          UtilsService
+        ],
+
+  see a sample: https://stackoverflow.com/questions/35665903/how-to-write-helper-class-in-typescript
+*/
+
+
+// Platform
+// see: https://ionicframework.com/docs/angular/platform
+
+// Device
+// see https://ionicframework.com/docs/v3/native/device/
+// NOTES: requires  npm install --save @ionic-native/device@latest
+
+// ScreenOrientation
+// see https://ionicframework.com/docs/native/screen-orientation
+
+/* NOT USED UniqueDeviceID
+// see https://ionicframework.com/docs/native/unique-device-id
+// see also https://www.freakyjolly.com/ionic-4-get-unique-device-id-other-uids-of-uuid-imei-imsi-iccid-and-mac-using-native-cordova-plugins/
+import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
+import { Uid } from '@ionic-native/uid/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+*/
+let UtilsService = class UtilsService {
+    // #region Variables
+    // #endregion Variables
+    // #region Constructors
+    constructor(platform, device, screenOrientation) {
+        // constructor...
+        this.platform = platform;
+        this.device = device;
+        this.screenOrientation = screenOrientation;
+        // Lock screen orientation and listen for screen-orientation changes
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY);
+        this.screenOrientation.onChange().subscribe(() => {
+            console.log('Orientation Changed', this.screenOrientation.type);
+        });
+    }
+    // #endregion Constructors
+    // #region Public Methods
+    isDebug() {
+        // returns true if App is running on local webbrowser
+        return (!this.platform.is('cordova'));
+    }
+    platformIs(platform) {
+        // returns true if the platform is the one specified
+        return (this.platform.is(platform));
+    }
+    getDeviceData() {
+        // returns a full device-data object
+        // NOTE: uuid is calculated by constructor
+        let ret = {};
+        if (this.isDebug()) {
+            // running on webbrowser: creates dummy device data
+            ret = {
+                'platform': 'browser',
+                'version': '0.0.0',
+                'model': 'model',
+                'manufacturer': 'manufacturer',
+                'isVirtual': false,
+                'serial': 'unknown',
+                'uuid': 'debug_browser'
+            };
+        }
+        else {
+            // running on device: returns device data
+            ret = {
+                'platform': this.device.platform,
+                'version': this.device.version,
+                'model': this.device.model,
+                'manufacturer': this.device.manufacturer,
+                'isVirtual': this.device.isVirtual,
+                'serial': this.device.serial,
+                'uuid': this.device.uuid
+            };
+        }
+        console.log('getDeviceData()', ret);
+        return ret;
+    }
+    openMapByAPP(latitude, longitude) {
+        // open the Map APP (depending on the platform)
+        // pointing to the specified coords
+        // Android: geo:41.1954148,16.6165038
+        // iOS:     maps://maps.apple.com/?q=41.1954148,16.6165038
+        let url = '';
+        if (this.platform.is('android')) {
+            url = 'geo:' + latitude + ',' + longitude;
+        }
+        if (this.platform.is('ios')) {
+            // Note: this links also works on iOS Mobile
+            url = 'maps://maps.apple.com/?q=' + latitude + ',' + longitude;
+        }
+        if (url != '')
+            url = 'https://www.google.it/maps/@' + latitude + ',' + longitude + ',15z';
+        window.open(url);
+    }
+};
+UtilsService.ctorParameters = () => [
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"] },
+    { type: _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_3__["Device"] },
+    { type: _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_4__["ScreenOrientation"] }
+];
+UtilsService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], UtilsService);
+
+
+
+/***/ }),
+
 /***/ "AytR":
 /*!*****************************************!*\
   !*** ./src/environments/environment.ts ***!
@@ -26,7 +167,14 @@ __webpack_require__.r(__webpack_exports__);
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 const environment = {
-    production: false
+    production: false,
+    API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
+    API_LOGGER_ENABLED: false,
+    API_USE_LOCAL: false,
+    API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
+    API_END_POINT: 'http://gestionale.mgnservice.it/api/app',
+    LOCATION_TIMEOUT: 5,
+    LOCATION_INERVAL: 15 // interval (in seconds)
 };
 /*
  * For easier debugging in development mode, you can import the following file
@@ -60,6 +208,9 @@ __webpack_require__.r(__webpack_exports__);
 
 let AppComponent = class AppComponent {
     constructor() { }
+    ngOnInit() {
+        console.log('ngOnInit from AppComponent');
+    }
 };
 AppComponent.ctorParameters = () => [];
 AppComponent = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
@@ -69,6 +220,95 @@ AppComponent = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
         styles: [_app_component_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
     })
 ], AppComponent);
+
+
+
+/***/ }),
+
+/***/ "Vw97":
+/*!***************************************!*\
+  !*** ./src/app/Classes/Components.ts ***!
+  \***************************************/
+/*! exports provided: ComponentsService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ComponentsService", function() { return ComponentsService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/*
+  ComponentsService Class
+  implements various components, such as loading, alert
+
+  USAGE:
+    > in your "component" TS
+      import {UtilsService} from "../Classes/Components";
+
+    > in your "component" TS constructor, add
+      private components: ComponentsService
+
+    > in src/app.module.ts, add your provider
+        providers: [
+          ...,
+          ScreenOrientation,
+          ComponentsService
+        ],
+
+  see a sample: https://stackoverflow.com/questions/35665903/how-to-write-helper-class-in-typescript
+*/
+
+
+
+let ComponentsService = class ComponentsService {
+    // #region Variables
+    // #endregion Variables
+    // #region Constructors
+    constructor(alertController, loadingController) {
+        this.alertController = alertController;
+        this.loadingController = loadingController;
+        // constructor...
+    }
+    // #endregion Constructors
+    // #region Public Methods
+    showAlert(title, subtitle, message) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            // shows device native alert by alertController
+            const alert = yield this.alertController.create({
+                animated: true,
+                backdropDismiss: false,
+                header: title,
+                subHeader: subtitle,
+                message: message,
+                buttons: ['OK']
+            });
+            yield alert.present();
+        });
+    }
+    getLoader(message, duration) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            // returns a loading object
+            if (message == undefined)
+                message = 'Please wait...';
+            if (duration == undefined)
+                duration = 10000;
+            const loading = yield this.loadingController.create({
+                message: message,
+                duration: duration,
+                showBackdrop: true
+            });
+            return loading;
+        });
+    }
+};
+ComponentsService.ctorParameters = () => [
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["AlertController"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["LoadingController"] }
+];
+ComponentsService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], ComponentsService);
 
 
 
@@ -84,6 +324,152 @@ AppComponent = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ("<ion-app>\n  <ion-router-outlet></ion-router-outlet>\n</ion-app>\n");
+
+/***/ }),
+
+/***/ "YBWL":
+/*!********************************!*\
+  !*** ./src/app/Classes/API.ts ***!
+  \********************************/
+/*! exports provided: ApiService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ApiService", function() { return ApiService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/environments/environment */ "AytR");
+/*
+  ApiService Class
+  interacts with http://gestionale.mgnservice.it/ APIs
+
+  USAGE:
+    > in your "component" TS
+      import {ApiService} from "../Classes/API";
+
+    > in your "component" TS constructor, add
+      private api: ApiService
+
+    > in src/app.module.ts, add your provider
+        providers: [
+          ...,
+          ScreenOrientation,
+          ApiService
+        ],
+
+  see a sample: https://stackoverflow.com/questions/35665903/how-to-write-helper-class-in-typescript
+*/
+
+
+
+// Http Request
+
+
+let ApiService = class ApiService {
+    // #region Constructors
+    constructor(platform, httpClient) {
+        this.platform = platform;
+        this.httpClient = httpClient;
+        // constructor...
+    }
+    // #endregion Constructors
+    // #region Public API Methods
+    /**
+     * USAGE:
+     *      this.api.listWorkers().then((result) => {
+     *        console.log(result)
+     *        }
+     *      ).catch((error) => {
+     *        console.error(error)
+     *      })
+     */
+    listWorkers() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.apiGet('/workers/list/').then((result) => {
+                    if (result != undefined) {
+                        resolve(result.data);
+                    }
+                    else {
+                        // API Error
+                        alert('errore API operatori');
+                    }
+                });
+            });
+        });
+    }
+    listVeichles() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.apiGet('/veichles/list/').then((result) => {
+                    if (result != undefined) {
+                        resolve(result.data);
+                    }
+                    else {
+                        // API Error
+                        alert('errore API veicoli');
+                    }
+                });
+            });
+        });
+    }
+    // #region Public Methods
+    // #region Private Methods
+    endPoint() {
+        // returns the API endpoint base url: depending on the effective environment
+        // NOTE:   we could also use
+        //           environment.production
+        if (this.platform.is('cordova')) {
+            // running on device
+            return src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_END_POINT;
+        }
+        else {
+            // running on localhost or public domain, depending on API_USE_LOCAL
+            if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_USE_LOCAL)
+                return src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_END_POINT_LOCAL;
+            else
+                return src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_END_POINT;
+        }
+    }
+    // //#endregion Private Methods
+    // #region Http Base Functions
+    apiGet(uri) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                let url = this.endPoint() + uri;
+                alert(url);
+                const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpHeaders"]()
+                    .set('Access-Control-Allow-Origin', '*')
+                    .set('Content-Type', 'application/json; charset=utf-8')
+                    .set('Accept', 'application/json')
+                    .set('Authorization', 'Bearer ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_TOKEN);
+                this.httpClient.get(url, { 'headers': headers }).subscribe((response) => {
+                    if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
+                        console.warn('API Debugger LOG', uri, JSON.stringify(response));
+                    alert(JSON.stringify(response));
+                    resolve(response);
+                }, (err) => {
+                    if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
+                        console.error('API Debug LOG', uri, JSON.stringify(err));
+                    alert(JSON.stringify(err));
+                    reject(err);
+                });
+            });
+        });
+    }
+};
+ApiService.ctorParameters = () => [
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"] },
+    { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClient"] }
+];
+ApiService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], ApiService);
+
+
 
 /***/ }),
 
@@ -107,12 +493,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/geolocation/ngx */ "Bfh1");
 /* harmony import */ var _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/native-geocoder/ngx */ "h+qT");
 /* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
-/* harmony import */ var _ionic_native_unique_device_id_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/unique-device-id/ngx */ "/+Rg");
-/* harmony import */ var _ionic_native_uid_ngx__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @ionic-native/uid/ngx */ "JN8Z");
-/* harmony import */ var _ionic_native_android_permissions_ngx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ionic-native/android-permissions/ngx */ "WOgW");
-/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
 
+/*
+app.module.ts
+src/app.module.ts
+*/
 
 
 
@@ -122,18 +513,26 @@ __webpack_require__.r(__webpack_exports__);
 // geolocation and native-geocoder
 
 
-// Device (see https://ionicframework.com/docs/v3/native/device/)
+// Device
+// see https://ionicframework.com/docs/v3/native/device/
 // NOTES: requires  npm install --save @ionic-native/device@latest
-
-// UniqueDeviceID (see https://ionicframework.com/docs/native/unique-device-id)
-// see also https://www.freakyjolly.com/ionic-4-get-unique-device-id-other-uids-of-uuid-imei-imsi-iccid-and-mac-using-native-cordova-plugins/
-
-
 
 // ScreenOrientation (see https://ionicframework.com/docs/native/screen-orientation)
 
 // http requests
 
+// WebArtigiani Classes
+
+
+
+
+/* NOT USED
+ UniqueDeviceID (see https://ionicframework.com/docs/native/unique-device-id)
+// see also https://www.freakyjolly.com/ionic-4-get-unique-device-id-other-uids-of-uuid-imei-imsi-iccid-and-mac-using-native-cordova-plugins/
+import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
+import { Uid } from '@ionic-native/uid/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+*/
 Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["enableProdMode"])();
 let AppModule = class AppModule {
 };
@@ -145,7 +544,7 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _angular_platform_browser__WEBPACK_IMPORTED_MODULE_2__["BrowserModule"],
             _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["IonicModule"].forRoot(),
             _app_routing_module__WEBPACK_IMPORTED_MODULE_6__["AppRoutingModule"],
-            _angular_common_http__WEBPACK_IMPORTED_MODULE_14__["HttpClientModule"]
+            _angular_common_http__WEBPACK_IMPORTED_MODULE_11__["HttpClientModule"]
         ],
         providers: [
             _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_7__["Geolocation"],
@@ -155,10 +554,17 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
                 useClass: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["IonicRouteStrategy"]
             },
             _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_9__["Device"],
-            _ionic_native_unique_device_id_ngx__WEBPACK_IMPORTED_MODULE_10__["UniqueDeviceID"],
-            _ionic_native_uid_ngx__WEBPACK_IMPORTED_MODULE_11__["Uid"],
-            _ionic_native_android_permissions_ngx__WEBPACK_IMPORTED_MODULE_12__["AndroidPermissions"],
-            _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_13__["ScreenOrientation"]
+            _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_10__["ScreenOrientation"],
+            /*
+            UniqueDeviceID,
+            Uid,
+            AndroidPermissions,
+            */
+            // WebArtigiani
+            _Classes_API__WEBPACK_IMPORTED_MODULE_12__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_13__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_14__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_15__["GeoLocationService"]
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })
@@ -403,6 +809,131 @@ webpackAsyncContext.keys = function webpackAsyncContextKeys() {
 };
 webpackAsyncContext.id = "kLfG";
 module.exports = webpackAsyncContext;
+
+/***/ }),
+
+/***/ "vA/e":
+/*!****************************************!*\
+  !*** ./src/app/Classes/GeoLocation.ts ***!
+  \****************************************/
+/*! exports provided: GeoLocationService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GeoLocationService", function() { return GeoLocationService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic-native/geolocation/ngx */ "Bfh1");
+/* harmony import */ var _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic-native/native-geocoder/ngx */ "h+qT");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/environments/environment */ "AytR");
+/*
+  GeoLocationService Class
+  implements geo-location functions
+
+  USAGE:
+    > in your "component" TS
+      import {GeoLocationService} from "../Classes/Components";
+
+    > in your "component" TS constructor, add
+      private components: GeoLocationService
+
+    > in src/app.module.ts, add your provider
+        providers: [
+          ...,
+          ScreenOrientation,
+          GeoLocationService
+        ],
+
+  see a sample: https://stackoverflow.com/questions/35665903/how-to-write-helper-class-in-typescript
+*/
+
+
+// GeoLocation and GeoCoder
+
+
+
+let GeoLocationService = class GeoLocationService {
+    // #region Variables
+    // #endregion Variables
+    // #region Constructors
+    constructor(geolocation, nativeGeocoder) {
+        this.geolocation = geolocation;
+        this.nativeGeocoder = nativeGeocoder;
+        // constructor...
+    }
+    // #endregion Constructors
+    // #region Public Methods
+    checkService() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            /**
+             * checks Geolocation service
+             */
+            let geoLocationOptions = {
+                timeout: (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_TIMEOUT * 1000),
+                enableHighAccuracy: true,
+                maximumAge: 0 // no cached position
+            };
+            return new Promise((resolve, reject) => {
+                this.geolocation.getCurrentPosition(geoLocationOptions)
+                    .then((data) => {
+                    // getCurrentPosition result
+                    resolve(data);
+                }).catch((error) => {
+                    // getCurrentPosition error
+                    reject(error);
+                });
+            });
+        });
+    }
+    locate() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            /**
+             * geo-locate the user
+             */
+            return new Promise((resolve, reject) => {
+                let geoLocationOptions = {
+                    timeout: (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_TIMEOUT * 1000),
+                    enableHighAccuracy: true,
+                    maximumAge: 0 // no cached position
+                };
+                this.geolocation.getCurrentPosition(geoLocationOptions)
+                    .then((data) => {
+                    // getCurrentPosition result
+                    // es: 41.1954148 16.6165038
+                    console.log('geolocation result', data.coords.latitude, data.coords.longitude, data.timestamp);
+                    if (data.timestamp > 0) {
+                        /*
+                        this.geoData.latitude = data.coords.latitude
+                        this.geoData.longitude = data.coords.longitude
+                        this.geoData.accuracy = Math.round(data.coords.accuracy)
+                        this.geoData.timestamp =  data.timestamp
+                        */
+                    }
+                    else {
+                        // location is empty
+                    }
+                }).catch((error) => {
+                    // getCurrentPosition error
+                    /*
+                    this.error_code = error.code
+                    this.error_message = error.message
+                    this.locationErrors += 1
+                    */
+                });
+            });
+        });
+    }
+};
+GeoLocationService.ctorParameters = () => [
+    { type: _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_2__["Geolocation"] },
+    { type: _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_3__["NativeGeocoder"] }
+];
+GeoLocationService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], GeoLocationService);
+
+
 
 /***/ }),
 

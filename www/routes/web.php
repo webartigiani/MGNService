@@ -23,12 +23,23 @@ Route::get('/', function () {
  * require
  *      Authorization:Bearer env('IONIC_APP_TOKEN')
  */
-Route::namespace('App\\Http\\Controllers\\API\\APP')->group(function () {
+Route::group([
+    'middleware' => ['api', 'cors'],
+    'namespace' => 'App\\Http\\Controllers\\API\\APP'
+], function ($router) {
+    Route::get('api/app/ping/', 'ApiController@ping');
     Route::get('api/app/workers/list/', 'ApiController@listWorkers');
     Route::get('api/app/veichles/list/', 'ApiController@listVeichles');
     Route::post('api/app/devices/add/', 'ApiController@registerDevice');
 });
-
+/*
+Route::namespace('App\\Http\\Controllers\\API\\APP')->group(function () {
+    Route::get('api/app/ping/', 'ApiController@ping');
+    Route::get('api/app/workers/list/', 'ApiController@listWorkers');
+    Route::get('api/app/veichles/list/', 'ApiController@listVeichles');
+    Route::post('api/app/devices/add/', 'ApiController@registerDevice');
+});
+*/
 
 
 Auth::routes(['verify' => true]);

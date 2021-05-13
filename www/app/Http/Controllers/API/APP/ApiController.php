@@ -13,18 +13,32 @@ use DB;
 
 class ApiController extends Controller
 {
+
 //#region Workers
     public function listWorkers(Request $request)
     {/* listWorkers
-        list workers
+        list free, enabled workers
 
         GET api/app/workers/list/
+
+        RESPONSE:
+            {
+                "success": true,
+                "data": [
+                    {
+                        "id": 8,
+                        "name": "ANNA",
+                        "surname": "E. NACCAH"
+                    },
+                    ...
+                ],
+                "message": "Workers List"
+            }
         */
 
         // validates APP authorization
         if (!$this->routeAPP($request)) return $this->redicretHome();
-
-        $result = DB::table('workers')->get();
+        $result = DB::table('app_v_workers')->get();
         return $this->sendResponse($result, 'Workers List');
     }
 //#endregion Workers
@@ -32,15 +46,30 @@ class ApiController extends Controller
 //#region Veichles
 public function listVeichles(Request $request)
 {/* listVeichles
-    list veichles
+    lists free, enabled veichles
 
     GET api/app/veichles/list/
+
+    RESPONSE:
+        {
+            "success": true,
+            "data": [
+                {
+                    "id": 1,
+                    "manufacter": "Citroen",
+                    "model": "C3",
+                    "licence_plate": "XX123XX"
+                },
+                ...
+            ],
+            "message": "Veichles List"
+        }
     */
 
     // validates APP authorization
     if (!$this->routeAPP($request)) return $this->redicretHome();
 
-    $result = DB::table('veichles')->get();
+    $result = DB::table('app_v_veichles')->get();
     return $this->sendResponse($result, 'Veichles List');
 }
 //#endregion Veichles
@@ -169,6 +198,10 @@ public function registerDevice(Request $request)
 //#endregion Devices
 
 //#region Response/Utils
+
+    public function ping() {
+        return $this->sendResponse('OK', time());
+    }
     /**
      * Returns the specific result, by and additional message
      * Returns status 200
@@ -189,7 +222,7 @@ public function registerDevice(Request $request)
      *      $result = DB::table('veichles')->get();
      *      return $this->sendResponse($result, 'Veichles List');
      */
-    public function sendResponse($result, $message)
+     public function sendResponse($result, $message)
     {
         $response = [
             'success' => true,
