@@ -31,106 +31,74 @@ import { environment } from "src/environments/environment";
 @Injectable()
 export class ApiService {
 
-  // #region Constructors
-   constructor(
+    // #region Constructors
+    constructor(
       private platform: Platform,
       private httpClient: HttpClient
-   ) {
-    // constructor...
-   }
-  // #endregion Constructors
+    ) {
+      // constructor...
+    }
+    // #endregion Constructors
 
-  // #region Public API Methods
-  /**
-   * USAGE:
-   *      this.api.listWorkers().then((result) => {
-   *        console.log(result)
-   *        }
-   *      ).catch((error) => {
-   *        console.error(error)
-   *      })
-   */
-
-   async ping(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.get('/ping/').then((result) => {
-        if (result != undefined) {
-          resolve(result.data)
-        } else {
-          // API Error
-        }
-      })
-    })
-  }
-  async listWorkers(): Promise<any> {
-    return new Promise((resolve, reject) => {
-
-      this.get('/workers/list/').then((result) => {
-        if (result != undefined) {
-          resolve(result.data)
-        } else {
-          // API Error
-          alert('errore API operatori')
-        }
-      })
-    })
-  }
-  async listVeichles(): Promise<any> {
-    return new Promise((resolve, reject) => {
-
-      this.get('/veichles/list/').then((result) => {
-        if (result != undefined) {
-          resolve(result.data)
-        } else {
-          // API Error
-          alert('errore API veicoli')
-        }
-      })
-    })
-  }
-  // #region Public Methods
-
-  // #region Private Methods
-   private endPoint() {
-     // returns the API endpoint base url: depending on the effective environment
-     // NOTE:   we could also use
-     //           environment.production
-
-     if (this.platform.is('cordova')) {
-        // running on device
-        return environment.API_END_POINT
-     } else {
-        // running on localhost or public domain, depending on API_USE_LOCAL
-        if (environment.API_USE_LOCAL)
-          return environment.API_END_POINT_LOCAL
-        else
-          return environment.API_END_POINT
-     }
-   }
-  // //#endregion Private Methods
-
-  // #region Http Base Functions
-    async get(uri): Promise<any> {
+    // #region Public API Methods
+    /**
+     * USAGE:
+     *      this.api.listWorkers().then((result) => {
+     *        console.log(result)
+     *        }
+     *      ).catch((error) => {
+     *        console.error(error)
+     *      })
+     */
+    async ping(): Promise<any> {
       return new Promise((resolve, reject) => {
-
-        const headers = new HttpHeaders()
-          .set('Access-Control-Allow-Origin', '*')
-          .set('Content-Type', 'application/json; charset=utf-8')
-          .set('Accept', 'application/json')
-          .set('Authorization', 'Bearer ' + environment.API_TOKEN);
-
-          this.httpClient.get(this.endPoint() + uri, { 'headers': headers }).subscribe((response) => {
-              if (environment.API_LOGGER_ENABLED) console.warn('API Debugger LOG', uri, JSON.stringify(response))
-              resolve(response);
-          }, (err) => {
-              if (environment.API_LOGGER_ENABLED) console.error('API Debug LOG', uri, JSON.stringify(err))
-              let xErr = this.envelopeError(err)
-              reject(xErr);
-          })
+        this.get('/ping/').then((result) => {
+            resolve(result.data)
+        }).catch((error) => {
+            reject(error)
+        })
       })
     }
+    async listWorkers(): Promise<any> {
+      return new Promise((resolve, reject) => {
 
-    envelopeError(err) {
+        this.get('/workers/list/').then((result) => {
+            resolve(result.data)
+        }).catch((error) => {
+            reject(error)
+        })
+      })
+    }
+    async listVeichles(): Promise<any> {
+      return new Promise((resolve, reject) => {
+
+        this.get('/veichles/list/').then((result) => {
+          resolve(result.data)
+        }).catch((error) => {
+            reject(error)
+        })
+      })
+    }
+    // #region Public Methods
+
+    // #region Private Methods
+    private endPoint() {
+      // returns the API endpoint base url: depending on the effective environment
+      // NOTE:   we could also use
+      //           environment.production
+
+      if (this.platform.is('cordova')) {
+          // running on device
+          return environment.API_END_POINT
+      } else {
+          // running on localhost or public domain, depending on API_USE_LOCAL
+          if (environment.API_USE_LOCAL)
+            return environment.API_END_POINT_LOCAL
+          else
+            return environment.API_END_POINT
+      }
+    }
+    private envelopeError(err) {
       /* returns an error object
       {
         "http_status":{
@@ -160,5 +128,27 @@ export class ApiService {
       }
       return errObj
     }
-  // #endregion Http Base Functions
+    // #endregion Private Methods
+
+    // #region Http Base Functions
+    private async get(uri): Promise<any> {
+      return new Promise((resolve, reject) => {
+
+        const headers = new HttpHeaders()
+          .set('Access-Control-Allow-Origin', '*')
+          .set('Content-Type', 'application/json; charset=utf-8')
+          .set('Accept', 'application/json')
+          .set('Authorization', 'Bearer ' + environment.API_TOKEN);
+
+          this.httpClient.get(this.endPoint() + uri, { 'headers': headers }).subscribe((response) => {
+              if (environment.API_LOGGER_ENABLED) console.warn('API Debugger LOG', uri, JSON.stringify(response))
+              resolve(response);
+          }, (err) => {
+              if (environment.API_LOGGER_ENABLED) console.error('API Debug LOG', uri, JSON.stringify(err))
+              let xErr = this.envelopeError(err)
+              reject(xErr);
+          })
+      })
+    }
+    // #endregion Http Base Functions
 }

@@ -124,9 +124,19 @@ export class UtilsService {
     return ret
    }
 
-   isDeviceOnLine() {
-     // returns true if the device is online
-     return (this.network.type.toLocaleLowerCase() !== 'none')
+  isDeviceOnLine() {
+      // returns true if the device is online
+      if (this.isDebug())
+        return true
+      else
+        return (this.network.type.toLocaleLowerCase() !== 'none')
+  }
+
+   deviceConnectionType() {
+     if (this.isDebug())
+       return 'wifi'
+     else
+      return this.network.type.toLocaleLowerCase()
    }
    openMapByAPP(latitude: any, longitude: any) {
      // open the Map APP (depending on the platform)

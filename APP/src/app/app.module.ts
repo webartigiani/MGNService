@@ -31,6 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Network } from '@ionic-native/network/ngx';
 
 // WebArtigiani Classes
+import { AppService } from './Classes/App';
 import { ApiService } from './Classes/API';
 import { UtilsService } from './Classes/Utils';
 import { ComponentsService } from './Classes/Components';
@@ -74,6 +75,7 @@ enableProdMode()
     */
 
     // WebArtigiani
+    AppService,
     ApiService,
     UtilsService,
     ComponentsService,

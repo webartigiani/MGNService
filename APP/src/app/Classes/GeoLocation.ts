@@ -43,73 +43,84 @@ export class GeoLocationService {
    }
   // #endregion Constructors
 
-   // #region Public Methods
-   async checkService(): Promise<any> {
-    /**
-     * checks Geolocation service
-     */
-
-    let geoLocationOptions = {                            // geolocation options
-      timeout: (environment.LOCATION_TIMEOUT * 1000),
-      enableHighAccuracy: true,
-      maximumAge: 0                                       // no cached position
-    };
-    return new Promise((resolve, reject) => {
-      this.geolocation.getCurrentPosition(geoLocationOptions)
-      .then((data) => {
-        // result
-        resolve(data)
-      }).catch((error) => {
-        /* error
-            possible errors
-              {code: 1, message: "User denied Geolocation"}       // on WebBrowser
-              {code: 1, message: "Illegal Access"}                // on Android
-              {code: 2, message: "Network location provider at 'https://www.googleapis.com/' : No response received."}
-              {code: 3, message: "Timeout expired"}
-        */
-        reject(error)
+    // #region Public Methods
+    async checkService(): Promise<any> {
+      /**
+       * checks Geolocation service
+       */
+      return new Promise((resolve, reject) => {
+        this.geolocation.getCurrentPosition(this.getOptions())
+        .then((data) => {
+          // result
+          resolve(this.envelopeData(data))
+        }).catch((error) => {
+          /* error
+              possible errors
+                {code: 1, message: "User denied Geolocation"}       // on WebBrowser
+                {code: 1, message: "Illegal Access"}                // on Android
+                {code: 2, message: "Network location provider at 'https://www.googleapis.com/' : No response received."}
+                {code: 3, message: "Timeout expired"}
+          */
+          reject(error)
+        })
       })
-    })
-  }
+    }
 
-   async locate(): Promise<any> {
-     /**
-      * geo-locate the user
-      */
-    return new Promise((resolve, reject) => {
-      let geoLocationOptions = {                        // geolocation options
+    async locate(): Promise<any> {
+      /**
+        * geo-locate the device
+        */
+      return new Promise((resolve, reject) => {
+        this.geolocation.getCurrentPosition(this.getOptions())
+          .then((data) => {
+            // getCurrentPosition result
+            // es: 41.1954148 16.6165038
+
+            if (data.timestamp > 0) {
+              resolve(this.envelopeData(data))
+            } else {
+              // location is empty
+            }
+          }).catch((error) => {
+            reject(error)
+          })
+      })
+    }
+    // #endregion Public Methods
+
+    // #region Private Methods
+    private getOptions() {
+      // envelope geolocation options
+      let ret = {
         timeout: (environment.LOCATION_TIMEOUT * 1000),
         enableHighAccuracy: true,
-        maximumAge: 0                                   // no cached position
-      };
+        maximumAge: 0                                       // no cached position
+      }
+      return ret
+    }
+    private envelopeData(data: any) {
+      // evenlope getCurrentPosition result
 
-      this.geolocation.getCurrentPosition(geoLocationOptions)
-        .then((data) => {
-          // getCurrentPosition result
-          // es: 41.1954148 16.6165038
-
-          console.log('geolocation result', data.coords.latitude, data.coords.longitude, data.timestamp)
-
-          if (data.timestamp > 0) {
-            /*
-            this.geoData.latitude = data.coords.latitude
-            this.geoData.longitude = data.coords.longitude
-            this.geoData.accuracy = Math.round(data.coords.accuracy)
-            this.geoData.timestamp =  data.timestamp
-            */
-          } else {
-            // location is empty
-
-          }
-        }).catch((error) => {
-          // getCurrentPosition error
-          /*
-          this.error_code = error.code
-          this.error_message = error.message
-          this.locationErrors += 1
-          */
-        })
-    })
-  }
-   // #endregion Public Methods
+      let ret
+      if (data.timestamp > 0) {
+        ret = {
+          "latitude": data.coords.latitude,
+          "longitude": data.coords.longitude,
+          "accuracy": data.coords.accuracy,
+          "timestamp": data.timestamp,
+          "valid": true
+        }
+      } else {
+        // not valid data
+        ret = {
+          "latitude": 0,
+          "longitude": 0,
+          "accuracy": 0,
+          "timestamp": 0,
+          "valid": false
+        }
+      }
+      return ret
+    }
+    // #region Private Methods
 }

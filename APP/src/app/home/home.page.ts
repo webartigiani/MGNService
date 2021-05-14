@@ -74,16 +74,6 @@ export class HomePage {
       })
 
 
-      setInterval(() => {
-        // Checks Geolocation service
-        this.geolocation.checkService().then((data) => {
-          console.log('geolocation data', data)
-        }).catch((err) => {
-          console.error('geolocation error', err)
-        })
-      }, 2000);
-
-
     }
   // #endregion Constructors
 
