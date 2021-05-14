@@ -35,6 +35,7 @@ import { ApiService } from './Classes/API';
 import { UtilsService } from './Classes/Utils';
 import { ComponentsService } from './Classes/Components';
 import { GeoLocationService } from './Classes/GeoLocation';
+import { LocalDataService } from './Classes/LocalData';
 
 /* NOT USED
  UniqueDeviceID (see https://ionicframework.com/docs/native/unique-device-id)
@@ -75,7 +76,8 @@ enableProdMode()
     ApiService,
     UtilsService,
     ComponentsService,
-    GeoLocationService
+    GeoLocationService,
+    LocalDataService
   ],
   bootstrap: [AppComponent],
 })

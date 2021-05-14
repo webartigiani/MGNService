@@ -46,7 +46,7 @@ HomePageRoutingModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      MGN Service\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  B\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"true\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"operator\"\n          >\n          <ion-select-option *ngFor=\"let item of this.operators\" [value]=\"item\">{{ item.name }} {{ item.surname }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let item of this.veichles\" [value]=\"item\">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>\n        </ion-select>\n      </ion-item>\n    </ion-list>\n  </div>\n\n  <!-- geoLocaiton div -->\n  <div id=\"geoLocator\"\n    *ngIf=\"false\"\n    >\n\n    <!-- results -->\n    <div id=\"results\"\n      *ngIf=\"error_code === 0\"\n    >\n      <br><br><br>\n      <img src=\"assets/ani/locator.gif\" class=\"ani\">\n      <br><br>\n      <p>Procedi verso la tua destinazione...</p>\n    </div>\n\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            *ngIf=\"true\"\n            (click)=\"startLocating()\"\n            shape=\"round\"\n          >Avvia</ion-button>\n\n          <!-- stop button -->\n          <ion-button\n            *ngIf=\"false\"\n            (click)=\"dummy()\"\n            shape=\"round\"\n          >Stop</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      MGN Service\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n\n<ion-content [fullscreen]=\"true\">\n\n  {{ readData() }}\n  <br>\n  <ion-button\n  (click)=\"writeData()\"\n  shape=\"round\"\n  >Salva</ion-button>\n\n  <ion-button\n  (click)=\"deleteData()\"\n  shape=\"round\"\n  >Cancella</ion-button>\n\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"true\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"operator\"\n          >\n          <ion-select-option *ngFor=\"let item of this.operators\" [value]=\"item\">{{ item.name }} {{ item.surname }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let item of this.veichles\" [value]=\"item\">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>\n        </ion-select>\n      </ion-item>\n    </ion-list>\n  </div>\n\n  <!-- geoLocaiton div -->\n  <div id=\"geoLocator\"\n    *ngIf=\"false\"\n    >\n\n    <!-- results -->\n    <div id=\"results\"\n      *ngIf=\"error_code === 0\"\n    >\n      <br><br><br>\n      <img src=\"assets/ani/locator.gif\" class=\"ani\">\n      <br><br>\n      <p>Procedi verso la tua destinazione...</p>\n    </div>\n\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            *ngIf=\"true\"\n            (click)=\"startLocating()\"\n            shape=\"round\"\n          >Avvia</ion-button>\n\n          <!-- stop button -->\n          <ion-button\n            *ngIf=\"false\"\n            (click)=\"dummy()\"\n            shape=\"round\"\n          >Stop</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ }),
 
@@ -119,19 +119,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _raw_loader_home_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./home.page.html */ "WcN3");
 /* harmony import */ var _home_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./home.page.scss */ "f6od");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
 
 
 
-
-// Network
-// see  https://ionicframework.com/docs/native/network
 
 // WebArtigiani Classes
+
 
 
 
@@ -141,13 +139,13 @@ let HomePage = class HomePage {
     // #region Constructors
     constructor(
     // WebArtigiani
-    api, utils, components, geolocation, network) {
+    api, utils, components, geolocation, localData) {
         // Constructor
         this.api = api;
         this.utils = utils;
         this.components = components;
         this.geolocation = geolocation;
-        this.network = network;
+        this.localData = localData;
         // #region Variables
         this.baseURL = 'https://jsonplaceholder.typicode.com'; // API End-point base url
         this.operators = []; // operatori
@@ -156,12 +154,6 @@ let HomePage = class HomePage {
         this.veichle = '';
         // clears console
         console.clear();
-        // #region Network
-        setInterval(() => {
-            console.log('we are connected via ' + this.network.type);
-            console.log(this.network);
-        }, 1000);
-        // #endregion Network
         // lists workers and veichles
         this.api.listWorkers().then((result) => {
             // list workers
@@ -221,6 +213,15 @@ let HomePage = class HomePage {
     }
     // #endregion View LifeCycle Events
     // #region Public/Private Methods
+    writeData() {
+        this.localData.writeData('nome', 'paolo');
+    }
+    readData() {
+        return this.localData.readData('nome', 'predefinito');
+    }
+    deleteData() {
+        this.localData.deleteData('nome');
+    }
     // #region User Functions
     startLocating() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -266,11 +267,11 @@ let HomePage = class HomePage {
     }
 };
 HomePage.ctorParameters = () => [
-    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_5__["ApiService"] },
-    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_6__["UtilsService"] },
-    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_7__["ComponentsService"] },
-    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_8__["GeoLocationService"] },
-    { type: _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_4__["Network"] }
+    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_4__["ApiService"] },
+    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_5__["UtilsService"] },
+    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_6__["ComponentsService"] },
+    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_7__["GeoLocationService"] },
+    { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_8__["LocalDataService"] }
 ];
 HomePage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({

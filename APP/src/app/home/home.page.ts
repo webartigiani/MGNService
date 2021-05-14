@@ -5,6 +5,7 @@ import { ApiService } from '../Classes/API';
 import { UtilsService } from '../Classes/Utils';
 import { ComponentsService } from '../Classes/Components';
 import { GeoLocationService } from '../Classes/GeoLocation';
+import { LocalDataService } from '../Classes/LocalData';
 
 @Component({
   selector: 'app-home',
@@ -28,7 +29,8 @@ export class HomePage {
       private api: ApiService,
       private utils: UtilsService,
       private components: ComponentsService,
-      private geolocation: GeoLocationService
+      private geolocation: GeoLocationService,
+      private localData: LocalDataService
     ) {
       // Constructor
 
@@ -101,6 +103,42 @@ export class HomePage {
   // #endregion View LifeCycle Events
 
   // #region Public/Private Methods
+
+  writeValue() {
+    let d = [
+      {
+        'name': 'paolo',
+        'surname': 'fox'
+      },
+      {
+        'name': 'marta',
+        'surname': 'stiuart'
+      },
+    ]
+    this.localData.writeValue('nome', 'andrea')
+  }
+  writeObject() {
+    let obj = [
+      {
+        'name': 'paolo',
+        'surname': 'fox'
+      },
+      {
+        'name': 'marta',
+        'surname': 'stiuart'
+      },
+    ]
+    this.localData.writeArray('lista', obj)
+  }
+  readValue() {
+    return this.localData.readValue('nome', 'predefinito')
+  }
+  readObject() {
+    return JSON.stringify(this.localData.readArray('lista', []))
+  }
+  delete() {
+    this.localData.delete('nome')
+  }
 
     // #region User Functions
     async startLocating() {

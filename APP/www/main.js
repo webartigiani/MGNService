@@ -1,5 +1,75 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"],{
 
+/***/ "/zBf":
+/*!**************************************!*\
+  !*** ./src/app/Classes/LocalData.ts ***!
+  \**************************************/
+/*! exports provided: LocalDataService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LocalDataService", function() { return LocalDataService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/*
+  LocalDataService Class
+  interacts with http://gestionale.mgnservice.it/ APIs
+
+  USAGE:
+    > in your "component" TS
+      import {LocalDataService} from "../Classes/LocalData";
+
+    > in your "component" TS constructor, add
+      private api: UtilsService
+
+    > in src/app.module.ts, add your provider
+        providers: [
+          ...,
+          ScreenOrientation,
+          LocalDataService
+        ],
+
+  see a sample: https://stackoverflow.com/questions/35665903/how-to-write-helper-class-in-typescript
+*/
+
+
+let LocalDataService = class LocalDataService {
+    // #region Variables
+    // #endregion Variables
+    // #region Constructors
+    constructor() {
+        // constructor...
+    }
+    // #endregion Constructors
+    // #region Public Methods
+    writeData(name, value) {
+        localStorage.setItem(name, value);
+    }
+    readData(name, defaultValue) {
+        if (defaultValue === undefined)
+            defaultValue = '';
+        let value = localStorage.getItem(name);
+        if (value === null)
+            value = defaultValue;
+        return value;
+    }
+    deleteData(name) {
+        localStorage.removeItem(name);
+    }
+    clear() {
+        localStorage.clear();
+    }
+};
+LocalDataService.ctorParameters = () => [];
+LocalDataService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], LocalDataService);
+
+
+
+/***/ }),
+
 /***/ 0:
 /*!***************************!*\
   !*** multi ./src/main.ts ***!
@@ -26,7 +96,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
 /* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
-/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
+/* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
+/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
 /*
   UtilsService Class
   interacts with http://gestionale.mgnservice.it/ APIs
@@ -56,6 +127,9 @@ __webpack_require__.r(__webpack_exports__);
 // see https://ionicframework.com/docs/v3/native/device/
 // NOTES: requires  npm install --save @ionic-native/device@latest
 
+// Network
+// see  https://ionicframework.com/docs/native/network
+
 // ScreenOrientation
 // see https://ionicframework.com/docs/native/screen-orientation
 
@@ -70,10 +144,11 @@ let UtilsService = class UtilsService {
     // #region Variables
     // #endregion Variables
     // #region Constructors
-    constructor(platform, device, screenOrientation) {
+    constructor(platform, device, network, screenOrientation) {
         // constructor...
         this.platform = platform;
         this.device = device;
+        this.network = network;
         this.screenOrientation = screenOrientation;
         // Lock screen orientation and listen for screen-orientation changes
         this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY);
@@ -104,7 +179,8 @@ let UtilsService = class UtilsService {
                 'manufacturer': 'manufacturer',
                 'isVirtual': false,
                 'serial': 'unknown',
-                'uuid': 'debug_browser'
+                'uuid': 'debug_browser',
+                'connection_type': 'ethernet'
             };
         }
         else {
@@ -116,11 +192,16 @@ let UtilsService = class UtilsService {
                 'manufacturer': this.device.manufacturer,
                 'isVirtual': this.device.isVirtual,
                 'serial': this.device.serial,
-                'uuid': this.device.uuid
+                'uuid': this.device.uuid,
+                'connection_type': this.network.type.toLocaleLowerCase()
             };
         }
         console.log('getDeviceData()', ret);
         return ret;
+    }
+    isDeviceOnLine() {
+        // returns true if the device is online
+        return (this.network.type.toLocaleLowerCase() !== 'none');
     }
     openMapByAPP(latitude, longitude) {
         // open the Map APP (depending on the platform)
@@ -143,7 +224,8 @@ let UtilsService = class UtilsService {
 UtilsService.ctorParameters = () => [
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"] },
     { type: _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_3__["Device"] },
-    { type: _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_4__["ScreenOrientation"] }
+    { type: _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_4__["Network"] },
+    { type: _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_5__["ScreenOrientation"] }
 ];
 UtilsService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
@@ -541,6 +623,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
 /* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
 /* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
 
 /*
 app.module.ts
@@ -567,6 +650,7 @@ src/app.module.ts
 // see  https://ionicframework.com/docs/native/network
 
 // WebArtigiani Classes
+
 
 
 
@@ -610,7 +694,8 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _Classes_API__WEBPACK_IMPORTED_MODULE_13__["ApiService"],
             _Classes_Utils__WEBPACK_IMPORTED_MODULE_14__["UtilsService"],
             _Classes_Components__WEBPACK_IMPORTED_MODULE_15__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_16__["GeoLocationService"]
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_16__["GeoLocationService"],
+            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_17__["LocalDataService"]
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })
