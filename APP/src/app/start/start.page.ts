@@ -19,7 +19,7 @@ export class StartPage {
 
   // #region Constructor
   constructor(
-      // WebArtigiani
+      // WebArtigiani Classes
       private api: ApiService,
       private utils: UtilsService,
       private components: ComponentsService,
