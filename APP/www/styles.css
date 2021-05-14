@@ -1232,5 +1232,13 @@ sub {
 .ion-align-items-baseline {
   align-items: baseline !important;
 }
+/* UI style */
+ion-title img {
+  max-width: 24px;
+}
+/* Generic classes */
+.center {
+  text-align: center;
+}
 
 /*# sourceMappingURL=styles.css.map*/

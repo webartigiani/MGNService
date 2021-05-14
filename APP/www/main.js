@@ -203,8 +203,8 @@ let UtilsService = class UtilsService {
             ret = {
                 'platform': 'browser',
                 'version': '0.0.0',
+                'manufacter': 'manufacter',
                 'model': 'model',
-                'manufacturer': 'manufacturer',
                 'isVirtual': false,
                 'serial': 'unknown',
                 'uuid': 'debug_browser',
@@ -216,20 +216,28 @@ let UtilsService = class UtilsService {
             ret = {
                 'platform': this.device.platform,
                 'version': this.device.version,
+                'manufacter': this.device.manufacturer,
                 'model': this.device.model,
-                'manufacturer': this.device.manufacturer,
                 'isVirtual': this.device.isVirtual,
                 'serial': this.device.serial,
                 'uuid': this.device.uuid,
                 'connection_type': this.network.type.toLocaleLowerCase()
             };
         }
-        console.log('getDeviceData()', ret);
         return ret;
     }
     isDeviceOnLine() {
         // returns true if the device is online
-        return (this.network.type.toLocaleLowerCase() !== 'none');
+        if (this.isDebug())
+            return true;
+        else
+            return (this.network.type.toLocaleLowerCase() !== 'none');
+    }
+    deviceConnectionType() {
+        if (this.isDebug())
+            return 'wifi';
+        else
+            return this.network.type.toLocaleLowerCase();
     }
     openMapByAPP(latitude, longitude) {
         // open the Map APP (depending on the platform)
@@ -278,8 +286,10 @@ __webpack_require__.r(__webpack_exports__);
 // The list of file replacements can be found in `angular.json`.
 const environment = {
     production: false,
+    APP_TITLE: 'MGN Service',
+    APP_VERSION: '0.0.1',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
-    API_LOGGER_ENABLED: false,
+    API_LOGGER_ENABLED: true,
     API_USE_LOCAL: false,
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'http://gestionale.mgnservice.it/api/app',
@@ -294,6 +304,67 @@ const environment = {
  * on performance if an error is thrown.
  */
 // import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+
+
+/***/ }),
+
+/***/ "FNOQ":
+/*!********************************!*\
+  !*** ./src/app/Classes/App.ts ***!
+  \********************************/
+/*! exports provided: AppService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppService", function() { return AppService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/environments/environment */ "AytR");
+/*
+  AppService Class
+  implements various components, such as loading, alert
+
+  USAGE:
+    > in your "component" TS
+      import {AppService} from "../Classes/Components";
+
+    > in your "component" TS constructor, add
+      private components: AppService
+
+    > in src/app.module.ts, add your provider
+        providers: [
+          ...,
+          ScreenOrientation,
+          AppService
+        ],
+
+  see a sample: https://stackoverflow.com/questions/35665903/how-to-write-helper-class-in-typescript
+*/
+
+
+
+let AppService = class AppService {
+    // #region Variables
+    // #endregion Variables
+    // #region Constructors
+    constructor() {
+        // constructor...
+    }
+    // #endregion Constructors
+    // #region Public Methods
+    appName() {
+        return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].APP_TITLE;
+    }
+    appVersion() {
+        return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].APP_VERSION;
+    }
+};
+AppService.ctorParameters = () => [];
+AppService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], AppService);
+
 
 
 /***/ }),
@@ -500,47 +571,125 @@ let ApiService = class ApiService {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 this.get('/ping/').then((result) => {
-                    if (result != undefined) {
-                        resolve(result.data);
-                    }
-                    else {
-                        // API Error
-                    }
+                    resolve(result.data);
+                }).catch((error) => {
+                    reject(error);
                 });
             });
         });
     }
     listWorkers() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            /**
+             * Lists Workers (enabled and not in use)
+             */
             return new Promise((resolve, reject) => {
                 this.get('/workers/list/').then((result) => {
-                    if (result != undefined) {
-                        resolve(result.data);
-                    }
-                    else {
-                        // API Error
-                        alert('errore API operatori');
-                    }
+                    resolve(result.data);
+                }).catch((error) => {
+                    reject(error);
                 });
             });
         });
     }
     listVeichles() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            /**
+             * Lists Veichles (enabled and not in use)
+             */
             return new Promise((resolve, reject) => {
                 this.get('/veichles/list/').then((result) => {
-                    if (result != undefined) {
-                        resolve(result.data);
-                    }
-                    else {
-                        // API Error
-                        alert('errore API veicoli');
-                    }
+                    resolve(result.data);
+                }).catch((error) => {
+                    reject(error);
+                });
+            });
+        });
+    }
+    deviceAdd(deviceData, gpsData) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            /**
+             * Add/Updates device on server
+            {
+                "platform": "Android",
+                "version": "10.0.0",
+                "manufacter": "Samsung",
+                "model": "S8",
+                "is_virtual": false,
+                "serial": "20c8bef9-3f86-4ddc-a8c6-xxx",
+                "uuid": "x1234",
+                "latitude": "41.19317221071111",
+                "longitude": "16.599785497822222",
+                "accuracy": "10"
+            }
+            */
+            const payload = {
+                "platform": deviceData.platform,
+                "version": deviceData.version,
+                "manufacter": deviceData.manufacter,
+                "model": deviceData.model,
+                "is_virtual": deviceData.isVirtual,
+                "serial": deviceData.serial,
+                "uuid": deviceData.uuid,
+                "connection_type": deviceData.connection_type,
+                "latitude": gpsData.latitude,
+                "longitude": gpsData.longitude,
+                "accuracy": gpsData.accuracy,
+            };
+            return new Promise((resolve, reject) => {
+                this.post('/devices/add/', payload).then((result) => {
+                    resolve(result.data);
+                }).catch((error) => {
+                    reject(error);
                 });
             });
         });
     }
     // #region Public Methods
+    // #region Http Base Functions
+    get(uri) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpHeaders"]()
+                    .set('Access-Control-Allow-Origin', '*')
+                    .set('Content-Type', 'application/json; charset=utf-8')
+                    .set('Accept', 'application/json')
+                    .set('Authorization', 'Bearer ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_TOKEN);
+                this.httpClient.get(this.endPoint() + uri, { 'headers': headers }).subscribe((response) => {
+                    if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
+                        console.warn('API Debugger LOG', 'GET', uri, JSON.stringify(response));
+                    resolve(response);
+                }, (err) => {
+                    if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
+                        console.error('API Debug LOG', 'GET', uri, JSON.stringify(err));
+                    let xErr = this.envelopeError(err);
+                    reject(xErr);
+                });
+            });
+        });
+    }
+    post(uri, data) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpHeaders"]()
+                    .set('Access-Control-Allow-Origin', '*')
+                    .set('Content-Type', 'application/json; charset=utf-8')
+                    .set('Accept', 'application/json')
+                    .set('Authorization', 'Bearer ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_TOKEN);
+                this.httpClient.post(this.endPoint() + uri, data, { 'headers': headers }).subscribe((response) => {
+                    if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
+                        console.warn('API Debugger LOG', 'POST', uri, JSON.stringify(response));
+                    resolve(response);
+                }, (err) => {
+                    if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
+                        console.error('API Debug LOG', 'POST', uri, JSON.stringify(err));
+                    let xErr = this.envelopeError(err);
+                    reject(xErr);
+                });
+            });
+        });
+    }
+    // #endregion Http Base Functions
     // #region Private Methods
     endPoint() {
         // returns the API endpoint base url: depending on the effective environment
@@ -557,29 +706,6 @@ let ApiService = class ApiService {
             else
                 return src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_END_POINT;
         }
-    }
-    // //#endregion Private Methods
-    // #region Http Base Functions
-    get(uri) {
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpHeaders"]()
-                    .set('Access-Control-Allow-Origin', '*')
-                    .set('Content-Type', 'application/json; charset=utf-8')
-                    .set('Accept', 'application/json')
-                    .set('Authorization', 'Bearer ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_TOKEN);
-                this.httpClient.get(this.endPoint() + uri, { 'headers': headers }).subscribe((response) => {
-                    if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
-                        console.warn('API Debugger LOG', uri, JSON.stringify(response));
-                    resolve(response);
-                }, (err) => {
-                    if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].API_LOGGER_ENABLED)
-                        console.error('API Debug LOG', uri, JSON.stringify(err));
-                    let xErr = this.envelopeError(err);
-                    reject(xErr);
-                });
-            });
-        });
     }
     envelopeError(err) {
         /* returns an error object
@@ -647,11 +773,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
 /* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
 
 /*
 app.module.ts
@@ -678,6 +805,7 @@ src/app.module.ts
 // see  https://ionicframework.com/docs/native/network
 
 // WebArtigiani Classes
+
 
 
 
@@ -720,11 +848,12 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             AndroidPermissions,
             */
             // WebArtigiani
-            _Classes_API__WEBPACK_IMPORTED_MODULE_13__["ApiService"],
-            _Classes_Utils__WEBPACK_IMPORTED_MODULE_14__["UtilsService"],
-            _Classes_Components__WEBPACK_IMPORTED_MODULE_15__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_16__["GeoLocationService"],
-            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_17__["LocalDataService"]
+            _Classes_App__WEBPACK_IMPORTED_MODULE_13__["AppService"],
+            _Classes_API__WEBPACK_IMPORTED_MODULE_14__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_15__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_16__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_17__["GeoLocationService"],
+            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_18__["LocalDataService"]
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })
@@ -1029,16 +1158,11 @@ let GeoLocationService = class GeoLocationService {
             /**
              * checks Geolocation service
              */
-            let geoLocationOptions = {
-                timeout: (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_TIMEOUT * 1000),
-                enableHighAccuracy: true,
-                maximumAge: 0 // no cached position
-            };
             return new Promise((resolve, reject) => {
-                this.geolocation.getCurrentPosition(geoLocationOptions)
+                this.geolocation.getCurrentPosition(this.getOptions())
                     .then((data) => {
                     // result
-                    resolve(data);
+                    resolve(this.envelopeData(data));
                 }).catch((error) => {
                     /* error
                         possible errors
@@ -1055,40 +1179,59 @@ let GeoLocationService = class GeoLocationService {
     locate() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             /**
-             * geo-locate the user
-             */
+              * geo-locate the device
+              */
             return new Promise((resolve, reject) => {
-                let geoLocationOptions = {
-                    timeout: (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_TIMEOUT * 1000),
-                    enableHighAccuracy: true,
-                    maximumAge: 0 // no cached position
-                };
-                this.geolocation.getCurrentPosition(geoLocationOptions)
+                this.geolocation.getCurrentPosition(this.getOptions())
                     .then((data) => {
                     // getCurrentPosition result
                     // es: 41.1954148 16.6165038
-                    console.log('geolocation result', data.coords.latitude, data.coords.longitude, data.timestamp);
                     if (data.timestamp > 0) {
-                        /*
-                        this.geoData.latitude = data.coords.latitude
-                        this.geoData.longitude = data.coords.longitude
-                        this.geoData.accuracy = Math.round(data.coords.accuracy)
-                        this.geoData.timestamp =  data.timestamp
-                        */
+                        resolve(this.envelopeData(data));
                     }
                     else {
                         // location is empty
                     }
                 }).catch((error) => {
-                    // getCurrentPosition error
-                    /*
-                    this.error_code = error.code
-                    this.error_message = error.message
-                    this.locationErrors += 1
-                    */
+                    reject(error);
                 });
             });
         });
+    }
+    // #endregion Public Methods
+    // #region Private Methods
+    getOptions() {
+        // envelope geolocation options
+        let ret = {
+            timeout: (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_TIMEOUT * 1000),
+            enableHighAccuracy: true,
+            maximumAge: 0 // no cached position
+        };
+        return ret;
+    }
+    envelopeData(data) {
+        // evenlope getCurrentPosition result
+        let ret;
+        if (data.timestamp > 0) {
+            ret = {
+                "latitude": data.coords.latitude,
+                "longitude": data.coords.longitude,
+                "accuracy": data.coords.accuracy,
+                "timestamp": data.timestamp,
+                "valid": true
+            };
+        }
+        else {
+            // not valid data
+            ret = {
+                "latitude": 0,
+                "longitude": 0,
+                "accuracy": 0,
+                "timestamp": 0,
+                "valid": false
+            };
+        }
+        return ret;
     }
 };
 GeoLocationService.ctorParameters = () => [
@@ -1122,7 +1265,7 @@ __webpack_require__.r(__webpack_exports__);
 const routes = [
     {
         path: '',
-        redirectTo: 'check-connection',
+        redirectTo: 'start',
         pathMatch: 'full'
     },
     {
@@ -1130,8 +1273,16 @@ const routes = [
         loadChildren: () => __webpack_require__.e(/*! import() | home-home-module */ "home-home-module").then(__webpack_require__.bind(null, /*! ./home/home.module */ "ct+p")).then(m => m.HomePageModule)
     },
     {
-        path: 'check-connection',
-        loadChildren: () => __webpack_require__.e(/*! import() | check-connection-check-connection-module */ "check-connection-check-connection-module").then(__webpack_require__.bind(null, /*! ./check-connection/check-connection.module */ "Dqt7")).then(m => m.CheckConnectionPageModule)
+        path: 'start',
+        loadChildren: () => __webpack_require__.e(/*! import() | start-start-module */ "start-start-module").then(__webpack_require__.bind(null, /*! ./start/start.module */ "qyyb")).then(m => m.StartPageModule)
+    },
+    {
+        path: 'login-veichle',
+        loadChildren: () => __webpack_require__.e(/*! import() | login-veichle-login-veichle-module */ "login-veichle-login-veichle-module").then(__webpack_require__.bind(null, /*! ./login-veichle/login-veichle.module */ "rH1d")).then(m => m.LoginVeichlePageModule)
+    },
+    {
+        path: 'tracking',
+        loadChildren: () => __webpack_require__.e(/*! import() | tracking-tracking-module */ "tracking-tracking-module").then(__webpack_require__.bind(null, /*! ./tracking/tracking.module */ "ZyQ5")).then(m => m.TrackingPageModule)
     },
 ];
 let AppRoutingModule = class AppRoutingModule {

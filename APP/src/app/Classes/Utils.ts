@@ -100,8 +100,8 @@ export class UtilsService {
       ret = {
         'platform': 'browser',
         'version': '0.0.0',
+        'manufacter': 'manufacter',
         'model': 'model',
-        'manufacturer': 'manufacturer',
         'isVirtual': false,
         'serial': 'unknown',
         'uuid': 'debug_browser',
@@ -112,15 +112,14 @@ export class UtilsService {
       ret = {
         'platform': this.device.platform,
         'version': this.device.version,
+        'manufacter': this.device.manufacturer,
         'model': this.device.model,
-        'manufacturer': this.device.manufacturer,
         'isVirtual': this.device.isVirtual,
         'serial': this.device.serial,
         'uuid': this.device.uuid,
         'connection_type': this.network.type.toLocaleLowerCase()
       }
     }
-    console.log('getDeviceData()', ret)
     return ret
    }
 

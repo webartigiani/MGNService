@@ -60,8 +60,10 @@ export class ApiService {
       })
     }
     async listWorkers(): Promise<any> {
+      /**
+       * Lists Workers (enabled and not in use)
+       */
       return new Promise((resolve, reject) => {
-
         this.get('/workers/list/').then((result) => {
             resolve(result.data)
         }).catch((error) => {
@@ -70,8 +72,10 @@ export class ApiService {
       })
     }
     async listVeichles(): Promise<any> {
+      /**
+       * Lists Veichles (enabled and not in use)
+       */
       return new Promise((resolve, reject) => {
-
         this.get('/veichles/list/').then((result) => {
           resolve(result.data)
         }).catch((error) => {
@@ -79,7 +83,85 @@ export class ApiService {
         })
       })
     }
+    async deviceAdd(deviceData: any, gpsData: any): Promise<any> {
+        /**
+         * Add/Updates device on server
+        {
+            "platform": "Android",
+            "version": "10.0.0",
+            "manufacter": "Samsung",
+            "model": "S8",
+            "is_virtual": false,
+            "serial": "20c8bef9-3f86-4ddc-a8c6-xxx",
+            "uuid": "x1234",
+            "latitude": "41.19317221071111",
+            "longitude": "16.599785497822222",
+            "accuracy": "10"
+        }
+        */
+        const payload = {
+            "platform": deviceData.platform,
+            "version": deviceData.version,
+            "manufacter": deviceData.manufacter,
+            "model": deviceData.model,
+            "is_virtual": deviceData.isVirtual,
+            "serial": deviceData.serial,
+            "uuid": deviceData.uuid,
+            "connection_type": deviceData.connection_type,
+            "latitude": gpsData.latitude,
+            "longitude": gpsData.longitude,
+            "accuracy": gpsData.accuracy,
+        }
+        return new Promise((resolve, reject) => {
+          this.post('/devices/add/', payload).then((result) => {
+            resolve(result.data)
+          }).catch((error) => {
+            reject(error)
+          })
+        })
+    }
     // #region Public Methods
+
+    // #region Http Base Functions
+    private async get(uri): Promise<any> {
+      return new Promise((resolve, reject) => {
+
+        const headers = new HttpHeaders()
+          .set('Access-Control-Allow-Origin', '*')
+          .set('Content-Type', 'application/json; charset=utf-8')
+          .set('Accept', 'application/json')
+          .set('Authorization', 'Bearer ' + environment.API_TOKEN);
+
+          this.httpClient.get(this.endPoint() + uri, { 'headers': headers }).subscribe((response) => {
+              if (environment.API_LOGGER_ENABLED) console.warn('API Debugger LOG', 'GET', uri, JSON.stringify(response))
+              resolve(response);
+          }, (err) => {
+              if (environment.API_LOGGER_ENABLED) console.error('API Debug LOG', 'GET', uri, JSON.stringify(err))
+              let xErr = this.envelopeError(err)
+              reject(xErr);
+          })
+      })
+    }
+    private async post(uri, data): Promise<any> {
+      return new Promise((resolve, reject) => {
+
+        const headers = new HttpHeaders()
+          .set('Access-Control-Allow-Origin', '*')
+          .set('Content-Type', 'application/json; charset=utf-8')
+          .set('Accept', 'application/json')
+          .set('Authorization', 'Bearer ' + environment.API_TOKEN);
+
+          this.httpClient.post(this.endPoint() + uri, data, { 'headers': headers }).subscribe((response) => {
+              if (environment.API_LOGGER_ENABLED) console.warn('API Debugger LOG', 'POST', uri, JSON.stringify(response))
+              resolve(response);
+          }, (err) => {
+              if (environment.API_LOGGER_ENABLED) console.error('API Debug LOG', 'POST', uri, JSON.stringify(err))
+              let xErr = this.envelopeError(err)
+              reject(xErr);
+          })
+      })
+    }
+    // #endregion Http Base Functions
 
     // #region Private Methods
     private endPoint() {
@@ -129,26 +211,4 @@ export class ApiService {
       return errObj
     }
     // #endregion Private Methods
-
-    // #region Http Base Functions
-    private async get(uri): Promise<any> {
-      return new Promise((resolve, reject) => {
-
-        const headers = new HttpHeaders()
-          .set('Access-Control-Allow-Origin', '*')
-          .set('Content-Type', 'application/json; charset=utf-8')
-          .set('Accept', 'application/json')
-          .set('Authorization', 'Bearer ' + environment.API_TOKEN);
-
-          this.httpClient.get(this.endPoint() + uri, { 'headers': headers }).subscribe((response) => {
-              if (environment.API_LOGGER_ENABLED) console.warn('API Debugger LOG', uri, JSON.stringify(response))
-              resolve(response);
-          }, (err) => {
-              if (environment.API_LOGGER_ENABLED) console.error('API Debug LOG', uri, JSON.stringify(err))
-              let xErr = this.envelopeError(err)
-              reject(xErr);
-          })
-      })
-    }
-    // #endregion Http Base Functions
 }

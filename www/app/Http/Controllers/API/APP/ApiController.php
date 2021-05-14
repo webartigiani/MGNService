@@ -90,6 +90,7 @@ public function registerDevice(Request $request)
             "is_virtual": false,
             "serial": "20c8bef9-3f86-4ddc-a8c6-c496428a05b7",
             "uuid": "aae5ba8eed5a",
+            "connection_type": "wifi",
             "latitude": "41.19317221073727",
             "longitude": "16.599785497829647",
             "accuracy": "10"
@@ -146,6 +147,7 @@ public function registerDevice(Request $request)
                 'serial' => $payload['serial'],
                 'uuid' => $payload['uuid'],
                 'is_online' => true,
+                'connection_type' => $payload['connection_type'],
                 'enabled' => true,
                 'created_at' =>  \Carbon\Carbon::now(), # new \Datetime()
                 'updated_at' => \Carbon\Carbon::now(),  # new \Datetime()

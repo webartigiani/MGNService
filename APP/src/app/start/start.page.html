@@ -2,25 +2,12 @@
   start/
   starting page
 -->
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      <img src="assets/icon/favicon.png" />
-      {{ app.appName() }}
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true" class="center">
-
   <img src="assets/ani/start.gif" />
   <br>
-
   <div id="checkConnections">
     <p [innerHTML]="statusDesc"></p>
   </div>
-
-
 </ion-content>
 
 <!-- Footer -->

@@ -21,7 +21,7 @@ export class StartPage {
   // #region Variables
   statusDesc: string = 'caricamento...'
   statusError: boolean = false
-  execDelay: number = 0.1                       // numero di secondi di attesa esecuzione
+  execDelay: number = 0.25                       // numero di secondi di attesa esecuzione
   retryDelay: number = 3                        // numero di secondi per retrial
   // #endregion Variables
 
@@ -114,6 +114,8 @@ export class StartPage {
         // Geo-location service OK
 
         this.statusDesc = 'Avvio in corso...'
+
+        this.api.deviceAdd(this.utils.getDeviceData(), data)
 
         setTimeout(() => {
           this.navCtrl.navigateRoot('home')
