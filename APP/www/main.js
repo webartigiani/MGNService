@@ -14,7 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /*
   LocalDataService Class
-  interacts with http://gestionale.mgnservice.it/ APIs
+  provides methods to store and read values, objects, array from/to localStorage
 
   USAGE:
     > in your "component" TS
@@ -43,10 +43,10 @@ let LocalDataService = class LocalDataService {
     }
     // #endregion Constructors
     // #region Public Methods
-    writeData(name, value) {
+    writeValue(name, value) {
         localStorage.setItem(name, value);
     }
-    readData(name, defaultValue) {
+    readValue(name, defaultValue) {
         if (defaultValue === undefined)
             defaultValue = '';
         let value = localStorage.getItem(name);
@@ -54,7 +54,35 @@ let LocalDataService = class LocalDataService {
             value = defaultValue;
         return value;
     }
-    deleteData(name) {
+    writeObject(name, value) {
+        if (value === null)
+            value = {};
+        localStorage.setItem(name, JSON.stringify(value));
+    }
+    readObject(name, defaultObject) {
+        if (defaultObject === undefined)
+            defaultObject = '{}';
+        let value = localStorage.getItem(name);
+        if (value === null)
+            value = defaultObject;
+        value = JSON.parse(value);
+        return value;
+    }
+    writeArray(name, value) {
+        if (value === null)
+            value = [];
+        localStorage.setItem(name, JSON.stringify(value));
+    }
+    readArray(name, defaultArray) {
+        if (defaultArray === undefined)
+            defaultArray = [];
+        let value = localStorage.getItem(name);
+        if (value === null)
+            return defaultArray;
+        else
+            return JSON.parse(value);
+    }
+    delete(name) {
         localStorage.removeItem(name);
     }
     clear() {
@@ -676,6 +704,7 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _angular_common_http__WEBPACK_IMPORTED_MODULE_11__["HttpClientModule"]
         ],
         providers: [
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["NavController"],
             _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_7__["Geolocation"],
             _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_8__["NativeGeocoder"],
             {
@@ -1016,6 +1045,7 @@ let GeoLocationService = class GeoLocationService {
                           {code: 1, message: "User denied Geolocation"}       // on WebBrowser
                           {code: 1, message: "Illegal Access"}                // on Android
                           {code: 2, message: "Network location provider at 'https://www.googleapis.com/' : No response received."}
+                          {code: 3, message: "Timeout expired"}
                     */
                     reject(error);
                 });
@@ -1091,13 +1121,17 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     {
+        path: '',
+        redirectTo: 'check-connection',
+        pathMatch: 'full'
+    },
+    {
         path: 'home',
         loadChildren: () => __webpack_require__.e(/*! import() | home-home-module */ "home-home-module").then(__webpack_require__.bind(null, /*! ./home/home.module */ "ct+p")).then(m => m.HomePageModule)
     },
     {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full'
+        path: 'check-connection',
+        loadChildren: () => __webpack_require__.e(/*! import() | check-connection-check-connection-module */ "check-connection-check-connection-module").then(__webpack_require__.bind(null, /*! ./check-connection/check-connection.module */ "Dqt7")).then(m => m.CheckConnectionPageModule)
     },
 ];
 let AppRoutingModule = class AppRoutingModule {

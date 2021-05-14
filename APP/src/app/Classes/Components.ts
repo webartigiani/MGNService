@@ -39,7 +39,7 @@ export class ComponentsService {
   // #endregion Constructors
 
    // #region Public Methods
-   async showAlert(title, subtitle, message) {
+   async showAlert(title: string, subtitle: string, message: string) {
       // shows device native alert by alertController
       const alert = await this.alertController.create({
         animated: true,

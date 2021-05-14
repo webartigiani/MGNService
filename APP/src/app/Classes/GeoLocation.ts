@@ -65,6 +65,7 @@ export class GeoLocationService {
               {code: 1, message: "User denied Geolocation"}       // on WebBrowser
               {code: 1, message: "Illegal Access"}                // on Android
               {code: 2, message: "Network location provider at 'https://www.googleapis.com/' : No response received."}
+              {code: 3, message: "Timeout expired"}
         */
         reject(error)
       })

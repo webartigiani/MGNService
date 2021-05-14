@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NavController, Platform } from '@ionic/angular';
 
 // WebArtigiani Classes
 import { ApiService } from '../Classes/API';
@@ -30,7 +31,10 @@ export class HomePage {
       private utils: UtilsService,
       private components: ComponentsService,
       private geolocation: GeoLocationService,
-      private localData: LocalDataService
+      private localData: LocalDataService,
+
+      public navCtrl: NavController,
+      public platform: Platform
     ) {
       // Constructor
 
@@ -55,9 +59,31 @@ export class HomePage {
         console.error(error)
       })
 
-      this.geolocation.checkService().then((data) => {
-      }).catch((err) => {
+      // Event listners
+      this.platform.backButton.subscribe(() => {
+        this.components.showAlert('Attenzione', 'operazione non consentita', 'Prima di terminare l\'applicazione, completa il tuo tragitto.')
+        console.log('Another handler was called!');
+        return;
+      });
+
+      this.platform.pause.subscribe(() => {
+        console.log('pause')
       })
+      this.platform.resume.subscribe(() => {
+        console.log('resume')
+      })
+
+
+      setInterval(() => {
+        // Checks Geolocation service
+        this.geolocation.checkService().then((data) => {
+          console.log('geolocation data', data)
+        }).catch((err) => {
+          console.error('geolocation error', err)
+        })
+      }, 2000);
+
+
     }
   // #endregion Constructors
 
@@ -102,44 +128,11 @@ export class HomePage {
 
   // #endregion View LifeCycle Events
 
+  navigate() {
+    this.navCtrl.navigateRoot('check-connection')
+  }
+
   // #region Public/Private Methods
-
-  writeValue() {
-    let d = [
-      {
-        'name': 'paolo',
-        'surname': 'fox'
-      },
-      {
-        'name': 'marta',
-        'surname': 'stiuart'
-      },
-    ]
-    this.localData.writeValue('nome', 'andrea')
-  }
-  writeObject() {
-    let obj = [
-      {
-        'name': 'paolo',
-        'surname': 'fox'
-      },
-      {
-        'name': 'marta',
-        'surname': 'stiuart'
-      },
-    ]
-    this.localData.writeArray('lista', obj)
-  }
-  readValue() {
-    return this.localData.readValue('nome', 'predefinito')
-  }
-  readObject() {
-    return JSON.stringify(this.localData.readArray('lista', []))
-  }
-  delete() {
-    this.localData.delete('nome')
-  }
-
     // #region User Functions
     async startLocating() {
 
