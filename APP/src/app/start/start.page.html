@@ -1,0 +1,35 @@
+<!--
+  start/
+  starting page
+-->
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <img src="assets/icon/favicon.png" />
+      {{ appName() }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="center">
+
+  <img src="assets/ani/start.gif" />
+  <br>
+
+  <div id="checkConnections">
+    <i class="fas fa-check"></i> verifica connessione...
+  </div>
+
+
+</ion-content>
+
+<!-- Footer -->
+<ion-footer class="ion-no-border">
+  <ion-grid>
+    <ion-row no-padding no-margin>
+        <ion-col col-12 no-padding class="center">
+          {{ appName() }} v.{{ appVersion() }}
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

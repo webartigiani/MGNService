@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { CheckConnectionPageRoutingModule } from './check-connection-routing.module';
+import { LoginVeichlePageRoutingModule } from './login-veichle-routing.module';
 
-import { CheckConnectionPage } from './check-connection.page';
+import { LoginVeichlePage } from './login-veichle.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    CheckConnectionPageRoutingModule
+    LoginVeichlePageRoutingModule
   ],
-  declarations: [CheckConnectionPage]
+  declarations: [LoginVeichlePage]
 })
-export class CheckConnectionPageModule {}
+export class LoginVeichlePageModule {}

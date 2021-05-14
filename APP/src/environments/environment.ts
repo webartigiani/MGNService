@@ -5,6 +5,9 @@
 export const environment = {
   production: false,
 
+  APP_TITLE: 'MGN Service',                                 // APP Data
+  APP_VERSION: '0.0.1',
+
   API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',        // API token
   API_LOGGER_ENABLED: false,                                // enabled/disable API calling debug on console
   API_USE_LOCAL: false,                                      // when not on device, if true, point on API_END_POINT_LOCAL

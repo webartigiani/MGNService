@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'check-connection',
+    redirectTo: 'start',
     pathMatch: 'full'
   },
   {
@@ -12,8 +12,16 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
-    path: 'check-connection',
-    loadChildren: () => import('./check-connection/check-connection.module').then( m => m.CheckConnectionPageModule)
+    path: 'start',
+    loadChildren: () => import('./start/start.module').then( m => m.StartPageModule)
+  },
+  {
+    path: 'login-veichle',
+    loadChildren: () => import('./login-veichle/login-veichle.module').then( m => m.LoginVeichlePageModule)
+  },
+  {
+    path: 'tracking',
+    loadChildren: () => import('./tracking/tracking.module').then( m => m.TrackingPageModule)
   },
 ];
 
