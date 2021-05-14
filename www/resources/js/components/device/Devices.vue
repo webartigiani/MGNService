@@ -26,6 +26,9 @@
                       <th>Abilitato</th>
                       <th>UUID</th>
                       <th>Numero Seriale</th>
+                      <th>Data Attivazione</th>
+                      <th>Ultimo Accesso</th>
+                      <th>Connessione</th>
                       <th>Azioni</th>
                     </tr>
                   </thead>
@@ -55,8 +58,20 @@
                             :title="`Non abilitato`"></i>
                       </td>
                         <td>{{ item.uuid }}</td>
-                        <td>{{ item.serial }}</td>
-                      <td>
+                        <td>{{ (item.serial == 'unknown') ? '-': item.serial }}</td>
+                        <td>{{ formatDateTime(item.created_at) }}</td>
+                        <td>{{ formatDateTime(item.updated_at) }}</td>
+                        <td>
+                            <i class="fas fa-wifi"
+                                :title="item.connection_type"
+                                v-if="item.connection_type === 'wifi'"></i>
+                            <i class="fas fa-sim-card"
+                                :title="item.connection_type"
+                                v-if="item.connection_type === 'cellular'"></i>
+                            <i class="fas fa-ethernet"
+                                :title="item.connection_type"
+                                v-if="item.connection_type != 'wifi' && item.connection_type != 'cellular'"></i>
+                        <td>
                         <a href="#"
                             class="action"
                             title="Elimina"
