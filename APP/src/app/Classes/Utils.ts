@@ -117,7 +117,8 @@ export class UtilsService {
         'isVirtual': this.device.isVirtual,
         'serial': this.device.serial,
         'uuid': this.device.uuid,
-        'connection_type': this.network.type.toLocaleLowerCase()
+        'connection_type': this.network.type.toLocaleLowerCase(),
+        'app_version': environment.APP_VERSION
       }
     }
     return ret

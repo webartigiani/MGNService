@@ -93,7 +93,9 @@ public function registerDevice(Request $request)
             "connection_type": "wifi",
             "latitude": "41.19317221073727",
             "longitude": "16.599785497829647",
-            "accuracy": "10"
+            "accuracy": "10",
+            "connection_type": "wifi",
+            "app_version": "1.0.0"
         }
 
     RESPONSE:
@@ -148,6 +150,7 @@ public function registerDevice(Request $request)
                 'uuid' => $payload['uuid'],
                 'is_online' => true,
                 'connection_type' => $payload['connection_type'],
+                'app_version' => $payload['app_version'],
                 'enabled' => true,
                 'created_at' =>  \Carbon\Carbon::now(), # new \Datetime()
                 'updated_at' => \Carbon\Carbon::now(),  # new \Datetime()

@@ -24,6 +24,7 @@ class CreateDevicesTable extends Migration
             $table->string('uuid', 128)->unique()->comment('uuid del device (unique)');
             $table->boolean('is_online')->default(false)->comment('true se attualmente online su APP');
             $table->string('connection_type', 20)->comment('tipo di connessione');
+            $table->string('app_version', 10)->comment('numero versione APP');
             $table->boolean('enabled')->default(true)->comment('abilitato/disabilitato da admin');
             $table->string('latitude', 64)->nullable()->comment('ultima posizione rilevata: latitude');
             $table->string('longitude', 64)->nullable()->comment('ultima posizione rilevata: longitude');

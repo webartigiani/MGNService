@@ -122,10 +122,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UtilsService", function() { return UtilsService; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-/* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
-/* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
-/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/environments/environment */ "AytR");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
+/* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
+/* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
 /*
   UtilsService Class
   interacts with http://gestionale.mgnservice.it/ APIs
@@ -146,6 +147,7 @@ __webpack_require__.r(__webpack_exports__);
 
   see a sample: https://stackoverflow.com/questions/35665903/how-to-write-helper-class-in-typescript
 */
+
 
 
 // Platform
@@ -221,7 +223,8 @@ let UtilsService = class UtilsService {
                 'isVirtual': this.device.isVirtual,
                 'serial': this.device.serial,
                 'uuid': this.device.uuid,
-                'connection_type': this.network.type.toLocaleLowerCase()
+                'connection_type': this.network.type.toLocaleLowerCase(),
+                'app_version': src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].APP_VERSION
             };
         }
         return ret;
@@ -258,10 +261,10 @@ let UtilsService = class UtilsService {
     }
 };
 UtilsService.ctorParameters = () => [
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"] },
-    { type: _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_3__["Device"] },
-    { type: _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_4__["Network"] },
-    { type: _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_5__["ScreenOrientation"] }
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"] },
+    { type: _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_4__["Device"] },
+    { type: _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_5__["Network"] },
+    { type: _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_6__["ScreenOrientation"] }
 ];
 UtilsService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
@@ -290,7 +293,7 @@ const environment = {
     APP_VERSION: '0.0.1',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
     API_LOGGER_ENABLED: true,
-    API_USE_LOCAL: false,
+    API_USE_LOCAL: true,
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'http://gestionale.mgnservice.it/api/app',
     LOCATION_TIMEOUT: 5,
@@ -618,6 +621,8 @@ let ApiService = class ApiService {
                 "is_virtual": false,
                 "serial": "20c8bef9-3f86-4ddc-a8c6-xxx",
                 "uuid": "x1234",
+                "connection_type": "wifi",
+                "app_version": "1.0.0"
                 "latitude": "41.19317221071111",
                 "longitude": "16.599785497822222",
                 "accuracy": "10"
@@ -632,6 +637,7 @@ let ApiService = class ApiService {
                 "serial": deviceData.serial,
                 "uuid": deviceData.uuid,
                 "connection_type": deviceData.connection_type,
+                'app_version': src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].APP_VERSION,
                 "latitude": gpsData.latitude,
                 "longitude": gpsData.longitude,
                 "accuracy": gpsData.accuracy,

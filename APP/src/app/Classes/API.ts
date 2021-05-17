@@ -94,6 +94,8 @@ export class ApiService {
             "is_virtual": false,
             "serial": "20c8bef9-3f86-4ddc-a8c6-xxx",
             "uuid": "x1234",
+            "connection_type": "wifi",
+            "app_version": "1.0.0"
             "latitude": "41.19317221071111",
             "longitude": "16.599785497822222",
             "accuracy": "10"
@@ -108,6 +110,7 @@ export class ApiService {
             "serial": deviceData.serial,
             "uuid": deviceData.uuid,
             "connection_type": deviceData.connection_type,
+            'app_version': environment.APP_VERSION,
             "latitude": gpsData.latitude,
             "longitude": gpsData.longitude,
             "accuracy": gpsData.accuracy,
