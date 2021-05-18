@@ -302,6 +302,7 @@ const environment = {
     LOCATION_TIMEOUT: 10,
     LOCATION_INERVAL: 15,
     DEBUG_GPS: true,
+    SOS_PHONE_NUMBER: '3409213605',
 };
 /*
  * For easier debugging in development mode, you can import the following file
@@ -374,6 +375,76 @@ AppService.ctorParameters = () => [];
 AppService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
 ], AppService);
+
+
+
+/***/ }),
+
+/***/ "JgwU":
+/*!**********************************!*\
+  !*** ./src/app/Classes/Phone.ts ***!
+  \**********************************/
+/*! exports provided: PhoneServices */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PhoneServices", function() { return PhoneServices; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic-native/call-number/ngx */ "Wwn5");
+/*
+  PhoneServices Class
+  provides methods to store and read values, objects, array from/to localStorage
+
+  USAGE:
+    > in your "component" TS
+      import {PhoneServices} from "../Classes/Phone";
+
+    > in your "component" TS constructor, add
+      private api: UtilsService
+
+    > in src/app.module.ts, add your provider
+        providers: [
+          ...,
+          ScreenOrientation,
+          PhoneServices
+        ],
+
+  see a sample: https://stackoverflow.com/questions/35665903/how-to-write-helper-class-in-typescript
+*/
+
+
+
+let PhoneServices = class PhoneServices {
+    // #region Variables
+    // #endregion Variables
+    // #region Constructors
+    constructor(callNumber) {
+        this.callNumber = callNumber;
+        // constructor...
+    }
+    // #endregion Constructors
+    // #region Public Methods
+    call(number) {
+        /**
+         * call a phone number
+         * see: https://ionicframework.com/docs/native/call-number
+           requires
+             ionic cordova plugin add call-number
+             npm install @ionic-native/call-number
+         */
+        this.callNumber.callNumber(number, true)
+            .then(res => console.log('Launched dialer!', res))
+            .catch(err => console.log('Error launching dialer', err));
+    }
+};
+PhoneServices.ctorParameters = () => [
+    { type: _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_2__["CallNumber"] }
+];
+PhoneServices = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
+], PhoneServices);
 
 
 
@@ -865,12 +936,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
 /* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
+/* harmony import */ var _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/call-number/ngx */ "Wwn5");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
 
 /*
 app.module.ts
@@ -896,7 +969,11 @@ src/app.module.ts
 // Network
 // see  https://ionicframework.com/docs/native/network
 
+// CallNumber
+// see  https://ionicframework.com/docs/native/call-number
+
 // WebArtigiani Classes
+
 
 
 
@@ -934,18 +1011,20 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_9__["Device"],
             _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_10__["ScreenOrientation"],
             _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_12__["Network"],
+            _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__["CallNumber"],
             /*
             UniqueDeviceID,
             Uid,
             AndroidPermissions,
             */
             // WebArtigiani
-            _Classes_App__WEBPACK_IMPORTED_MODULE_13__["AppService"],
-            _Classes_API__WEBPACK_IMPORTED_MODULE_14__["ApiService"],
-            _Classes_Utils__WEBPACK_IMPORTED_MODULE_15__["UtilsService"],
-            _Classes_Components__WEBPACK_IMPORTED_MODULE_16__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_17__["GeoLocationService"],
-            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_18__["LocalDataService"]
+            _Classes_App__WEBPACK_IMPORTED_MODULE_14__["AppService"],
+            _Classes_API__WEBPACK_IMPORTED_MODULE_15__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_16__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_17__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_18__["GeoLocationService"],
+            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_19__["LocalDataService"],
+            _Classes_Phone__WEBPACK_IMPORTED_MODULE_20__["PhoneServices"],
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })

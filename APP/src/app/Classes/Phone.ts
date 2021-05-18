@@ -37,8 +37,8 @@ export class PhoneServices {
   // #endregion Constructors
 
 
-   // #region Public Methods
-   call(number: string) {
+  // #region Public Methods
+  call(number: string) {
      /**
       * call a phone number
       * see: https://ionicframework.com/docs/native/call-number
@@ -46,6 +46,9 @@ export class PhoneServices {
           ionic cordova plugin add call-number
           npm install @ionic-native/call-number
       */
-   }
+      this.callNumber.callNumber(number, true)
+        .then(res => console.log('Launched dialer!', res))
+        .catch(err => console.log('Error launching dialer', err));
+  }
    //#endregion Public Methods
 }

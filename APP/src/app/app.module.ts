@@ -30,6 +30,10 @@ import { HttpClientModule } from '@angular/common/http';
 // see  https://ionicframework.com/docs/native/network
 import { Network } from '@ionic-native/network/ngx';
 
+// CallNumber
+// see  https://ionicframework.com/docs/native/call-number
+import { CallNumber } from '@ionic-native/call-number/ngx'
+
 // WebArtigiani Classes
 import { AppService } from './Classes/App';
 import { ApiService } from './Classes/API';
@@ -37,6 +41,7 @@ import { UtilsService } from './Classes/Utils';
 import { ComponentsService } from './Classes/Components';
 import { GeoLocationService } from './Classes/GeoLocation';
 import { LocalDataService } from './Classes/LocalData';
+import { PhoneServices } from './Classes/Phone';
 
 /* NOT USED
  UniqueDeviceID (see https://ionicframework.com/docs/native/unique-device-id)
@@ -68,6 +73,7 @@ enableProdMode()
     Device,
     ScreenOrientation,
     Network,
+    CallNumber,
     /*
     UniqueDeviceID,
     Uid,
@@ -80,7 +86,8 @@ enableProdMode()
     UtilsService,
     ComponentsService,
     GeoLocationService,
-    LocalDataService
+    LocalDataService,
+    PhoneServices,
   ],
   bootstrap: [AppComponent],
 })

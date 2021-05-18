@@ -10,6 +10,7 @@ import { UtilsService } from '../Classes/Utils';
 import { ComponentsService } from '../Classes/Components';
 import { GeoLocationService } from '../Classes/GeoLocation';
 import { LocalDataService } from '../Classes/LocalData';
+import { PhoneServices } from '../Classes/Phone';
 
 @Component({
   selector: 'app-start',
@@ -34,6 +35,7 @@ export class StartPage {
       private components: ComponentsService,
       private geolocation: GeoLocationService,
       private localData: LocalDataService,
+      private phone: PhoneServices,
 
       // Angular
       public navCtrl: NavController,

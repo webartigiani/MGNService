@@ -41,7 +41,7 @@ export class ComponentsService {
    // #region Public Methods
    async showAlert(title: string, subtitle: string, message: string) {
       // shows device native alert by alertController
-      const alert = await this.alertController.create({
+      const msg = await this.alertController.create({
         animated: true,
         backdropDismiss: false,
         header: title,
@@ -49,8 +49,43 @@ export class ComponentsService {
         message: message,
         buttons: ['OK']
       });
-      await alert.present();
+      await msg.present()
    }
+
+   async showConfirm(title: string, subtitle: string, message: string) {
+
+    // shows device native alert by alertController
+    const msg = await this.alertController.create({
+      animated: true,
+      backdropDismiss: false,
+      header: title,
+      subHeader: subtitle,
+      message: message,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            //console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          role: 'ok',
+          handler: () => {
+            //console.log('OK clicked');
+          }
+        }
+      ]
+    });
+    await msg.present()
+
+    return new Promise((resolve, reject) => {
+      msg.onDidDismiss().then((result) => {
+        resolve(result.role === 'ok')
+      })
+    })
+ }
 
    async getLoader(message?: string, duration?: number) {
     // returns a loading object

@@ -59,6 +59,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
 /* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
 /* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Classes/Phone */ "JgwU");
 
 
 
@@ -72,12 +73,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 let TrackingPage = class TrackingPage {
     // #endregion Variables
     // #region Constructor
     constructor(
     // WebArtigiani
-    app, api, utils, components, geolocation, localData, 
+    app, api, utils, components, geolocation, localData, phone, 
     // Angular
     platform, navCtrl) {
         // Constructor code...
@@ -87,6 +89,7 @@ let TrackingPage = class TrackingPage {
         this.components = components;
         this.geolocation = geolocation;
         this.localData = localData;
+        this.phone = phone;
         this.platform = platform;
         this.navCtrl = navCtrl;
         // #region Variables
@@ -107,6 +110,10 @@ let TrackingPage = class TrackingPage {
     // #endregion Component LifeCycls
     // #region Public Methods
     dummy() {
+    }
+    SOS() {
+        // starts a calling to the SOS number
+        this.phone.call(src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER);
     }
     geoLocate() {
         /**
@@ -140,6 +147,7 @@ TrackingPage.ctorParameters = () => [
     { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_9__["ComponentsService"] },
     { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_10__["GeoLocationService"] },
     { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_11__["LocalDataService"] },
+    { type: _Classes_Phone__WEBPACK_IMPORTED_MODULE_12__["PhoneServices"] },
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["Platform"] },
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["NavController"] }
 ];
@@ -219,7 +227,7 @@ TrackingPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\" class=\"center\">\n\n  <!-- debug GPS data -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    {{ gpsData.accuracy }}<br>\n    {{ gpsData.timestamp }}<br>\n    {{ counter }}\n  </div>\n\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- pause button -->\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app yellow\"\n          >\n            <ion-icon name=\"pause\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"log-out\"></ion-icon></ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\" class=\"center\">\n\n  <!-- debug GPS data -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    {{ gpsData.accuracy }}<br>\n    {{ gpsData.timestamp }}<br>\n    {{ counter }}\n  </div>\n\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- pause button -->\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app yellow\"\n          >\n            <ion-icon name=\"pause\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"log-out\"></ion-icon></ion-button>\n\n          <!-- SOS Caller -->\n          <ion-button\n            (click)=\"SOS()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ })
 

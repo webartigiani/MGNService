@@ -14,4 +14,5 @@ export const environment = {
   LOCATION_INERVAL: 10,                                     // interval (in seconds)
 
   DEBUG_GPS: false,                                         // true to debug GPS data
+  SOS_PHONE_NUMBER: '112',             // SOS Phone Number
 };

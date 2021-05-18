@@ -21,6 +21,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
 /* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
 /* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Classes/Phone */ "JgwU");
 
 
 
@@ -33,12 +34,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 let StartPage = class StartPage {
     // #endregion Variables
     // #region Constructor
     constructor(
     // WebArtigiani
-    app, api, utils, components, geolocation, localData, 
+    app, api, utils, components, geolocation, localData, phone, 
     // Angular
     navCtrl) {
         this.app = app;
@@ -47,6 +49,7 @@ let StartPage = class StartPage {
         this.components = components;
         this.geolocation = geolocation;
         this.localData = localData;
+        this.phone = phone;
         this.navCtrl = navCtrl;
         // #region Variables
         this.statusDesc = 'caricamento...';
@@ -154,6 +157,7 @@ StartPage.ctorParameters = () => [
     { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_8__["ComponentsService"] },
     { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_9__["GeoLocationService"] },
     { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_10__["LocalDataService"] },
+    { type: _Classes_Phone__WEBPACK_IMPORTED_MODULE_11__["PhoneServices"] },
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["NavController"] }
 ];
 StartPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([

@@ -9,7 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"true\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"worker\"\n          >\n          <ion-select-option *ngFor=\"let item of this.workers\" [value]=\"item\">{{ item.name }} {{ item.surname }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let item of this.veichles\" [value]=\"item\">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Codice</ion-label>     <!-- codice timbrata -->\n        <ion-input\n        [(ngModel)]=\"code\"\n        placeholder=\"Codice timbrata\"\n        #codeID\n        ></ion-input>\n      </ion-item>\n    </ion-list>\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            (click)=\"start()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app\"\n          >Avvia</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"true\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"worker\"\n          >\n          <ion-select-option *ngFor=\"let item of this.workers\" [value]=\"item\">{{ item.name }} {{ item.surname }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let item of this.veichles\" [value]=\"item\">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Codice</ion-label>     <!-- codice timbrata -->\n        <ion-input\n        [(ngModel)]=\"code\"\n        placeholder=\"Codice timbrata\"\n        #codeID\n        ></ion-input>\n      </ion-item>\n    </ion-list>\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            (click)=\"start()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app\"\n          >Avvia</ion-button>\n\n          <!-- SOS Caller -->\n          <ion-button\n            (click)=\"SOS()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ }),
 
@@ -64,13 +64,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _raw_loader_login_veichle_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./login-veichle.page.html */ "bQul");
 /* harmony import */ var _login_veichle_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./login-veichle.page.scss */ "y8+z");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/environments/environment */ "AytR");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Classes/Phone */ "JgwU");
+
 
 
 
@@ -84,12 +87,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 let LoginVeichlePage = class LoginVeichlePage {
     // #endregion Variables
     // #region Constructor
     constructor(
     // WebArtigiani
-    app, api, utils, components, geolocation, localData, 
+    app, api, utils, components, geolocation, localData, phone, 
     // Angular
     platform, navCtrl) {
         this.app = app;
@@ -98,6 +102,7 @@ let LoginVeichlePage = class LoginVeichlePage {
         this.components = components;
         this.geolocation = geolocation;
         this.localData = localData;
+        this.phone = phone;
         this.platform = platform;
         this.navCtrl = navCtrl;
         // #region Variables
@@ -184,7 +189,9 @@ let LoginVeichlePage = class LoginVeichlePage {
             }
         });
     }
-    pause() {
+    SOS() {
+        // starts a calling to the SOS number
+        this.phone.call(src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER);
     }
     // #endregion Public Methods
     // #region Private Methods
@@ -207,14 +214,15 @@ let LoginVeichlePage = class LoginVeichlePage {
     }
 };
 LoginVeichlePage.ctorParameters = () => [
-    { type: _Classes_App__WEBPACK_IMPORTED_MODULE_5__["AppService"] },
-    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_6__["ApiService"] },
-    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_7__["UtilsService"] },
-    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_8__["ComponentsService"] },
-    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_9__["GeoLocationService"] },
-    { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_10__["LocalDataService"] },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["Platform"] },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["NavController"] }
+    { type: _Classes_App__WEBPACK_IMPORTED_MODULE_6__["AppService"] },
+    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_7__["ApiService"] },
+    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_8__["UtilsService"] },
+    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_9__["ComponentsService"] },
+    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_10__["GeoLocationService"] },
+    { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_11__["LocalDataService"] },
+    { type: _Classes_Phone__WEBPACK_IMPORTED_MODULE_12__["PhoneServices"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["Platform"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["NavController"] }
 ];
 LoginVeichlePage.propDecorators = {
     codeEl: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_3__["ViewChild"], args: ['codeID', { static: false },] }]

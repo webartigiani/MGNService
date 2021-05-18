@@ -68,12 +68,13 @@ export class UtilsService {
       // constructor...
 
       // Lock screen orientation and listen for screen-orientation changes
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY)
+      /*this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY)
       this.screenOrientation.onChange().subscribe(
         () => {
             console.log('Orientation Changed', this.screenOrientation.type)
         }
       );
+      */
    }
   // #endregion Constructors
 

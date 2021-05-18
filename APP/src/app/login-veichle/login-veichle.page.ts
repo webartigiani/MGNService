@@ -12,6 +12,7 @@ import { UtilsService } from '../Classes/Utils';
 import { ComponentsService } from '../Classes/Components';
 import { GeoLocationService } from '../Classes/GeoLocation';
 import { LocalDataService } from '../Classes/LocalData';
+import { PhoneServices } from '../Classes/Phone';
 
 @Component({
   selector: 'app-login-veichle',
@@ -40,6 +41,7 @@ export class LoginVeichlePage {
     private components: ComponentsService,
     private geolocation: GeoLocationService,
     private localData: LocalDataService,
+    private phone: PhoneServices,
 
     // Angular
     public platform: Platform,
@@ -131,8 +133,13 @@ export class LoginVeichlePage {
       }
     })
   }
-  pause() {
 
+  SOS() {
+    // starts a calling to the SOS number
+
+    this.components.showConfirm('SOS','Avvia chiamata SOS','Avviare una chiamata al numero di SOS ' + environment.SOS_PHONE_NUMBER + '?').then((result) => {
+      if (result) this.phone.call(environment.SOS_PHONE_NUMBER)
+    })
   }
   // #endregion Public Methods
 
