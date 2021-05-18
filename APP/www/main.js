@@ -181,10 +181,13 @@ let UtilsService = class UtilsService {
         this.network = network;
         this.screenOrientation = screenOrientation;
         // Lock screen orientation and listen for screen-orientation changes
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY);
-        this.screenOrientation.onChange().subscribe(() => {
-            console.log('Orientation Changed', this.screenOrientation.type);
-        });
+        /*this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY)
+        this.screenOrientation.onChange().subscribe(
+          () => {
+              console.log('Orientation Changed', this.screenOrientation.type)
+          }
+        );
+        */
     }
     // #endregion Constructors
     // #region Public Methods
@@ -295,14 +298,14 @@ const environment = {
     APP_TITLE: 'MGN Service',
     APP_VERSION: '0.0.1',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
-    API_LOGGER_ENABLED: true,
+    API_LOGGER_ENABLED: false,
     API_USE_LOCAL: false,
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'http://gestionale.mgnservice.it/api/app',
     LOCATION_TIMEOUT: 10,
     LOCATION_INERVAL: 15,
     DEBUG_GPS: true,
-    SOS_PHONE_NUMBER: '3409213605',
+    SOS_PHONE_NUMBER: '112',
 };
 /*
  * For easier debugging in development mode, you can import the following file
@@ -536,7 +539,7 @@ let ComponentsService = class ComponentsService {
     showAlert(title, subtitle, message) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             // shows device native alert by alertController
-            const alert = yield this.alertController.create({
+            const msg = yield this.alertController.create({
                 animated: true,
                 backdropDismiss: false,
                 header: title,
@@ -544,7 +547,41 @@ let ComponentsService = class ComponentsService {
                 message: message,
                 buttons: ['OK']
             });
-            yield alert.present();
+            yield msg.present();
+        });
+    }
+    showConfirm(title, subtitle, message) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            // shows device native alert by alertController
+            const msg = yield this.alertController.create({
+                animated: true,
+                backdropDismiss: false,
+                header: title,
+                subHeader: subtitle,
+                message: message,
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel',
+                        handler: () => {
+                            //console.log('Cancel clicked');
+                        }
+                    },
+                    {
+                        text: 'OK',
+                        role: 'ok',
+                        handler: () => {
+                            //console.log('OK clicked');
+                        }
+                    }
+                ]
+            });
+            yield msg.present();
+            return new Promise((resolve, reject) => {
+                msg.onDidDismiss().then((result) => {
+                    resolve(result.role === 'ok');
+                });
+            });
         });
     }
     getLoader(message, duration) {

@@ -191,7 +191,10 @@ let LoginVeichlePage = class LoginVeichlePage {
     }
     SOS() {
         // starts a calling to the SOS number
-        this.phone.call(src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER);
+        this.components.showConfirm('SOS', 'Avvia chiamata SOS', 'Avviare una chiamata al numero di SOS ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER + '?').then((result) => {
+            if (result)
+                this.phone.call(src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER);
+        });
     }
     // #endregion Public Methods
     // #region Private Methods

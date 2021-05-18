@@ -12,6 +12,7 @@ export const environment = {
 
   LOCATION_TIMEOUT: 10,                                     // GPS location: request timout (in seconds)
   LOCATION_INERVAL: 10,                                     // interval (in seconds)
+  MAX_PAUSE_TIMEOUT: 15,                                    // tempo massimo di pausa in minuti
 
   DEBUG_GPS: false,                                         // true to debug GPS data
   SOS_PHONE_NUMBER: '112',             // SOS Phone Number

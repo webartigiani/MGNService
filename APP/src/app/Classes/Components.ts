@@ -39,8 +39,13 @@ export class ComponentsService {
   // #endregion Constructors
 
    // #region Public Methods
-   async showAlert(title: string, subtitle: string, message: string) {
+   async showAlert(title: string, subtitle: string, message: string, timeout?: number) {
       // shows device native alert by alertController
+
+      // default timeout 0"
+      if (timeout === undefined) timeout = 0
+      console.log(timeout)
+
       const msg = await this.alertController.create({
         animated: true,
         backdropDismiss: false,
@@ -50,10 +55,17 @@ export class ComponentsService {
         buttons: ['OK']
       });
       await msg.present()
+
+      // sets timeout
+      if (timeout > 0) {
+        setTimeout(() => {
+            msg.dismiss()
+            console.log('timeout scaduto')
+        }, timeout);
+      }
    }
 
    async showConfirm(title: string, subtitle: string, message: string) {
-
     // shows device native alert by alertController
     const msg = await this.alertController.create({
       animated: true,

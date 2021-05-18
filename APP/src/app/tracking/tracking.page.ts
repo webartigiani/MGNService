@@ -20,9 +20,11 @@ import { PhoneServices } from '../Classes/Phone';
 export class TrackingPage {
 
   // #region Variables
-  counter: number = 0
+  counter: number = 0           // contatore tracciamenti
   sessionID: string = ''
-  gpsData:any = {}
+  gpsData: any = {}
+  isPaued: boolean = false
+  alreadyPaused: boolean = false
   // #endregion Variables
 
   // #region Constructor
@@ -47,7 +49,6 @@ export class TrackingPage {
   }
   // #endregion Constructor
 
-
   // #region Component LifeCycle
   ngAfterViewInit() {
 
@@ -60,6 +61,24 @@ export class TrackingPage {
   // #endregion Component LifeCycls
 
   // #region Public Methods
+  pause() {
+    // do a pause
+    if (this.alreadyPaused) {
+      // pause already used
+      this.components.showAlert('Pausa', 'Pausa non disponibile', 'Hai già usufruito di una pausa lungo il tragitto.')
+      return;
+    }
+
+    // ask for confirmation
+    this.components.showConfirm('Pausa','Hai a disposizione una sola pausa lungo il tragitto','Confermi di voler usufruire della pausa ora?').then((result) => {
+      if (!result) return;
+      this.isPaued = true
+      this.alreadyPaused = true
+
+      this.components.showAlert('In Pausa', 'Sistema in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "OK" al termine della pausa.', environment.MAX_PAUSE_TIMEOUT * 60 * 1000)
+    })
+
+  }
   dummy() {
 
   }
@@ -67,6 +86,8 @@ export class TrackingPage {
     // starts a calling to the SOS number
     this.components.showConfirm('SOS','Avvia chiamata SOS','Avviare una chiamata al numero di SOS ' + environment.SOS_PHONE_NUMBER + '?').then((result) => {
       if (result) this.phone.call(environment.SOS_PHONE_NUMBER)
+
+
     })
   }
 
