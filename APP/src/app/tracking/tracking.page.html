@@ -8,10 +8,18 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="center">
-  {{ gpsData.latitude }}<br>
-  {{ gpsData.longitude }}<br>
-  {{ gpsData.accuracy }}<br>
-  {{ gpsData.timestamp }}<br>
+
+  <!-- debug GPS data -->
+  <div id="debug"
+    *ngIf="app.debugGPS()"
+    >
+    {{ gpsData.latitude }}<br>
+    {{ gpsData.longitude }}<br>
+    {{ gpsData.accuracy }}<br>
+    {{ gpsData.timestamp }}<br>
+    {{ counter }}
+  </div>
+
 </ion-content>
 
 <!-- Footer -->

@@ -42,5 +42,8 @@ export class AppService {
   appVersion() {
     return environment.APP_VERSION
   }
+  debugGPS() {
+    return environment.DEBUG_GPS
+  }
    // #endregion Public Methods
 }

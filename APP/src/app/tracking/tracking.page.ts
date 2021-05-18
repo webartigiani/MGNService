@@ -20,7 +20,9 @@ import { LocalDataService } from '../Classes/LocalData';
 export class TrackingPage {
 
   // #region Variables
-  gpsData = {}
+  counter: number = 0
+  sessionID: string = ''
+  gpsData:any = {}
   // #endregion Variables
 
   // #region Constructor
@@ -38,6 +40,9 @@ export class TrackingPage {
     public navCtrl: NavController
   ) {
     // Constructor code...
+
+    // gets current session_id from storage
+    this.sessionID = this.localData.readValue('session_id');
   }
   // #endregion Constructor
 
@@ -45,13 +50,10 @@ export class TrackingPage {
   // #region Component LifeCycle
   ngAfterViewInit() {
 
+    this.geoLocate()
+
     setInterval(() => {
-      this.geolocation.locate().then((data) => {
-        if (data.valid) this.gpsData = data
-        console.log(data)
-      }).catch((error) => {
-        console.error(error)
-      })
+      this.geoLocate()
     }, environment.LOCATION_INERVAL * 1000);
   }
   // #endregion Component LifeCycls
@@ -59,6 +61,34 @@ export class TrackingPage {
   // #region Public Methods
   dummy() {
 
+  }
+  geoLocate() {
+    /**
+     * Geo-locate the device
+     */
+
+    this.geolocation.locate().then((data) => {
+      // Geo-location OK
+
+      if (data.valid) {
+        this.gpsData = data
+        this.counter++
+      }
+      console.log('Geo-location result', data)
+
+      this.api.continueTracking(this.sessionID, data)
+      .then((result) => {
+        // tracking-data saved
+        console.log('Geo-location API result', result)
+
+      }).catch((error) => {
+        // API Error
+        console.error(error)
+      });
+    }).catch((error) => {
+      // geo-location error
+      console.error('Geo-location error', error)
+    })
   }
   // #endregion Public Methods
 

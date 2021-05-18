@@ -80,6 +80,7 @@ let TrackingPage = class TrackingPage {
     app, api, utils, components, geolocation, localData, 
     // Angular
     platform, navCtrl) {
+        // Constructor code...
         this.app = app;
         this.api = api;
         this.utils = utils;
@@ -89,25 +90,47 @@ let TrackingPage = class TrackingPage {
         this.platform = platform;
         this.navCtrl = navCtrl;
         // #region Variables
+        this.counter = 0;
+        this.sessionID = '';
         this.gpsData = {};
-        // Constructor code...
+        // gets current session_id from storage
+        this.sessionID = this.localData.readValue('session_id');
     }
     // #endregion Constructor
     // #region Component LifeCycle
     ngAfterViewInit() {
+        this.geoLocate();
         setInterval(() => {
-            this.geolocation.locate().then((data) => {
-                if (data.valid)
-                    this.gpsData = data;
-                console.log(data);
-            }).catch((error) => {
-                console.error(error);
-            });
+            this.geoLocate();
         }, src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_INERVAL * 1000);
     }
     // #endregion Component LifeCycls
     // #region Public Methods
     dummy() {
+    }
+    geoLocate() {
+        /**
+         * Geo-locate the device
+         */
+        this.geolocation.locate().then((data) => {
+            // Geo-location OK
+            if (data.valid) {
+                this.gpsData = data;
+                this.counter++;
+            }
+            console.log('Geo-location result', data);
+            this.api.continueTracking(this.sessionID, data)
+                .then((result) => {
+                // tracking-data saved
+                console.log('Geo-location API result', result);
+            }).catch((error) => {
+                // API Error
+                console.error(error);
+            });
+        }).catch((error) => {
+            // geo-location error
+            console.error('Geo-location error', error);
+        });
     }
 };
 TrackingPage.ctorParameters = () => [
@@ -141,7 +164,7 @@ TrackingPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0cmFja2luZy5wYWdlLnNjc3MifQ== */");
+/* harmony default export */ __webpack_exports__["default"] = ("div#debug {\n  position: absolute;\n  width: 100%;\n  height: 80px;\n  bottom: 80px;\n  background-color: orange;\n  color: blue;\n  font-size: 0.75em;\n  font-style: italic;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3RyYWNraW5nLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGtCQUFBO0VBQ0EsV0FBQTtFQUNBLFlBQUE7RUFDQSxZQUFBO0VBQ0Esd0JBQUE7RUFDQSxXQUFBO0VBQ0EsaUJBQUE7RUFDQSxrQkFBQTtBQUNGIiwiZmlsZSI6InRyYWNraW5nLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImRpdiNkZWJ1ZyB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgd2lkdGg6MTAwJTtcbiAgaGVpZ2h0OjgwcHg7XG4gIGJvdHRvbTo4MHB4O1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBvcmFuZ2U7XG4gIGNvbG9yOmJsdWU7XG4gIGZvbnQtc2l6ZTogLjc1ZW07XG4gIGZvbnQtc3R5bGU6IGl0YWxpYztcbn1cbiJdfQ== */");
 
 /***/ }),
 
@@ -196,7 +219,7 @@ TrackingPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\" class=\"center\">\n  {{ gpsData.latitude }}<br>\n  {{ gpsData.longitude }}<br>\n  {{ gpsData.accuracy }}<br>\n  {{ gpsData.timestamp }}<br>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- pause button -->\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app yellow\"\n          >\n            <ion-icon name=\"pause\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"log-out\"></ion-icon></ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\" class=\"center\">\n\n  <!-- debug GPS data -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    {{ gpsData.accuracy }}<br>\n    {{ gpsData.timestamp }}<br>\n    {{ counter }}\n  </div>\n\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- pause button -->\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app yellow\"\n          >\n            <ion-icon name=\"pause\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"log-out\"></ion-icon></ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ })
 

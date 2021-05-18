@@ -70,7 +70,8 @@ class TrackingSessionController extends Controller
         $deviceID = $data[0]->id;
 
         // calculates the session-id
-        $sessionID = $this->utils->OraItaliana()->format('YmdHis') . '-' . $worker->id . '-' . $veichle->id . '-' . $deviceID;
+        //$sessionID = $this->utils->OraItaliana()->format('YmdHis') . '-' . $worker->id . '-' . $veichle->id . '-' . $deviceID;
+        $sessionID = dechex(time()) . '-' . $worker->id . '-' . $veichle->id . '-' . $deviceID;
 
         // Creates the tracking-session
         $thisID = DB::table('tracking_sessions')->insertGetId(
@@ -112,6 +113,7 @@ class TrackingSessionController extends Controller
             DB::table('devices')
                 ->where('id', $deviceID)
                 ->update([
+                    'connection_type' => $device->connection_type,
                     'tracking_session' => $sessionID,
                     'status' => 1,
                     'status_date' => $this->utils->OraItaliana(),

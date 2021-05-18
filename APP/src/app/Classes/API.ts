@@ -123,9 +123,9 @@ export class ApiService {
           })
         })
     }
-    async loginWorkerWithVeichle(deviceData: any, gpsData: any, worker: any, veichle: any, password: string) {
+    async startTrackingSession(deviceData: any, gpsData: any, worker: any, veichle: any, password: string) {
       /**
-       * Login worker with veichle
+       * startTrackingSession
       {
         "device":{
           "platform":"browser",
@@ -158,12 +158,6 @@ export class ApiService {
         "password":"password"
       }
        */
-      console.log('deviceData', deviceData)
-      console.log('gpsData', gpsData)
-      console.log('worker', worker)
-      console.log('veichle', veichle)
-      console.log('password', password)
-
       const payload = {
         "device": deviceData,
         "gps": gpsData,
@@ -171,7 +165,39 @@ export class ApiService {
         "veichle": veichle,
         "password": password
       }
-      console.log('payload', JSON.stringify(payload))
+      return new Promise((resolve, reject) => {
+        this.post('/workers/startTrackingSession/', payload).then((result) => {
+          resolve(result)
+        }).catch((error) => {
+          reject(error)
+        })
+      })
+    }
+    async continueTracking(sessionID: string, gpsData: any) {
+      /**
+       * Continue Tracking
+        {
+            "gps": {
+                "latitude": 44.6466223,
+                "longitude": 10.9308673,
+                "accuracy": 12,
+                "timestamp": 1621246509939,
+                "valid": true
+            },
+            "session_id": "20210518140719-1-1-2"
+        }
+       */
+      const payload = {
+        "gps": gpsData,
+        "session_id": sessionID
+      }
+      return new Promise((resolve, reject) => {
+        this.post('/workers/continueTracking/', payload).then((result) => {
+          resolve(result)
+        }).catch((error) => {
+          reject(error)
+        })
+      })
     }
     // #region Public Methods
 

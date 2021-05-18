@@ -43,6 +43,13 @@ class ApiController extends Controller
         login worker with veichle and device and starts a tracking session
 
         POST: api/app/workers/startTrackingSession
+
+        RESPONSE:
+        {
+            "success": true,
+            "data": "OK",
+            "message": "20210518140719-1-1-2"
+        }
         */
         // validates APP authorization
         if (!$this->routeAPP($request)) return $this->redicretHome();

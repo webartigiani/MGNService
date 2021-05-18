@@ -79,7 +79,7 @@
                             <i class="fa fa-trash blue"></i>
                         </a>
                         <a :href="'tracking/?session_id=' + item.tracking_session_id"
-                            v-if="item.mode == 2"
+                            v-if="item.mode != 99"
                             class="action"
                             title="Visualizza Posizione"
                             >

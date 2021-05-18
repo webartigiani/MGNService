@@ -101,10 +101,20 @@ export class LoginVeichlePage {
           // try to geo-locate
           this.geolocation.locate().then((data) => {
 
-            //this.api.loginWorkerWithVeichle(this.utils.getDeviceData(), data, this.worker, this.veichle,this.code)
-            this.navCtrl.navigateRoot('tracking')
-            loading.dismiss()
+            this.api.startTrackingSession(this.utils.getDeviceData(), data, this.worker, this.veichle, this.code)
+            .then((result) => {
+              // tracking-session created: gets session-id, saves it, and navigate to 'tracking' page
+              const sessionID = result['message'];
+              this.localData.writeValue('session_id', sessionID)
+              this.navCtrl.navigateRoot('tracking')
+              loading.dismiss()
 
+            }).catch((error) => {
+              // API Error
+              loading.dismiss()
+              this.components.showAlert(error['message'], 'Si è verificato un errore', error['message_details']);
+              this.loadData()
+            });
           }).catch((error) => {
             // geo-location error
           })

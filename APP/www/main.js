@@ -296,11 +296,12 @@ const environment = {
     APP_VERSION: '0.0.1',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
     API_LOGGER_ENABLED: true,
-    API_USE_LOCAL: true,
+    API_USE_LOCAL: false,
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'http://gestionale.mgnservice.it/api/app',
-    LOCATION_TIMEOUT: 5,
-    LOCATION_INERVAL: 10 // interval (in seconds)
+    LOCATION_TIMEOUT: 10,
+    LOCATION_INERVAL: 15,
+    DEBUG_GPS: true,
 };
 /*
  * For easier debugging in development mode, you can import the following file
@@ -364,6 +365,9 @@ let AppService = class AppService {
     }
     appVersion() {
         return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].APP_VERSION;
+    }
+    debugGPS() {
+        return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].DEBUG_GPS;
     }
 };
 AppService.ctorParameters = () => [];
@@ -653,10 +657,10 @@ let ApiService = class ApiService {
             });
         });
     }
-    loginWorkerWithVeichle(deviceData, gpsData, worker, veichle, password) {
+    startTrackingSession(deviceData, gpsData, worker, veichle, password) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             /**
-             * Login worker with veichle
+             * startTrackingSession
             {
               "device":{
                 "platform":"browser",
@@ -689,11 +693,6 @@ let ApiService = class ApiService {
               "password":"password"
             }
              */
-            console.log('deviceData', deviceData);
-            console.log('gpsData', gpsData);
-            console.log('worker', worker);
-            console.log('veichle', veichle);
-            console.log('password', password);
             const payload = {
                 "device": deviceData,
                 "gps": gpsData,
@@ -701,7 +700,41 @@ let ApiService = class ApiService {
                 "veichle": veichle,
                 "password": password
             };
-            console.log('payload', JSON.stringify(payload));
+            return new Promise((resolve, reject) => {
+                this.post('/workers/startTrackingSession/', payload).then((result) => {
+                    resolve(result);
+                }).catch((error) => {
+                    reject(error);
+                });
+            });
+        });
+    }
+    continueTracking(sessionID, gpsData) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            /**
+             * Continue Tracking
+              {
+                  "gps": {
+                      "latitude": 44.6466223,
+                      "longitude": 10.9308673,
+                      "accuracy": 12,
+                      "timestamp": 1621246509939,
+                      "valid": true
+                  },
+                  "session_id": "20210518140719-1-1-2"
+              }
+             */
+            const payload = {
+                "gps": gpsData,
+                "session_id": sessionID
+            };
+            return new Promise((resolve, reject) => {
+                this.post('/workers/continueTracking/', payload).then((result) => {
+                    resolve(result);
+                }).catch((error) => {
+                    reject(error);
+                });
+            });
         });
     }
     // #region Public Methods
