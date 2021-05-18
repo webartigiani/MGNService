@@ -46,7 +46,7 @@ HomePageRoutingModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      MGN Service\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"true\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"operator\"\n          >\n          <ion-select-option *ngFor=\"let item of this.operators\" [value]=\"item\">{{ item.name }} {{ item.surname }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let item of this.veichles\" [value]=\"item\">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>\n        </ion-select>\n      </ion-item>\n    </ion-list>\n  </div>\n\n  <!-- geoLocaiton div -->\n  <div id=\"geoLocator\"\n    *ngIf=\"false\"\n    >\n\n    <!-- results -->\n    <div id=\"results\"\n      *ngIf=\"error_code === 0\"\n    >\n      <br><br><br>\n      <img src=\"assets/ani/locator.gif\" class=\"ani\">\n      <br><br>\n      <p>Procedi verso la tua destinazione...</p>\n    </div>\n\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            *ngIf=\"true\"\n            (click)=\"startLocating()\"\n            shape=\"round\"\n          >Avvia</ion-button>\n\n          <!-- stop button -->\n          <ion-button\n            *ngIf=\"false\"\n            (click)=\"dummy()\"\n            shape=\"round\"\n          >Stop</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      MGN Service\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  <!-- geoLocaiton div -->\n  <div id=\"geoLocator\"\n    *ngIf=\"false\"\n    >\n\n    <!-- results -->\n    <div id=\"results\"\n    >\n      <br><br><br>\n      <img src=\"assets/ani/locator.gif\" class=\"ani\">\n      <br><br>\n      <p>Procedi verso la tua destinazione...</p>\n    </div>\n\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            *ngIf=\"true\"\n            (click)=\"startLocating()\"\n            shape=\"round\"\n          >Avvia</ion-button>\n\n          <!-- stop button -->\n          <ion-button\n            *ngIf=\"false\"\n            (click)=\"dummy()\"\n            shape=\"round\"\n          >Stop</ion-button>\n\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ }),
 
@@ -137,7 +137,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let HomePage = class HomePage {
-    // #endregion Variables
     // #region Constructors
     constructor(
     // WebArtigiani
@@ -150,81 +149,9 @@ let HomePage = class HomePage {
         this.localData = localData;
         this.navCtrl = navCtrl;
         this.platform = platform;
-        // #region Variables
-        this.baseURL = 'https://jsonplaceholder.typicode.com'; // API End-point base url
-        this.operators = []; // operatori
-        this.operator = '';
-        this.veichles = []; // targhe veicoli
-        this.veichle = '';
         // clears console
-        console.clear();
-        // lists workers and veichles
-        this.api.listWorkers().then((result) => {
-            // list workers
-            this.operators = result;
-            this.api.listVeichles().then((result) => {
-                // lists veichles
-                this.veichles = result;
-            }).catch((error) => {
-                // error listing veichles
-                console.error(error);
-            });
-        }).catch((error) => {
-            // error listing workers
-            console.error(error);
-        });
-        // Event listners
-        this.platform.backButton.subscribe(() => {
-            this.components.showAlert('Attenzione', 'operazione non consentita', 'Prima di terminare l\'applicazione, completa il tuo tragitto.');
-            console.log('Another handler was called!');
-            return;
-        });
-        this.platform.pause.subscribe(() => {
-            console.log('pause');
-        });
-        this.platform.resume.subscribe(() => {
-            console.log('resume');
-        });
     }
     // #endregion Constructors
-    // #region View LifeCycle Events
-    // see: https://angular.io/guide/lifecycle-hooks
-    ngOnInit() {
-        /*
-        Initialize the directive or component
-        after Angular first displays the data-bound properties and sets the directive or component's input properties.
-        Called once
-        */
-        console.log('ngOnInit');
-    }
-    ngAfterContentInit() {
-        /*
-        Respond after Angular projects external content into the component's view, or into the view that a directive is in.
-        Called once
-        */
-        console.log('ngAfterContentInit');
-    }
-    ngAfterContentChecked() {
-        // Respond after Angular checks the content projected into the directive or component.
-    }
-    ngAfterViewInit() {
-        /*
-        Respond after Angular initializes the component's views and child views, or the view that contains the directive.
-        Called once
-        */
-        console.log('ngAfterViewInit');
-    }
-    ngAfterViewChecked() {
-        // Respond after Angular checks the component's views and child views, or the view that contains the directive.
-    }
-    ngOnDestroy() {
-        /*
-        Cleanup just before Angular destroys the directive or component.
-        Unsubscribe Observables and detach event handlers to avoid memory leaks.
-        */
-        console.log('ngOnDestroy');
-    }
-    // #endregion View LifeCycle Events
     navigate() {
         this.navCtrl.navigateRoot('check-connection');
     }
@@ -233,44 +160,41 @@ let HomePage = class HomePage {
     startLocating() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             // checks operator and veichle selection
+            /*
             if ((typeof this.operator === 'string') || (typeof this.veichle === 'string')) {
-                this.components.showAlert('Attenzione', 'Operatore e veicolo richiesti', 'Operatore e veicolo sono entrambi richiesti per avviare il tragitto. Prego, seleziona operatore e veicolo');
-                return;
+              this.components.showAlert('Attenzione', 'Operatore e veicolo richiesti', 'Operatore e veicolo sono entrambi richiesti per avviare il tragitto. Prego, seleziona operatore e veicolo')
+              return
             }
+      
             // shows loader then calls API
             this.components.getLoader('Verifica connessione...').then((loading) => {
-                loading.present();
-                loading.message = 'Verifica servizio GeoLocalizzazione...';
-                this.geolocation.checkService()
-                    .then((result) => {
-                    // GeoLocation Service running
-                    loading.dismiss();
-                    /* start locating
-                    this.locate()
-                    this.tmr = setInterval( ()=>{
-                      this.locate()
-                    }, (this.locationInterval * 1000))
-                    */
-                }).catch((error) => {
-                    // GeoLocation Error {code:%, message:$}
-                    loading.dismiss();
-                    alert(error.message);
-                });
-            });
+              loading.present()
+      
+              loading.message = 'Verifica servizio GeoLocalizzazione...'
+      
+              this.geolocation.checkService()
+              .then((result) => {
+                // GeoLocation Service running
+                loading.dismiss()
+      
+                // start locating
+                this.locate()
+                this.tmr = setInterval( ()=>{
+                  this.locate()
+                }, (this.locationInterval * 1000))
+              }).catch((error) => {
+                // GeoLocation Error {code:%, message:$}
+                loading.dismiss()
+                alert(error.message)
+              })
+            })
+            */
         });
-    }
-    dummy() {
     }
     // #endregion User Functions
     // #region Location Functions
     isLocating() {
         return true;
-    }
-    // #endregion Location Functions
-    // #endregion
-    // #region Utils Functions
-    timestampToDateTime(ts) {
-        return new Date(ts); //.toLocaleDateString("it-IT")
     }
 };
 HomePage.ctorParameters = () => [

@@ -25,6 +25,10 @@ class CreateVeichlesTable extends Migration
             $table->integer('worker')->nullable()->comment('dipendente a bordo. workers.id');
             $table->boolean('enabled')->default(true)->comment('abilitato/disabilitato da Admin');
             $table->string('tracking_session', 20)->nullable()->default('')->comment('id sessione geo-localizzazione. geo_tracking.session_id');
+            $table->string('latitude', 64)->nullable()->comment('ultima posizione rilevata: latitude');
+            $table->string('longitude', 64)->nullable()->comment('ultima posizione rilevata: longitude');
+            $table->integer('accuracy')->nullable()->comment('ultime posizione rilevata: accuratezza in metri');
+            $table->timestamp('last_position')->nullable()->comment('data/ora rilevamento ultima posizione');
             $table->timestamps();
             $table->softDeletes();
         });

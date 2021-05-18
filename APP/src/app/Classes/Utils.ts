@@ -138,6 +138,7 @@ export class UtilsService {
      else
       return this.network.type.toLocaleLowerCase()
    }
+
    openMapByAPP(latitude: any, longitude: any) {
      // open the Map APP (depending on the platform)
      // pointing to the specified coords
@@ -156,5 +157,9 @@ export class UtilsService {
       if (url != '') url = 'https://www.google.it/maps/@' + latitude + ',' + longitude + ',15z'
       window.open(url)
    }
+
+   timestampToDateTime(ts) {
+    return new Date(ts) //.toLocaleDateString("it-IT")
+  }
    //#endregion Public Methods
 }

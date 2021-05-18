@@ -41,6 +41,9 @@
     },
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "io.webartigiani.mgn"
+    },
+    "mx.ferreyra.callnumber": {
+      "PACKAGE_NAME": "io.webartigiani.mgn"
     }
   },
   "dependent_plugins": {

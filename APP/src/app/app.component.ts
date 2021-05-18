@@ -9,6 +9,5 @@ export class AppComponent {
   constructor() {}
 
   ngOnInit() {
-    console.log('ngOnInit from AppComponent');
   }
 }

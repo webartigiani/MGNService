@@ -9,7 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header>\n  <ion-toolbar>\n    <ion-title>login_veichle</ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n\n</ion-content>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"true\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"worker\"\n          >\n          <ion-select-option *ngFor=\"let item of this.workers\" [value]=\"item\">{{ item.name }} {{ item.surname }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let item of this.veichles\" [value]=\"item\">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Codice</ion-label>     <!-- codice timbrata -->\n        <ion-input\n        [(ngModel)]=\"code\"\n        placeholder=\"Codice timbrata\"\n        #codeID\n        ></ion-input>\n      </ion-item>\n    </ion-list>\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            (click)=\"start()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app\"\n          >Avvia</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ }),
 
@@ -64,16 +64,151 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _raw_loader_login_veichle_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./login-veichle.page.html */ "bQul");
 /* harmony import */ var _login_veichle_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./login-veichle.page.scss */ "y8+z");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
+
+
+
+
+
+
+// WebArtigiani Classes
+
+
 
 
 
 
 let LoginVeichlePage = class LoginVeichlePage {
-    constructor() { }
-    ngOnInit() {
+    // #endregion Variables
+    // #region Constructor
+    constructor(
+    // WebArtigiani
+    app, api, utils, components, geolocation, localData, 
+    // Angular
+    platform, navCtrl) {
+        this.app = app;
+        this.api = api;
+        this.utils = utils;
+        this.components = components;
+        this.geolocation = geolocation;
+        this.localData = localData;
+        this.platform = platform;
+        this.navCtrl = navCtrl;
+        // #region Variables
+        this.workers = []; // dipendenti
+        this.worker = '';
+        this.veichles = []; // veicoli
+        this.veichle = '';
+        this.code = '';
+        // Constructor code...
+        this.loadData();
+        // #region Device Event listners
+        this.platform.backButton.subscribe(() => {
+            //this.components.showAlert('Attenzione', 'operazione non consentita', 'Prima di terminare l\'applicazione, completa il tuo tragitto.')
+            //console.log('Another handler was called!');
+            //return;
+        });
+        this.platform.pause.subscribe(() => {
+            //console.log('pause')
+        });
+        this.platform.resume.subscribe(() => {
+            //console.log('resume')
+        });
+        // #endregion Device Event listners
+    }
+    // #endregion Constructor
+    // #region Component LifeCycle
+    ngAfterViewInit() {
+    }
+    // #endregion Component LifeCycls
+    // #region Public Methods
+    start() {
+        /**
+         * Starts tracking worker on veichle
+         */
+        // #region Validations
+        // checks selections: worker and veichle are both required
+        if ((typeof this.worker === 'string') || (typeof this.veichle === 'string')) {
+            this.components.showAlert('Attenzione', 'Operatore e veicolo richiesti', 'Operatore e veicolo sono entrambi richiesti per avviare il tragitto. Prego, seleziona operatore e veicolo');
+            return;
+        }
+        // Checks password
+        if (this.code == '') {
+            this.components.showAlert('Attenzione', 'Codice timbrata richiesto', 'Inserisci il codice timbrata del tuo operatore');
+            this.codeEl.setFocus();
+        }
+        // #endregion Validations
+        // shows loader then calls API to login
+        this.components.getLoader('Attendi...').then((loading) => {
+            loading.present();
+            // checks if device is online
+            if (this.utils.isDeviceOnLine()) {
+                // try to ping server
+                if (this.api.ping()) {
+                    // try to geo-locate
+                    this.geolocation.locate().then((data) => {
+                        //this.api.loginWorkerWithVeichle(this.utils.getDeviceData(), data, this.worker, this.veichle,this.code)
+                        this.navCtrl.navigateRoot('tracking');
+                        loading.dismiss();
+                    }).catch((error) => {
+                        // geo-location error
+                    });
+                }
+                else {
+                    // ping failed
+                    loading.dismiss();
+                    this.components.showAlert('Connessione al server assente', 'Errore di connessione al server MGN', 'Si è verificato un errore di connessione al server MSGN. Prego, riprova.');
+                    this.loadData();
+                }
+            }
+            else {
+                // device offline
+                loading.dismiss();
+                this.components.showAlert('Connessione Assente', 'Connessione alla rete assente', 'Prego, verifica la tua connessione quindi riprova');
+            }
+        });
+    }
+    pause() {
+    }
+    // #endregion Public Methods
+    // #region Private Methods
+    loadData() {
+        // lists workers and veichles
+        this.api.listWorkers().then((result) => {
+            // list workers
+            this.workers = result;
+            this.api.listVeichles().then((result) => {
+                // lists veichles
+                this.veichles = result;
+            }).catch((error) => {
+                // error listing veichles
+                console.error(error);
+            });
+        }).catch((error) => {
+            // error listing workers
+            console.error(error);
+        });
     }
 };
-LoginVeichlePage.ctorParameters = () => [];
+LoginVeichlePage.ctorParameters = () => [
+    { type: _Classes_App__WEBPACK_IMPORTED_MODULE_5__["AppService"] },
+    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_6__["ApiService"] },
+    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_7__["UtilsService"] },
+    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_8__["ComponentsService"] },
+    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_9__["GeoLocationService"] },
+    { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_10__["LocalDataService"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["Platform"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["NavController"] }
+];
+LoginVeichlePage.propDecorators = {
+    codeEl: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_3__["ViewChild"], args: ['codeID', { static: false },] }]
+};
 LoginVeichlePage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
         selector: 'app-login-veichle',

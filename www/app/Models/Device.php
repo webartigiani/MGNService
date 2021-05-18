@@ -16,6 +16,6 @@ class Device extends Model
      * @var array
      */
     protected $fillable = [
-        'platform', 'version', 'manufacter', 'model', 'is_virtual', 'serial', 'uuid', 'is_online', 'enabled', 'latitude', 'longitude', 'accuracy', 'last_position', 'connection_type', 'app_version'
+        'platform', 'version', 'manufacter', 'model', 'is_virtual', 'serial', 'uuid', 'is_online', 'enabled', 'status', 'status_date', 'latitude', 'longitude', 'accuracy', 'last_position', 'connection_type', 'app_version'
     ];
 }

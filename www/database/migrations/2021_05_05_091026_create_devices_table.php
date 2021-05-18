@@ -26,6 +26,9 @@ class CreateDevicesTable extends Migration
             $table->string('connection_type', 20)->comment('tipo di connessione');
             $table->string('app_version', 10)->comment('numero versione APP');
             $table->boolean('enabled')->default(true)->comment('abilitato/disabilitato da admin');
+            $table->integer('status')->default(0)->comment('stato. 0: libero; 1 in tracking');                   // 0: libero; 1 in tracking
+            $table->timestamp('status_date')->nullable()->comment('data ultimo aggiornamento stato');        // data stato
+            $table->string('tracking_session', 20)->nullable()->default('')->comment('id sessione geo-localizzazione. geo_tracking.session_id');
             $table->string('latitude', 64)->nullable()->comment('ultima posizione rilevata: latitude');
             $table->string('longitude', 64)->nullable()->comment('ultima posizione rilevata: longitude');
             $table->integer('accuracy')->nullable()->comment('ultime posizione rilevata: accuratezza in metri');

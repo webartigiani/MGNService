@@ -27,6 +27,11 @@ class CreateWorkersTable extends Migration
             $table->string('matricola', 30)->unique()->comment('numero di matricola del dipendente');
             $table->integer('stato')->default(0)->comment('stato. 0=fuori; 1=al lavoro');                   // 0: fuori; 1: accesso
             $table->timestamp('data_stato')->nullable()->comment('data ultimo aggiornamento stato');        // data stato
+            $table->string('tracking_session', 20)->nullable()->default('')->comment('id sessione geo-localizzazione. geo_tracking.session_id');
+            $table->string('latitude', 64)->nullable()->comment('ultima posizione rilevata: latitude');
+            $table->string('longitude', 64)->nullable()->comment('ultima posizione rilevata: longitude');
+            $table->integer('accuracy')->nullable()->comment('ultime posizione rilevata: accuratezza in metri');
+            $table->timestamp('last_position')->nullable()->comment('data/ora rilevamento ultima posizione');
             $table->timestamps();
             $table->softDeletes();
         });

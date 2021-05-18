@@ -19,6 +19,8 @@ class CreateTrackingDataTable extends Migration
             $table->string('latitude', 64)->nullable()->comment('ultima posizione rilevata: latitude');
             $table->string('longitude', 64)->nullable()->comment('ultima posizione rilevata: longitude');
             $table->integer('accuracy')->nullable()->comment('ultime posizione rilevata: accuratezza in metri');
+            $table->boolean('is_valid')->default(true)->comment('posizione valida/non valida');
+            $table->string('gps_timestamp', 20)->comment('timestamp da servizio geo-localizzazione');
             $table->timestamps();
             $table->softDeletes();
         });

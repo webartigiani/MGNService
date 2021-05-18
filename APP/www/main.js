@@ -259,6 +259,9 @@ let UtilsService = class UtilsService {
             url = 'https://www.google.it/maps/@' + latitude + ',' + longitude + ',15z';
         window.open(url);
     }
+    timestampToDateTime(ts) {
+        return new Date(ts); //.toLocaleDateString("it-IT")
+    }
 };
 UtilsService.ctorParameters = () => [
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"] },
@@ -297,7 +300,7 @@ const environment = {
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'http://gestionale.mgnservice.it/api/app',
     LOCATION_TIMEOUT: 5,
-    LOCATION_INERVAL: 15 // interval (in seconds)
+    LOCATION_INERVAL: 10 // interval (in seconds)
 };
 /*
  * For easier debugging in development mode, you can import the following file
@@ -393,7 +396,6 @@ __webpack_require__.r(__webpack_exports__);
 let AppComponent = class AppComponent {
     constructor() { }
     ngOnInit() {
-        console.log('ngOnInit from AppComponent');
     }
 };
 AppComponent.ctorParameters = () => [];
@@ -476,7 +478,7 @@ let ComponentsService = class ComponentsService {
             if (message == undefined)
                 message = 'Please wait...';
             if (duration == undefined)
-                duration = 10000;
+                duration = 60000;
             const loading = yield this.loadingController.create({
                 message: message,
                 duration: duration,
@@ -649,6 +651,57 @@ let ApiService = class ApiService {
                     reject(error);
                 });
             });
+        });
+    }
+    loginWorkerWithVeichle(deviceData, gpsData, worker, veichle, password) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            /**
+             * Login worker with veichle
+            {
+              "device":{
+                "platform":"browser",
+                "version":"0.0.0",
+                "manufacter":"manufacter",
+                "model":"model",
+                "isVirtual":false,
+                "serial":"unknown",
+                "uuid":"debug_browser",
+                "connection_type":"ethernet"
+              },
+              "gps":{
+                "latitude":44.6466223,
+                "longitude":10.9308673,
+                "accuracy":20,
+                "timestamp":1621246509939,
+                "valid":true
+              },
+              "worker":{
+                "id":8,
+                "name":"ANNA",
+                "surname":"E. NACCAH"
+              },
+              "veichle":{
+                "id":1,
+                "manufacter":"Citroen",
+                "model":"C3",
+                "licence_plate":"XX123XX"
+              },
+              "password":"password"
+            }
+             */
+            console.log('deviceData', deviceData);
+            console.log('gpsData', gpsData);
+            console.log('worker', worker);
+            console.log('veichle', veichle);
+            console.log('password', password);
+            const payload = {
+                "device": deviceData,
+                "gps": gpsData,
+                "worker": worker,
+                "veichle": veichle,
+                "password": password
+            };
+            console.log('payload', JSON.stringify(payload));
         });
     }
     // #region Public Methods

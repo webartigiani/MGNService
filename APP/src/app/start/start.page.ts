@@ -118,7 +118,7 @@ export class StartPage {
         this.api.deviceAdd(this.utils.getDeviceData(), data)
 
         setTimeout(() => {
-          this.navCtrl.navigateRoot('home')
+          this.navCtrl.navigateRoot('login-veichle')
         }, this.execDelay * 1000);
 
       }).catch((error) => {

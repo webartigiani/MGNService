@@ -120,7 +120,7 @@ let StartPage = class StartPage {
                 this.statusDesc = 'Avvio in corso...';
                 this.api.deviceAdd(this.utils.getDeviceData(), data);
                 setTimeout(() => {
-                    this.navCtrl.navigateRoot('home');
+                    this.navCtrl.navigateRoot('login-veichle');
                 }, this.execDelay * 1000);
             }).catch((error) => {
                 // describes the error

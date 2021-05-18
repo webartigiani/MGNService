@@ -1236,6 +1236,20 @@ sub {
 ion-title img {
   max-width: 24px;
 }
+.btn-app {
+  /* buttons */
+  --background:#01a140;
+  --background-activated:#93c11f;
+}
+.btn-app.yellow {
+  --background:yellow;
+  --background-activated:yellow;
+  color: gray;
+}
+.btn-app.red {
+  --background:red;
+  --background-activated:red;
+}
 /* Generic classes */
 .center {
   text-align: center;

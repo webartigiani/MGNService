@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
 
-  APP_TITLE: 'MGN Service',                                 // APP Data
+  APP_TITLE: 'MGN Service',                            // APP Data
   APP_VERSION: '0.0.1',
 
   API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',        // API token

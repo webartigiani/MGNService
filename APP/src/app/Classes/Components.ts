@@ -55,7 +55,7 @@ export class ComponentsService {
    async getLoader(message?: string, duration?: number) {
     // returns a loading object
     if (message == undefined) message = 'Please wait...'
-    if (duration == undefined) duration = 10000
+    if (duration == undefined) duration = 60000
 
     const loading = await this.loadingController.create({
       message: message,

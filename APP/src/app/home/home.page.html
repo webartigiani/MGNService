@@ -8,34 +8,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- form iniziale -->
-  <div id="startingForm"
-    *ngIf="true"
-    >
-    <ion-list>
-      <ion-item>
-        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->
-        <ion-select value=""
-          interface="action-sheet"
-          cancel-text="Annulla"
-          [(ngModel)]="operator"
-          >
-          <ion-select-option *ngFor="let item of this.operators" [value]="item">{{ item.name }} {{ item.surname }}</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->
-        <ion-select value=""
-          interface="action-sheet"
-          cancel-text="Annulla"
-          [(ngModel)]="veichle"
-          >
-          <ion-select-option *ngFor="let item of this.veichles" [value]="item">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-  </div>
-
   <!-- geoLocaiton div -->
   <div id="geoLocator"
     *ngIf="false"
@@ -43,7 +15,6 @@
 
     <!-- results -->
     <div id="results"
-      *ngIf="error_code === 0"
     >
       <br><br><br>
       <img src="assets/ani/locator.gif" class="ani">

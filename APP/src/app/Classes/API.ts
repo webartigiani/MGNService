@@ -123,6 +123,56 @@ export class ApiService {
           })
         })
     }
+    async loginWorkerWithVeichle(deviceData: any, gpsData: any, worker: any, veichle: any, password: string) {
+      /**
+       * Login worker with veichle
+      {
+        "device":{
+          "platform":"browser",
+          "version":"0.0.0",
+          "manufacter":"manufacter",
+          "model":"model",
+          "isVirtual":false,
+          "serial":"unknown",
+          "uuid":"debug_browser",
+          "connection_type":"ethernet"
+        },
+        "gps":{
+          "latitude":44.6466223,
+          "longitude":10.9308673,
+          "accuracy":20,
+          "timestamp":1621246509939,
+          "valid":true
+        },
+        "worker":{
+          "id":8,
+          "name":"ANNA",
+          "surname":"E. NACCAH"
+        },
+        "veichle":{
+          "id":1,
+          "manufacter":"Citroen",
+          "model":"C3",
+          "licence_plate":"XX123XX"
+        },
+        "password":"password"
+      }
+       */
+      console.log('deviceData', deviceData)
+      console.log('gpsData', gpsData)
+      console.log('worker', worker)
+      console.log('veichle', veichle)
+      console.log('password', password)
+
+      const payload = {
+        "device": deviceData,
+        "gps": gpsData,
+        "worker": worker,
+        "veichle": veichle,
+        "password": password
+      }
+      console.log('payload', JSON.stringify(payload))
+    }
     // #region Public Methods
 
     // #region Http Base Functions

@@ -1,9 +1,64 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>login_veichle</ion-title>
+    <ion-title>
+      <img src="assets/icon/favicon.png" class="title-icon">
+      {{ app.appName() }}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-
+<ion-content [fullscreen]="true">
+  <!-- form iniziale -->
+  <div id="startingForm"
+    *ngIf="true"
+    >
+    <ion-list>
+      <ion-item>
+        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->
+        <ion-select value=""
+          interface="action-sheet"
+          cancel-text="Annulla"
+          [(ngModel)]="worker"
+          >
+          <ion-select-option *ngFor="let item of this.workers" [value]="item">{{ item.name }} {{ item.surname }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->
+        <ion-select value=""
+          interface="action-sheet"
+          cancel-text="Annulla"
+          [(ngModel)]="veichle"
+          >
+          <ion-select-option *ngFor="let item of this.veichles" [value]="item">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Codice</ion-label>     <!-- codice timbrata -->
+        <ion-input
+        [(ngModel)]="code"
+        placeholder="Codice timbrata"
+        #codeID
+        ></ion-input>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>
+
+<!-- Footer -->
+<ion-footer class="ion-no-border">
+  <ion-grid>
+    <ion-row no-padding no-margin>
+        <ion-col col-12 no-padding class="center">
+
+          <!-- start button -->
+          <ion-button
+            (click)="start()"
+            shape="round"
+            size="large"
+            class="btn-app"
+          >Avvia</ion-button>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

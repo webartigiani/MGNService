@@ -11,6 +11,7 @@
 |
 */
 
+use App\Http\Controllers\Api\APP\ApiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,9 @@ Route::group([
     Route::get('api/app/workers/list/', 'ApiController@listWorkers');
     Route::get('api/app/veichles/list/', 'ApiController@listVeichles');
     Route::post('api/app/devices/add/', 'ApiController@registerDevice');
+    Route::post('api/app/workers/startTrackingSession', 'ApiController@startTrackingSession');      // tracking-session management
+    Route::post('api/app/workers/continueTracking', 'ApiController@continueTracking');
+    Route::post('api/app/workers/stopTrackingSession', 'ApiController@stopTrackingSession');
 });
 /*
 Route::namespace('App\\Http\\Controllers\\API\\APP')->group(function () {

@@ -21,6 +21,7 @@
     "@angular/router": "~11.2.0",
     "@capacitor/core": "2.4.7",
     "@ionic-native/android-permissions": "^5.32.1",
+    "@ionic-native/call-number": "^5.33.0",
     "@ionic-native/core": "^5.32.1",
     "@ionic-native/device": "^5.32.1",
     "@ionic-native/geolocation": "^5.32.1",
@@ -56,6 +57,7 @@
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "4.16.1",
     "@typescript-eslint/parser": "4.16.1",
+    "call-number": "^1.0.1",
     "cordova-android": "^9.1.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-android-permissions": "^1.1.2",
@@ -102,7 +104,8 @@
       "cordova-plugin-unique-device-id2": {},
       "cordova-plugin-dreamover-uid": {},
       "cordova-plugin-android-permissions": {},
-      "cordova-plugin-device": {}
+      "cordova-plugin-device": {},
+      "mx.ferreyra.callnumber": {}
     },
     "platforms": [
       "android"

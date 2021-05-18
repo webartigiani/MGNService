@@ -1,9 +1,50 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>tracking</ion-title>
+    <ion-title>
+      <img src="assets/icon/favicon.png" class="title-icon">
+      {{ app.appName() }}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-
+<ion-content [fullscreen]="true" class="center">
+  {{ gpsData.latitude }}<br>
+  {{ gpsData.longitude }}<br>
+  {{ gpsData.accuracy }}<br>
+  {{ gpsData.timestamp }}<br>
 </ion-content>
+
+<!-- Footer -->
+<ion-footer class="ion-no-border">
+  <ion-grid>
+    <ion-row no-padding no-margin>
+        <ion-col col-12 no-padding class="center">
+
+          <!-- pause button -->
+          <ion-button
+            (click)="dummy()"
+            shape="round"
+            size="large"
+            class="btn-app yellow"
+          >
+            <ion-icon name="pause"></ion-icon>
+          </ion-button>
+
+          <ion-button
+            (click)="dummy()"
+            shape="round"
+            size="large"
+            class="btn-app red"
+          ><ion-icon name="log-out"></ion-icon></ion-button>
+
+          <ion-button
+            (click)="dummy()"
+            shape="round"
+            size="large"
+            class="btn-app red"
+          >SOS</ion-button>
+
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>
