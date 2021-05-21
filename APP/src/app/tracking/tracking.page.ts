@@ -3,6 +3,7 @@ import { environment } from "src/environments/environment";
 
 import { NavController, Platform } from '@ionic/angular';
 
+
 // WebArtigiani Classes
 import { AppService } from '../Classes/App';
 import { ApiService } from '../Classes/API';
@@ -83,11 +84,11 @@ export class TrackingPage {
 
   }
   SOS() {
-    // starts a calling to the SOS number
+    /**
+     * starts a calling to the SOS number
+     */
     this.components.showConfirm('SOS','Avvia chiamata SOS','Avviare una chiamata al numero di SOS ' + environment.SOS_PHONE_NUMBER + '?').then((result) => {
       if (result) this.phone.call(environment.SOS_PHONE_NUMBER)
-
-
     })
   }
 

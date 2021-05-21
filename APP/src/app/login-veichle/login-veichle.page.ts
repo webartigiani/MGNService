@@ -1,9 +1,53 @@
+/*
+ * login-veichle/login-veichle.page
+ * login page
+ * roue: login-veichle
+ *
+ * NOTES:
+ *  User has to
+ *  - select its operator name
+ *  - select the veichles he's using
+ *  - type his "password_timbratura"
+ *  - then tap the "Avvia" button
+ *
+ *  the "Avvia" button do:
+ *  step 1: checks internet connection
+ *  step 2: try to ping the MGN server API
+ *  step 3: checks geo-location service
+ *
+ *  each step is shown into a loader "Attendi..."
+ *
+ *  step 4: if everything's ok:
+ *  - calls the "startTrackingSession" MGN API to start a brend new tracking-session (for the user, with the selected veichles)
+ *  - stores the new session_id into localStorage
+ *  - navigate to "tracking"
+ *
+ *  step 4: if something goes wrong:
+ *  - APP reloads workers and veichles list via MGN API
+ *
+ *  IMPORTANT:
+ *  - backgroundMode is disabled on this view:
+ *  - APP can't be set in background
+ *  - APP is restored when paused in max 0.25"
+ *  - backButton is overrided
+ *  - screen sleep is allowed
+ */
 import { Component } from '@angular/core';
 import { environment } from "src/environments/environment";
 
 import { NavController, Platform } from '@ionic/angular';
 import { Input, ViewChild } from '@angular/core';
 import {  IonInput } from '@ionic/angular'
+
+// Background Mode
+// see  https://ionicframework.com/docs/native/background-mode
+// see  https://github.com/katzer/cordova-plugin-background-mode
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
+//                      npm install @ionic-native/background-mode
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 
 // WebArtigiani Classes
 import { AppService } from '../Classes/App';
@@ -42,6 +86,7 @@ export class LoginVeichlePage {
     private geolocation: GeoLocationService,
     private localData: LocalDataService,
     private phone: PhoneServices,
+    private backgroundMode: BackgroundMode,
 
     // Angular
     public platform: Platform,
@@ -49,19 +94,19 @@ export class LoginVeichlePage {
   ) {
     // Constructor code...
     this.loadData()
-
       // #region Device Event listners
       this.platform.backButton.subscribe(() => {
         //this.components.showAlert('Attenzione', 'operazione non consentita', 'Prima di terminare l\'applicazione, completa il tuo tragitto.')
         //console.log('Another handler was called!');
         //return;
+        console.log('backbutton')
       });
 
       this.platform.pause.subscribe(() => {
-        //console.log('pause')
+        console.log('pause')
       })
       this.platform.resume.subscribe(() => {
-        //console.log('resume')
+        console.log('resume')
       })
       // #endregion Device Event listners
   }
@@ -69,6 +114,25 @@ export class LoginVeichlePage {
 
   // #region Component LifeCycle
   ngAfterViewInit() {
+  }
+  ngAfterViewChecked() {
+    // Respond after Angular checks the component's views and child views, or the view that contains the directive.
+    console.log('ngAfterViewChecked')
+
+    // - enables background mode
+    // - restores foreground when app is sent to background (background mode activated)
+    // - restores foreground by a 500ms timer, if app is in background mode
+    this.backgroundMode.enable()
+    this.backgroundMode.on('activate').subscribe(() => {
+      console.log('enter background mode')
+      this.backgroundMode.moveToForeground();
+    });
+    setInterval(() => {
+      if (this.backgroundMode.isActive()) {
+        console.log('restore foreground')
+        this.backgroundMode.moveToForeground();
+      }
+    }, 250);
   }
   // #endregion Component LifeCycls
 
@@ -110,7 +174,6 @@ export class LoginVeichlePage {
               this.localData.writeValue('session_id', sessionID)
               this.navCtrl.navigateRoot('tracking')
               loading.dismiss()
-
             }).catch((error) => {
               // API Error
               loading.dismiss()
@@ -135,8 +198,9 @@ export class LoginVeichlePage {
   }
 
   SOS() {
-    // starts a calling to the SOS number
-
+    /**
+     * starts a calling to the SOS number
+     */
     this.components.showConfirm('SOS','Avvia chiamata SOS','Avviare una chiamata al numero di SOS ' + environment.SOS_PHONE_NUMBER + '?').then((result) => {
       if (result) this.phone.call(environment.SOS_PHONE_NUMBER)
     })

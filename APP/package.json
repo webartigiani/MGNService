@@ -21,6 +21,7 @@
     "@angular/router": "~11.2.0",
     "@capacitor/core": "2.4.7",
     "@ionic-native/android-permissions": "^5.32.1",
+    "@ionic-native/background-mode": "^5.33.0",
     "@ionic-native/call-number": "^5.33.0",
     "@ionic-native/core": "^5.32.1",
     "@ionic-native/device": "^5.32.1",
@@ -61,6 +62,7 @@
     "cordova-android": "^9.1.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-android-permissions": "^1.1.2",
+    "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-geolocation": "^4.1.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
@@ -105,7 +107,8 @@
       "cordova-plugin-dreamover-uid": {},
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-device": {},
-      "mx.ferreyra.callnumber": {}
+      "mx.ferreyra.callnumber": {},
+      "cordova-plugin-background-mode": {}
     },
     "platforms": [
       "android"

@@ -1,3 +1,18 @@
+/*
+ * start/start.page
+ * start/loading page
+ * route: start (default route)
+ *
+ * NOTES:
+ *  this is the 1st page loaded when APP starts
+ *
+ *  step 1: checks internet connection
+ *  step 2: try to ping the MGN server API
+ *  step 3: checks geo-location service
+ *
+ *  each step is shown into div#statusDesc
+ *  step 4: if everything's ok registers/updates the device via API, then navigate to login page
+ */
 import { Component } from '@angular/core';
 import { environment } from "src/environments/environment";
 
@@ -116,14 +131,9 @@ export class StartPage {
         // Geo-location service OK
 
         this.statusDesc = 'Avvio in corso...'
-
-        this.api.deviceAdd(this.utils.getDeviceData(), data)
-
-        setTimeout(() => {
-          this.navCtrl.navigateRoot('login-veichle')
-        }, this.execDelay * 1000);
-
+        this.registerDevice(data);
       }).catch((error) => {
+        // geolocation.checkService() error
         // describes the error
         let m = ''
         switch (error.code) {
@@ -147,6 +157,21 @@ export class StartPage {
       })
     }, this.execDelay * 1000);
   }
-  // #endregion Public Methods
 
+  registerDevice(data) {
+    /**
+     * step 4: register/updates the device via API
+     */
+     this.api.deviceAdd(this.utils.getDeviceData(), data).then((result) => {
+      // device added/updated via API: navigate to login page
+      setTimeout(() => {
+        this.navCtrl.navigateRoot('login-veichle')
+      }, this.execDelay * 1000);
+    }).catch((error) => {
+      // API Error
+      this.components.showAlert(error['message'], 'Si è verificato un errore', error['message_details']);
+      window.location.reload()
+    });
+  }
+  // #endregion Public Methods
 }

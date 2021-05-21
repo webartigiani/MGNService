@@ -34,6 +34,16 @@ import { Network } from '@ionic-native/network/ngx';
 // see  https://ionicframework.com/docs/native/call-number
 import { CallNumber } from '@ionic-native/call-number/ngx'
 
+// Background Mode
+// see  https://ionicframework.com/docs/native/background-mode
+// see  https://github.com/katzer/cordova-plugin-background-mode
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
+//                      npm install @ionic-native/background-mode
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
+
 // WebArtigiani Classes
 import { AppService } from './Classes/App';
 import { ApiService } from './Classes/API';
@@ -88,6 +98,7 @@ enableProdMode()
     GeoLocationService,
     LocalDataService,
     PhoneServices,
+    BackgroundMode,
   ],
   bootstrap: [AppComponent],
 })

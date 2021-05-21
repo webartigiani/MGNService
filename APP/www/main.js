@@ -299,11 +299,12 @@ const environment = {
     APP_VERSION: '0.0.1',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
     API_LOGGER_ENABLED: false,
-    API_USE_LOCAL: false,
+    API_USE_LOCAL: true,
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'http://gestionale.mgnservice.it/api/app',
     LOCATION_TIMEOUT: 10,
     LOCATION_INERVAL: 15,
+    MAX_PAUSE_TIMEOUT: .5,
     DEBUG_GPS: true,
     SOS_PHONE_NUMBER: '112',
 };
@@ -472,8 +473,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let AppComponent = class AppComponent {
-    constructor() { }
-    ngOnInit() {
+    // #region Constructor
+    constructor() {
+        /**
+         * Constructor
+         */
     }
 };
 AppComponent.ctorParameters = () => [];
@@ -536,9 +540,13 @@ let ComponentsService = class ComponentsService {
     }
     // #endregion Constructors
     // #region Public Methods
-    showAlert(title, subtitle, message) {
+    showAlert(title, subtitle, message, timeout) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             // shows device native alert by alertController
+            // default timeout 0"
+            if (timeout === undefined)
+                timeout = 0;
+            console.log(timeout);
             const msg = yield this.alertController.create({
                 animated: true,
                 backdropDismiss: false,
@@ -548,6 +556,13 @@ let ComponentsService = class ComponentsService {
                 buttons: ['OK']
             });
             yield msg.present();
+            // sets timeout
+            if (timeout > 0) {
+                setTimeout(() => {
+                    msg.dismiss();
+                    console.log('timeout scaduto');
+                }, timeout);
+            }
         });
     }
     showConfirm(title, subtitle, message) {
@@ -974,13 +989,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
 /* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
 /* harmony import */ var _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/call-number/ngx */ "Wwn5");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
-/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
+/* harmony import */ var _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ionic-native/background-mode/ngx */ "1xeP");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
 
 /*
 app.module.ts
@@ -1008,6 +1024,15 @@ src/app.module.ts
 
 // CallNumber
 // see  https://ionicframework.com/docs/native/call-number
+
+// Background Mode
+// see  https://ionicframework.com/docs/native/background-mode
+// see  https://github.com/katzer/cordova-plugin-background-mode
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
+//                      npm install @ionic-native/background-mode
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 // WebArtigiani Classes
 
@@ -1055,13 +1080,14 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             AndroidPermissions,
             */
             // WebArtigiani
-            _Classes_App__WEBPACK_IMPORTED_MODULE_14__["AppService"],
-            _Classes_API__WEBPACK_IMPORTED_MODULE_15__["ApiService"],
-            _Classes_Utils__WEBPACK_IMPORTED_MODULE_16__["UtilsService"],
-            _Classes_Components__WEBPACK_IMPORTED_MODULE_17__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_18__["GeoLocationService"],
-            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_19__["LocalDataService"],
-            _Classes_Phone__WEBPACK_IMPORTED_MODULE_20__["PhoneServices"],
+            _Classes_App__WEBPACK_IMPORTED_MODULE_15__["AppService"],
+            _Classes_API__WEBPACK_IMPORTED_MODULE_16__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_17__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_18__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_19__["GeoLocationService"],
+            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_20__["LocalDataService"],
+            _Classes_Phone__WEBPACK_IMPORTED_MODULE_21__["PhoneServices"],
+            _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_14__["BackgroundMode"],
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })

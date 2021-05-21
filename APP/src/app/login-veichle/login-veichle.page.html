@@ -1,3 +1,39 @@
+<!--
+/*
+ * login-veichle/login-veichle.page
+ * login page
+ * roue: login-veichle
+ *
+ * NOTES:
+ *  User has to
+ *  - select its operator name
+ *  - select the veichles he's using
+ *  - type his "password_timbratura"
+ *  - then tap the "Avvia" button
+ *
+ *  the "Avvia" button do:
+ *  step 1: checks internet connection
+ *  step 2: try to ping the MGN server API
+ *  step 3: checks geo-location service
+ *
+ *  each step is shown into a loader "Attendi..."
+ *
+ *  step 4: if everything's ok:
+ *  - calls the "startTrackingSession" MGN API to start a brend new tracking-session (for the user, with the selected veichles)
+ *  - stores the new session_id into localStorage
+ *  - navigate to "tracking"
+ *
+ *  step 4: if something goes wrong:
+ *  - APP reloads workers and veichles list via MGN API
+ *
+ *  IMPORTANT:
+ *  - backgroundMode is disabled on this view:
+ *  - APP can't be set in background
+ *  - APP is restored when paused in max 0.25"
+ *  - backButton is overrided
+ *  - screen sleep is allowed
+ */
+-->
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>

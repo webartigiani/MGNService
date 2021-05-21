@@ -1,11 +1,24 @@
 <!--
-  start/
-  starting page
+/*
+ * start/start.page
+ * start/loading page
+ * route: start (default route)
+ *
+ * NOTES:
+ *  this is the 1st page loaded when APP starts
+ *
+ *  step 1: checks internet connection
+ *  step 2: try to ping the MGN server API
+ *  step 3: checks geo-location service
+ *
+ *  each step is shown into div#statusDesc
+ *  step 4: if everything's ok registers/updates the device via API, then navigate to login page
+ */
 -->
 <ion-content [fullscreen]="true" class="center">
   <img src="assets/ani/start.gif" />
   <br>
-  <div id="checkConnections">
+  <div id="statusDesc">
     <p [innerHTML]="statusDesc"></p>
   </div>
 </ion-content>

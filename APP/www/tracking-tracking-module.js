@@ -93,9 +93,11 @@ let TrackingPage = class TrackingPage {
         this.platform = platform;
         this.navCtrl = navCtrl;
         // #region Variables
-        this.counter = 0;
+        this.counter = 0; // contatore tracciamenti
         this.sessionID = '';
         this.gpsData = {};
+        this.isPaued = false;
+        this.alreadyPaused = false;
         // gets current session_id from storage
         this.sessionID = this.localData.readValue('session_id');
     }
@@ -109,6 +111,22 @@ let TrackingPage = class TrackingPage {
     }
     // #endregion Component LifeCycls
     // #region Public Methods
+    pause() {
+        // do a pause
+        if (this.alreadyPaused) {
+            // pause already used
+            this.components.showAlert('Pausa', 'Pausa non disponibile', 'Hai già usufruito di una pausa lungo il tragitto.');
+            return;
+        }
+        // ask for confirmation
+        this.components.showConfirm('Pausa', 'Hai a disposizione una sola pausa lungo il tragitto', 'Confermi di voler usufruire della pausa ora?').then((result) => {
+            if (!result)
+                return;
+            this.isPaued = true;
+            this.alreadyPaused = true;
+            this.components.showAlert('In Pausa', 'Sistema in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "OK" al termine della pausa.', src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].MAX_PAUSE_TIMEOUT * 60 * 1000);
+        });
+    }
     dummy() {
     }
     SOS() {
@@ -230,7 +248,7 @@ TrackingPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\" class=\"center\">\n\n  <!-- debug GPS data -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    {{ gpsData.accuracy }}<br>\n    {{ gpsData.timestamp }}<br>\n    {{ counter }}\n  </div>\n\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- pause button -->\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app yellow\"\n          >\n            <ion-icon name=\"pause\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"log-out\"></ion-icon></ion-button>\n\n          <!-- SOS Caller -->\n          <ion-button\n            (click)=\"SOS()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\" class=\"center\">\n\n  <!-- debug GPS data -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    {{ gpsData.accuracy }}<br>\n    {{ gpsData.timestamp }}<br>\n    {{ counter }}\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n          <!-- pause button -->\n          <ion-button\n            (click)=\"pause()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app yellow\"\n          >\n            <ion-icon name=\"pause\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"log-out\"></ion-icon></ion-button>\n\n          <!-- SOS Caller -->\n          <ion-button\n            (click)=\"SOS()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ })
 

@@ -44,6 +44,9 @@
     },
     "mx.ferreyra.callnumber": {
       "PACKAGE_NAME": "io.webartigiani.mgn"
+    },
+    "cordova-plugin-background-mode": {
+      "PACKAGE_NAME": "io.webartigiani.mgn"
     }
   },
   "dependent_plugins": {
