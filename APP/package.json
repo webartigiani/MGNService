@@ -26,6 +26,7 @@
     "@ionic-native/core": "^5.32.1",
     "@ionic-native/device": "^5.32.1",
     "@ionic-native/geolocation": "^5.32.1",
+    "@ionic-native/insomnia": "^5.33.0",
     "@ionic-native/native-geocoder": "^5.32.1",
     "@ionic-native/network": "^5.33.0",
     "@ionic-native/screen-orientation": "^5.32.1",
@@ -65,6 +66,7 @@
     "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-geolocation": "^4.1.0",
+    "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^4.2.1",
     "cordova-plugin-nativegeocoder": "^3.4.1",
@@ -108,7 +110,8 @@
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-device": {},
       "mx.ferreyra.callnumber": {},
-      "cordova-plugin-background-mode": {}
+      "cordova-plugin-background-mode": {},
+      "cordova-plugin-insomnia": {}
     },
     "platforms": [
       "android"

@@ -116,8 +116,14 @@ export class LoginVeichlePage {
   ngAfterViewInit() {
   }
   ngAfterViewChecked() {
-    // Respond after Angular checks the component's views and child views, or the view that contains the directive.
+    /**
+     * Respond after Angular checks the component's views and child views, or the view that contains the directive.
+     */
+
     console.log('ngAfterViewChecked')
+
+    // allows screen falling asleep
+    this.utils.allowScreenFallAsleep()
 
     // - enables background mode
     // - restores foreground when app is sent to background (background mode activated)

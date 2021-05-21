@@ -47,6 +47,9 @@
     },
     "cordova-plugin-background-mode": {
       "PACKAGE_NAME": "io.webartigiani.mgn"
+    },
+    "cordova-plugin-insomnia": {
+      "PACKAGE_NAME": "io.webartigiani.mgn"
     }
   },
   "dependent_plugins": {

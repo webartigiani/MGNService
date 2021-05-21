@@ -53,6 +53,9 @@ export class TrackingPage {
   // #region Component LifeCycle
   ngAfterViewInit() {
 
+    // keep screen awake
+    this.utils.keepScreenAwake()
+
     this.geoLocate()
 
     setInterval(() => {

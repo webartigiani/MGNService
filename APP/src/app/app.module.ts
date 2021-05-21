@@ -44,6 +44,13 @@ import { CallNumber } from '@ionic-native/call-number/ngx'
 //          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 
+// Insomina
+// Prevent the screen of the mobile device from falling asleep.
+// see  https://ionicframework.com/docs/native/insomnia
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-insomnia
+//                      npm install @ionic-native/insomnia
+import { Insomnia } from '@ionic-native/insomnia/ngx';
+
 // WebArtigiani Classes
 import { AppService } from './Classes/App';
 import { ApiService } from './Classes/API';
@@ -84,11 +91,8 @@ enableProdMode()
     ScreenOrientation,
     Network,
     CallNumber,
-    /*
-    UniqueDeviceID,
-    Uid,
-    AndroidPermissions,
-    */
+    BackgroundMode,
+    Insomnia,
 
     // WebArtigiani
     AppService,
@@ -98,7 +102,6 @@ enableProdMode()
     GeoLocationService,
     LocalDataService,
     PhoneServices,
-    BackgroundMode,
   ],
   bootstrap: [AppComponent],
 })

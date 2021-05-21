@@ -39,6 +39,13 @@ import { Network } from '@ionic-native/network/ngx';
 // see https://ionicframework.com/docs/native/screen-orientation
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
+// Insomina
+// Prevent the screen of the mobile device from falling asleep.
+// see  https://ionicframework.com/docs/native/insomnia
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-insomnia
+//                      npm install @ionic-native/insomnia
+import { Insomnia } from '@ionic-native/insomnia/ngx';
+
 /* NOT USED UniqueDeviceID
 // see https://ionicframework.com/docs/native/unique-device-id
 // see also https://www.freakyjolly.com/ionic-4-get-unique-device-id-other-uids-of-uuid-imei-imsi-iccid-and-mac-using-native-cordova-plugins/
@@ -59,11 +66,7 @@ export class UtilsService {
       private device: Device,
       private network: Network,
       private screenOrientation: ScreenOrientation,
-      /*
-      private uniqueDeviceID: UniqueDeviceID,
-      private uid: Uid,
-      private androidPermissions: AndroidPermissions,
-      */
+      private insomnia: Insomnia,
    ) {
       // constructor...
 
@@ -159,8 +162,25 @@ export class UtilsService {
       window.open(url)
    }
 
-   timestampToDateTime(ts) {
+  timestampToDateTime(ts) {
     return new Date(ts) //.toLocaleDateString("it-IT")
+  }
+
+  keepScreenAwake() {
+    // prevent screen to fall asleep (requires insomnia plugin)
+    this.insomnia.keepAwake()
+    .then(
+      () => console.log('keepAwake success'),
+      () => console.log('keepAwake error')
+    );
+  }
+  allowScreenFallAsleep() {
+    // allows screen to fall asleep (requires insomnia plugin)
+    this.insomnia.allowSleepAgain()
+    .then(
+      () => console.log('allowScreenFallAsleep success'),
+      () => console.log('allowScreenFallAsleep error')
+    );
   }
    //#endregion Public Methods
 }
