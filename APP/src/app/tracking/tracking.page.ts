@@ -3,7 +3,6 @@ import { environment } from "src/environments/environment";
 
 import { NavController, Platform } from '@ionic/angular';
 
-
 // WebArtigiani Classes
 import { AppService } from '../Classes/App';
 import { ApiService } from '../Classes/API';
@@ -21,6 +20,10 @@ import { PhoneServices } from '../Classes/Phone';
 export class TrackingPage {
 
   // #region Variables
+  current_worker = this.localData.readObject('current_worker', {})    // current worker and veichle
+  current_veichle = this.localData.readObject('current_veichle', {})
+  statusDesc = 'procedi verso la tua destinazione...'
+
   counter: number = 0           // contatore tracciamenti
   sessionID: string = ''
   gpsData: any = {}
@@ -53,11 +56,12 @@ export class TrackingPage {
   // #region Component LifeCycle
   ngAfterViewInit() {
 
-    // keep screen awake
+    // keep screen awake + keeps APP in foreground
     this.utils.keepScreenAwake()
+    this.utils.keepForeground()
 
+    // 1st geo-location, then geo-locate by interval
     this.geoLocate()
-
     setInterval(() => {
       this.geoLocate()
     }, environment.LOCATION_INERVAL * 1000);
@@ -69,21 +73,21 @@ export class TrackingPage {
     // do a pause
     if (this.alreadyPaused) {
       // pause already used
-      this.components.showAlert('Pausa', 'Pausa non disponibile', 'Hai già usufruito di una pausa lungo il tragitto.')
+      this.components.showAlert('Pausa', 'Pausa non disponibile', 'Hai già usufruito di una pausa lungo il tragitto.',0,'Ho capito')
       return;
     }
 
     // ask for confirmation
-    this.components.showConfirm('Pausa','Hai a disposizione una sola pausa lungo il tragitto','Confermi di voler usufruire della pausa ora?').then((result) => {
+    this.components.showConfirm('Pausa','Hai a disposizione una sola pausa lungo il tragitto','Confermi di voler usufruire della tua pausa ora?', ['No', 'Si']).then((result) => {
       if (!result) return;
       this.isPaued = true
       this.alreadyPaused = true
 
-      this.components.showAlert('In Pausa', 'Sistema in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "OK" al termine della pausa.', environment.MAX_PAUSE_TIMEOUT * 60 * 1000)
+      this.components.showAlert('In Pausa', 'Sistema in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "Riprendi" al termine della pausa.', environment.MAX_PAUSE_TIMEOUT * 60 * 1000, 'Riprendi')
     })
 
   }
-  dummy() {
+  stop() {
 
   }
   SOS() {

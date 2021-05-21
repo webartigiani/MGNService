@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
 
-  APP_TITLE: 'MGN Service',                            // APP Data
+  APP_TITLE: 'MGN Service',                                 // APP Data
   APP_VERSION: '0.0.1',
 
   API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',        // API token
@@ -18,7 +18,7 @@ export const environment = {
   LOCATION_INERVAL: 15,                                     // interval (in seconds)
   MAX_PAUSE_TIMEOUT: .5,                                    // tempo massimo di pausa in minuti
 
-  DEBUG_GPS: true,                                          // true to debug GPS data
+  DEBUG_GPS: false,                                          // true to debug GPS data
   SOS_PHONE_NUMBER: '112',             // SOS Phone Number
 };
 

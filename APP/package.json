@@ -9,7 +9,10 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "serve": "ionic serve",
+    "android": "ionic cordova run android --device --verbose",
+    "serve-and-android": "ionic serve && ionic cordova run android --device --verbose"
   },
   "private": true,
   "dependencies": {

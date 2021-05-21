@@ -61,8 +61,13 @@ export class StartPage {
 
   // #region Component LifeCycle
   ngAfterViewInit() {
-    console.log('ngAfterViewInit')
+    console.log('start', 'ngAfterViewInit')
 
+    // allows screen falling asleep + keeps APP in foreground
+    this.utils.allowScreenFallAsleep()
+    this.utils.keepForeground()
+
+    // starts steps...
     setTimeout(() => {
       this.checkConnection()
     }, this.execDelay * 1000 * 2);

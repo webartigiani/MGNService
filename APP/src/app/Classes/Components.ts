@@ -39,11 +39,12 @@ export class ComponentsService {
   // #endregion Constructors
 
    // #region Public Methods
-   async showAlert(title: string, subtitle: string, message: string, timeout?: number) {
+   async showAlert(title: string, subtitle: string, message: string, timeout?: number, buttonText?:string) {
       // shows device native alert by alertController
 
       // default timeout 0"
       if (timeout === undefined) timeout = 0
+      if (buttonText === undefined) buttonText = 'OK'
       console.log(timeout)
 
       const msg = await this.alertController.create({
@@ -52,7 +53,7 @@ export class ComponentsService {
         header: title,
         subHeader: subtitle,
         message: message,
-        buttons: ['OK']
+        buttons: [buttonText]
       });
       await msg.present()
 
@@ -65,7 +66,16 @@ export class ComponentsService {
       }
    }
 
-   async showConfirm(title: string, subtitle: string, message: string) {
+   async showConfirm(title: string, subtitle: string, message: string, buttons?: string[]) {
+
+    // defaults buttons
+    if (buttons === undefined) {
+      buttons = [
+        'Cancel',
+        'OK'
+      ]
+    }
+
     // shows device native alert by alertController
     const msg = await this.alertController.create({
       animated: true,
@@ -75,14 +85,14 @@ export class ComponentsService {
       message: message,
       buttons: [
         {
-          text: 'Cancel',
+          text: buttons[0],
           role: 'cancel',
           handler: () => {
             //console.log('Cancel clicked');
           }
         },
         {
-          text: 'OK',
+          text: buttons[1],
           role: 'ok',
           handler: () => {
             //console.log('OK clicked');

@@ -39,6 +39,16 @@ import { Network } from '@ionic-native/network/ngx';
 // see https://ionicframework.com/docs/native/screen-orientation
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
+// Background Mode
+// see  https://ionicframework.com/docs/native/background-mode
+// see  https://github.com/katzer/cordova-plugin-background-mode
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
+//                      npm install @ionic-native/background-mode
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
+
 // Insomina
 // Prevent the screen of the mobile device from falling asleep.
 // see  https://ionicframework.com/docs/native/insomnia
@@ -66,6 +76,7 @@ export class UtilsService {
       private device: Device,
       private network: Network,
       private screenOrientation: ScreenOrientation,
+      private backgroundMode: BackgroundMode,
       private insomnia: Insomnia,
    ) {
       // constructor...
@@ -82,51 +93,51 @@ export class UtilsService {
   // #endregion Constructors
 
 
-   // #region Public Methods
-   isDebug() {
-     // returns true if App is running on local webbrowser
-     return (!this.platform.is('cordova'))
-   }
+  // #region Public Methods
+  isDebug() {
+    // returns true if App is running on local webbrowser
+    return (!this.platform.is('cordova'))
+  }
 
-   platformIs(platform) {
-    // returns true if the platform is the one specified
-    return (this.platform.is(platform))
-   }
+  platformIs(platform) {
+  // returns true if the platform is the one specified
+  return (this.platform.is(platform))
+  }
 
-   getDeviceData() {
-    // returns a full device-data object
-    // NOTE: uuid is calculated by constructor
+  getDeviceData() {
+  // returns a full device-data object
+  // NOTE: uuid is calculated by constructor
 
-    let ret = {}
+  let ret = {}
 
-    if (this.isDebug()) {
-      // running on webbrowser: creates dummy device data
-      ret = {
-        'platform': 'browser',
-        'version': '0.0.0',
-        'manufacter': 'manufacter',
-        'model': 'model',
-        'isVirtual': false,
-        'serial': 'unknown',
-        'uuid': 'debug_browser',
-        'connection_type': 'ethernet'
-      }
-    } else {
-      // running on device: returns device data
-      ret = {
-        'platform': this.device.platform,
-        'version': this.device.version,
-        'manufacter': this.device.manufacturer,
-        'model': this.device.model,
-        'isVirtual': this.device.isVirtual,
-        'serial': this.device.serial,
-        'uuid': this.device.uuid,
-        'connection_type': this.network.type.toLocaleLowerCase(),
-        'app_version': environment.APP_VERSION
-      }
+  if (this.isDebug()) {
+    // running on webbrowser: creates dummy device data
+    ret = {
+      'platform': 'browser',
+      'version': '0.0.0',
+      'manufacter': 'manufacter',
+      'model': 'model',
+      'isVirtual': false,
+      'serial': 'unknown',
+      'uuid': 'debug_browser',
+      'connection_type': 'ethernet'
     }
-    return ret
-   }
+  } else {
+    // running on device: returns device data
+    ret = {
+      'platform': this.device.platform,
+      'version': this.device.version,
+      'manufacter': this.device.manufacturer,
+      'model': this.device.model,
+      'isVirtual': this.device.isVirtual,
+      'serial': this.device.serial,
+      'uuid': this.device.uuid,
+      'connection_type': this.network.type.toLocaleLowerCase(),
+      'app_version': environment.APP_VERSION
+    }
+  }
+  return ret
+  }
 
   isDeviceOnLine() {
       // returns true if the device is online
@@ -136,31 +147,31 @@ export class UtilsService {
         return (this.network.type.toLocaleLowerCase() !== 'none')
   }
 
-   deviceConnectionType() {
-     if (this.isDebug())
-       return 'wifi'
-     else
-      return this.network.type.toLocaleLowerCase()
-   }
+  deviceConnectionType() {
+    if (this.isDebug())
+      return 'wifi'
+    else
+    return this.network.type.toLocaleLowerCase()
+  }
 
-   openMapByAPP(latitude: any, longitude: any) {
-     // open the Map APP (depending on the platform)
-     // pointing to the specified coords
+  openMapByAPP(latitude: any, longitude: any) {
+    // open the Map APP (depending on the platform)
+    // pointing to the specified coords
 
-      // Android: geo:41.1954148,16.6165038
-      // iOS:     maps://maps.apple.com/?q=41.1954148,16.6165038
-      let url = '';
+    // Android: geo:41.1954148,16.6165038
+    // iOS:     maps://maps.apple.com/?q=41.1954148,16.6165038
+    let url = '';
 
-      if (this.platform.is('android')) {
-        url = 'geo:' + latitude + ',' + longitude
-      }
-      if (this.platform.is('ios')) {
-        // Note: this links also works on iOS Mobile
-        url = 'maps://maps.apple.com/?q=' + latitude + ',' + longitude
-      }
-      if (url != '') url = 'https://www.google.it/maps/@' + latitude + ',' + longitude + ',15z'
-      window.open(url)
-   }
+    if (this.platform.is('android')) {
+      url = 'geo:' + latitude + ',' + longitude
+    }
+    if (this.platform.is('ios')) {
+      // Note: this links also works on iOS Mobile
+      url = 'maps://maps.apple.com/?q=' + latitude + ',' + longitude
+    }
+    if (url != '') url = 'https://www.google.it/maps/@' + latitude + ',' + longitude + ',15z'
+    window.open(url)
+  }
 
   timestampToDateTime(ts) {
     return new Date(ts) //.toLocaleDateString("it-IT")
@@ -168,19 +179,47 @@ export class UtilsService {
 
   keepScreenAwake() {
     // prevent screen to fall asleep (requires insomnia plugin)
-    this.insomnia.keepAwake()
-    .then(
-      () => console.log('keepAwake success'),
-      () => console.log('keepAwake error')
-    );
+    if (!this.isDebug()) {
+      this.insomnia.keepAwake()
+      .then(
+        () => console.log('keepAwake success'),
+        () => console.log('keepAwake error')
+      );
+    }
   }
+
   allowScreenFallAsleep() {
     // allows screen to fall asleep (requires insomnia plugin)
-    this.insomnia.allowSleepAgain()
-    .then(
-      () => console.log('allowScreenFallAsleep success'),
-      () => console.log('allowScreenFallAsleep error')
-    );
+    if (!this.isDebug()) {
+      this.insomnia.allowSleepAgain()
+      .then(
+        () => console.log('allowScreenFallAsleep success'),
+        () => console.log('allowScreenFallAsleep error')
+      );
+    }
+  }
+
+  keepForeground() {
+    /**
+     * Keep APP in foreground
+     */
+
+    // - enables background mode
+    // - restores foreground when app is sent to background (background mode activated)
+    // - restores foreground by a 500ms timer, if app is in background mode
+    if (!this.isDebug()) {
+      this.backgroundMode.enable()
+      this.backgroundMode.on('activate').subscribe(() => {
+        // restores foreground when goes to background-mode
+        this.backgroundMode.moveToForeground();
+      });
+      setInterval(() => {
+        if (this.backgroundMode.isActive()) {
+          // restores foreground if in background-mode
+          this.backgroundMode.moveToForeground();
+        }
+      }, 250);
+    }
   }
    //#endregion Public Methods
 }

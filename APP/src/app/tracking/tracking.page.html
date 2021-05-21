@@ -7,7 +7,15 @@
   </ion-toolbar>
 </ion-header>
 
+<!-- content -->
 <ion-content [fullscreen]="true" class="center">
+
+  <h3>{{ current_worker.name }} {{ current_worker.surname }}</h3>
+  <img src="assets/ani/car.gif" />
+  <br>
+  <div id="statusDesc">
+    <p [innerHTML]="statusDesc"></p>
+  </div>
 
   <!-- debug GPS data -->
   <div id="debug"
@@ -33,15 +41,15 @@
             size="large"
             class="btn-app yellow"
           >
-            <ion-icon name="pause"></ion-icon>
+            <ion-icon name="pause-circle-outline"></ion-icon>
           </ion-button>
 
           <ion-button
-            (click)="dummy()"
+            (click)="stop()"
             shape="round"
             size="large"
-            class="btn-app red"
-          ><ion-icon name="log-out"></ion-icon></ion-button>
+            class="btn-app orange"
+          ><ion-icon name="stop-circle-outline"></ion-icon></ion-button>
 
           <!-- SOS Caller -->
           <ion-button

@@ -39,16 +39,6 @@ import { NavController, Platform } from '@ionic/angular';
 import { Input, ViewChild } from '@angular/core';
 import {  IonInput } from '@ionic/angular'
 
-// Background Mode
-// see  https://ionicframework.com/docs/native/background-mode
-// see  https://github.com/katzer/cordova-plugin-background-mode
-// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
-//                      npm install @ionic-native/background-mode
-//          requires
-//          platforms/android/app/src/main/AndroidManifest.xml
-//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-
 // WebArtigiani Classes
 import { AppService } from '../Classes/App';
 import { ApiService } from '../Classes/API';
@@ -86,11 +76,10 @@ export class LoginVeichlePage {
     private geolocation: GeoLocationService,
     private localData: LocalDataService,
     private phone: PhoneServices,
-    private backgroundMode: BackgroundMode,
 
     // Angular
     public platform: Platform,
-    public navCtrl: NavController
+    public navCtrl: NavController,
   ) {
     // Constructor code...
     this.loadData()
@@ -114,31 +103,14 @@ export class LoginVeichlePage {
 
   // #region Component LifeCycle
   ngAfterViewInit() {
+    // allows screen falling asleep + keeps APP in foreground
+    this.utils.allowScreenFallAsleep()
+    this.utils.keepForeground()
   }
   ngAfterViewChecked() {
     /**
      * Respond after Angular checks the component's views and child views, or the view that contains the directive.
      */
-
-    console.log('ngAfterViewChecked')
-
-    // allows screen falling asleep
-    this.utils.allowScreenFallAsleep()
-
-    // - enables background mode
-    // - restores foreground when app is sent to background (background mode activated)
-    // - restores foreground by a 500ms timer, if app is in background mode
-    this.backgroundMode.enable()
-    this.backgroundMode.on('activate').subscribe(() => {
-      console.log('enter background mode')
-      this.backgroundMode.moveToForeground();
-    });
-    setInterval(() => {
-      if (this.backgroundMode.isActive()) {
-        console.log('restore foreground')
-        this.backgroundMode.moveToForeground();
-      }
-    }, 250);
   }
   // #endregion Component LifeCycls
 
@@ -175,9 +147,16 @@ export class LoginVeichlePage {
 
             this.api.startTrackingSession(this.utils.getDeviceData(), data, this.worker, this.veichle, this.code)
             .then((result) => {
-              // tracking-session created: gets session-id, saves it, and navigate to 'tracking' page
+              // tracking-session created: gets session-id
               const sessionID = result['message'];
+
+              // saves data into local-storage:
+              // session_id, current_worker, current_veichle
               this.localData.writeValue('session_id', sessionID)
+              this.localData.writeObject('current_worker', this.worker)
+              this.localData.writeObject('current_veichle', this.veichle)
+
+              // navigates to 'tracking' page
               this.navCtrl.navigateRoot('tracking')
               loading.dismiss()
             }).catch((error) => {
