@@ -110,6 +110,22 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.plugins.insomnia"
       ]
+    },
+    {
+      "id": "cordova-plugin-appversion.RareloopAppVersion",
+      "file": "plugins/cordova-plugin-appversion/www/app-version.js",
+      "pluginId": "cordova-plugin-appversion",
+      "clobbers": [
+        "AppVersion"
+      ]
+    },
+    {
+      "id": "cordova-plugin-app-update.AppUpdate",
+      "file": "plugins/cordova-plugin-app-update/www/AppUpdate.js",
+      "pluginId": "cordova-plugin-app-update",
+      "clobbers": [
+        "AppUpdate"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -127,6 +143,8 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-whitelist": "1.3.3",
     "mx.ferreyra.callnumber": "0.0.2",
     "cordova-plugin-background-mode": "0.7.3",
-    "cordova-plugin-insomnia": "4.3.0"
+    "cordova-plugin-insomnia": "4.3.0",
+    "cordova-plugin-appversion": "1.0.0",
+    "cordova-plugin-app-update": "2.0.2"
   };
 });

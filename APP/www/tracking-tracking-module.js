@@ -93,6 +93,14 @@ let TrackingPage = class TrackingPage {
         this.platform = platform;
         this.navCtrl = navCtrl;
         // #region Variables
+        this.current_worker = this.localData.readObject('current_worker', {}); // current worker and veichle
+        this.current_veichle = this.localData.readObject('current_veichle', {});
+        this.statusDesc = 'continua verso la tua destinazione...';
+        this.instructions = [
+            'raggiunta la tua destinazione, clicca "Stop"',
+            'per fermarti lungo il tragitto, clicca "Pausa',
+            'per emergenze, clicca "SOS"'
+        ];
         this.counter = 0; // contatore tracciamenti
         this.sessionID = '';
         this.gpsData = {};
@@ -104,8 +112,10 @@ let TrackingPage = class TrackingPage {
     // #endregion Constructor
     // #region Component LifeCycle
     ngAfterViewInit() {
-        // keep screen awake
+        // keep screen awake + keeps APP in foreground
         this.utils.keepScreenAwake();
+        this.utils.keepForeground();
+        // 1st geo-location, then geo-locate by interval
         this.geoLocate();
         setInterval(() => {
             this.geoLocate();
@@ -114,22 +124,52 @@ let TrackingPage = class TrackingPage {
     // #endregion Component LifeCycls
     // #region Public Methods
     pause() {
-        // do a pause
+        /**
+         * Do a Pause
+         */
         if (this.alreadyPaused) {
             // pause already used
-            this.components.showAlert('Pausa', 'Pausa non disponibile', 'Hai già usufruito di una pausa lungo il tragitto.');
+            this.components.showAlert('Pausa', 'Pausa non disponibile', 'Hai già usufruito di una pausa lungo il tragitto.', 0, 'Ho capito');
             return;
         }
         // ask for confirmation
-        this.components.showConfirm('Pausa', 'Hai a disposizione una sola pausa lungo il tragitto', 'Confermi di voler usufruire della pausa ora?').then((result) => {
+        this.components.showConfirm('Pausa', 'Hai a disposizione una sola pausa lungo il tragitto', 'Confermi di voler usufruire della tua pausa ora?', ['No', 'Si']).then((result) => {
             if (!result)
                 return;
             this.isPaued = true;
-            this.alreadyPaused = true;
-            this.components.showAlert('In Pausa', 'Sistema in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "OK" al termine della pausa.', src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].MAX_PAUSE_TIMEOUT * 60 * 1000);
+            this.alreadyPaused = true; // sets pause already used
+            this.components.showAlert('In Pausa', 'Tragitto in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "Riprendi" al termine della pausa.', src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].MAX_PAUSE_TIMEOUT * 60 * 1000, 'Riprendi').then((result) => {
+                this.isPaued = false;
+            });
         });
     }
-    dummy() {
+    stop() {
+        /**
+         * Stops Geo-Locate
+         */
+        this.components.showConfirm('Conferma', 'Hai raggiunto la destinazione?', 'Confermi di volere interrompere il tragitto?', ['No', 'Si']).then((result) => {
+            if (result) {
+                // shows loader then calls API to login
+                this.components.getLoader('Attendi...').then((loading) => {
+                    loading.present();
+                    this.api.stopTracking(this.sessionID).then((result) => {
+                        // stopTracking OK
+                        this.localData.delete('session_id');
+                        this.localData.delete('current_worker');
+                        this.localData.delete('current_veichle');
+                        loading.dismiss();
+                        this.navCtrl.navigateRoot('login-veichle');
+                    }).catch((error) => {
+                        // API Error
+                        console.error(error);
+                        loading.dismiss();
+                    });
+                });
+            }
+            else {
+                // Do not stop!
+            }
+        });
     }
     SOS() {
         /**
@@ -145,16 +185,19 @@ let TrackingPage = class TrackingPage {
          * Geo-locate the device
          */
         this.geolocation.locate().then((data) => {
-            // Geo-location OK
+            /**
+             * Geo-location OK
+             * we call continueTracking API
+             */
             if (data.valid) {
                 this.gpsData = data;
                 this.counter++;
             }
-            console.log('Geo-location result', data);
-            this.api.continueTracking(this.sessionID, data)
+            console.log('isPaused', this.isPaued);
+            const navigationStatus = this.isPaued ? 'pause' : 'running'; // status paused/running
+            this.api.continueTracking(this.sessionID, data, navigationStatus)
                 .then((result) => {
-                // tracking-data saved
-                console.log('Geo-location API result', result);
+                // continueTracking OK
             }).catch((error) => {
                 // API Error
                 console.error(error);
@@ -197,7 +240,7 @@ TrackingPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("div#debug {\n  position: absolute;\n  width: 100%;\n  height: 80px;\n  bottom: 80px;\n  background-color: orange;\n  color: blue;\n  font-size: 0.75em;\n  font-style: italic;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3RyYWNraW5nLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGtCQUFBO0VBQ0EsV0FBQTtFQUNBLFlBQUE7RUFDQSxZQUFBO0VBQ0Esd0JBQUE7RUFDQSxXQUFBO0VBQ0EsaUJBQUE7RUFDQSxrQkFBQTtBQUNGIiwiZmlsZSI6InRyYWNraW5nLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImRpdiNkZWJ1ZyB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgd2lkdGg6MTAwJTtcbiAgaGVpZ2h0OjgwcHg7XG4gIGJvdHRvbTo4MHB4O1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBvcmFuZ2U7XG4gIGNvbG9yOmJsdWU7XG4gIGZvbnQtc2l6ZTogLjc1ZW07XG4gIGZvbnQtc3R5bGU6IGl0YWxpYztcbn1cbiJdfQ== */");
+/* harmony default export */ __webpack_exports__["default"] = ("div#debug {\n  position: absolute;\n  width: 100%;\n  height: 80px;\n  bottom: 80px;\n  background-color: orange;\n  color: blue;\n  font-size: 0.75em;\n  font-style: italic;\n}\n\nul.instructions li {\n  text-align: left;\n  font-size: 0.75em;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3RyYWNraW5nLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGtCQUFBO0VBQ0EsV0FBQTtFQUNBLFlBQUE7RUFDQSxZQUFBO0VBQ0Esd0JBQUE7RUFDQSxXQUFBO0VBQ0EsaUJBQUE7RUFDQSxrQkFBQTtBQUNGOztBQUVBO0VBQ0UsZ0JBQUE7RUFDQSxpQkFBQTtBQUNGIiwiZmlsZSI6InRyYWNraW5nLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImRpdiNkZWJ1ZyB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgd2lkdGg6MTAwJTtcbiAgaGVpZ2h0OjgwcHg7XG4gIGJvdHRvbTo4MHB4O1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBvcmFuZ2U7XG4gIGNvbG9yOmJsdWU7XG4gIGZvbnQtc2l6ZTogLjc1ZW07XG4gIGZvbnQtc3R5bGU6IGl0YWxpYztcbn1cblxudWwuaW5zdHJ1Y3Rpb25zIGxpIHtcbiAgdGV4dC1hbGlnbjogbGVmdDtcbiAgZm9udC1zaXplOiAuNzVlbTtcbn1cbiJdfQ== */");
 
 /***/ }),
 
@@ -252,7 +295,7 @@ TrackingPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\" class=\"center\">\n\n  <!-- debug GPS data -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    {{ gpsData.accuracy }}<br>\n    {{ gpsData.timestamp }}<br>\n    {{ counter }}\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n          <!-- pause button -->\n          <ion-button\n            (click)=\"pause()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app yellow\"\n          >\n            <ion-icon name=\"pause\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"dummy()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"log-out\"></ion-icon></ion-button>\n\n          <!-- SOS Caller -->\n          <ion-button\n            (click)=\"SOS()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<!-- content -->\n<ion-content [fullscreen]=\"true\" class=\"center\">\n  {{ isPaued }}\n  <h3>{{ current_worker.name }} {{ current_worker.surname }}</h3>\n  <img src=\"assets/ani/car.gif\" />\n  <br>\n  <div id=\"statusDesc\">\n    <p [innerHTML]=\"statusDesc\"></p>\n  </div>\n  <ul class=\"instructions\">\n    <li *ngFor=\"let sInstr of this.instructions\" [value]=\"sInstr\">{{ sInstr }}</li>\n  </ul>\n\n  <!-- SOS Caller -->\n  <ion-button\n    (click)=\"SOS()\"\n    shape=\"round\"\n    size=\"large\"\n    class=\"btn-app red\"\n  ><ion-icon name=\"call-outline\"></ion-icon>SOS</ion-button>\n\n\n  <!-- debug GPS data (if DEBUG_GPS==true) -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    {{ gpsData.accuracy }}<br>\n    {{ gpsData.timestamp }}<br>\n    {{ counter }}\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n          <!-- pause button -->\n          <ion-button\n            (click)=\"pause()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app orange\"\n          >\n            <ion-icon name=\"pause-circle-outline\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"stop()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"stop-circle-outline\"></ion-icon></ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ })
 

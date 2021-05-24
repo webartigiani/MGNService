@@ -60,12 +60,20 @@ export class StartPage {
   // #endregion Constructor
 
   // #region Component LifeCycle
+  ngOnInit() {
+    /*
+    Initialize the directive or component
+    after Angular first displays the data-bound properties and sets the directive or component's input properties.
+    Called once
+    */
+    this.app.checkUpdates()
+  }
   ngAfterViewInit() {
     console.log('start', 'ngAfterViewInit')
 
-    // allows screen falling asleep + keeps APP in foreground
+    // allows screen falling asleep (NOTE: here, we DO NOT keep APP in foreground)
     this.utils.allowScreenFallAsleep()
-    this.utils.keepForeground()
+    //this.utils.keepForeground()
 
     // starts steps...
     setTimeout(() => {

@@ -9,7 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<!--\n/*\n * login-veichle/login-veichle.page\n * login page\n * roue: login-veichle\n *\n * NOTES:\n *  User has to\n *  - select its operator name\n *  - select the veichles he's using\n *  - type his \"password_timbratura\"\n *  - then tap the \"Avvia\" button\n *\n *  the \"Avvia\" button do:\n *  step 1: checks internet connection\n *  step 2: try to ping the MGN server API\n *  step 3: checks geo-location service\n *\n *  each step is shown into a loader \"Attendi...\"\n *\n *  step 4: if everything's ok:\n *  - calls the \"startTrackingSession\" MGN API to start a brend new tracking-session (for the user, with the selected veichles)\n *  - stores the new session_id into localStorage\n *  - navigate to \"tracking\"\n *\n *  step 4: if something goes wrong:\n *  - APP reloads workers and veichles list via MGN API\n *\n *  IMPORTANT:\n *  - backgroundMode is disabled on this view:\n *  - APP can't be set in background\n *  - APP is restored when paused in max 0.25\"\n *  - backButton is overrided\n *  - screen sleep is allowed\n */\n-->\n<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content [fullscreen]=\"true\">\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"true\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"worker\"\n          >\n          <ion-select-option *ngFor=\"let item of this.workers\" [value]=\"item\">{{ item.name }} {{ item.surname }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let item of this.veichles\" [value]=\"item\">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Codice</ion-label>     <!-- codice timbrata -->\n        <ion-input\n        [(ngModel)]=\"code\"\n        placeholder=\"Codice timbrata\"\n        #codeID\n        ></ion-input>\n      </ion-item>\n    </ion-list>\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            (click)=\"start()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app\"\n          >Avvia</ion-button>\n\n          <!-- SOS Caller -->\n          <ion-button\n            (click)=\"SOS()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          >SOS</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<!--\n/*\n * login-veichle/login-veichle.page\n * login page\n * roue: login-veichle\n *\n * NOTES:\n *  User has to\n *  - select its operator name\n *  - select the veichles he's using\n *  - type his \"password_timbratura\"\n *  - then tap the \"Avvia\" button\n *\n *  the \"Avvia\" button do:\n *  step 1: checks internet connection\n *  step 2: try to ping the MGN server API\n *  step 3: checks geo-location service\n *\n *  each step is shown into a loader \"Attendi...\"\n *\n *  step 4: if everything's ok:\n *  - calls the \"startTrackingSession\" MGN API to start a brend new tracking-session (for the user, with the selected veichles)\n *  - stores the new session_id into localStorage\n *  - navigate to \"tracking\"\n *\n *  step 4: if something goes wrong:\n *  - APP reloads workers and veichles list via MGN API\n *\n *  IMPORTANT:\n *  - backgroundMode is disabled on this view:\n *  - APP can't be set in background\n *  - APP is restored when paused in max 0.25\"\n *  - backButton is overrided\n *  - screen sleep is allowed\n */\n-->\n<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<!-- content -->\n<ion-content [fullscreen]=\"true\">\n  <!-- form iniziale -->\n  <div id=\"startingForm\"\n    *ngIf=\"true\"\n    >\n    <ion-list>\n      <ion-item>\n        <ion-label>Operatore</ion-label>  <!-- selezione operatore -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"worker\"\n          >\n          <ion-select-option *ngFor=\"let item of this.workers\" [value]=\"item\">{{ item.name }} {{ item.surname }}</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Veicolo</ion-label>    <!-- selezione veicolo -->\n        <ion-select value=\"\"\n          interface=\"action-sheet\"\n          cancel-text=\"Annulla\"\n          [(ngModel)]=\"veichle\"\n          >\n          <ion-select-option *ngFor=\"let item of this.veichles\" [value]=\"item\">{{ item.manufacter }} {{ item.model }} ({{ item.licence_plate }})</ion-select-option>\n        </ion-select>\n      </ion-item>\n      <ion-item>\n        <ion-label>Codice</ion-label>     <!-- codice timbrata -->\n        <ion-input\n        [(ngModel)]=\"code\"\n        placeholder=\"Codice timbrata\"\n        #codeID\n        ></ion-input>\n      </ion-item>\n    </ion-list>\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n\n          <!-- start button -->\n          <ion-button\n            (click)=\"start()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app\"\n            ><ion-icon name=\"navigate-outline\"></ion-icon>Avvia</ion-button>\n\n          <!-- SOS Caller -->\n          <ion-button\n            (click)=\"SOS()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"call-outline\"></ion-icon>SOS</ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ }),
 
@@ -66,14 +66,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/environments/environment */ "AytR");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-/* harmony import */ var _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/background-mode/ngx */ "1xeP");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
-/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../Classes/Phone */ "JgwU");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Classes/Phone */ "JgwU");
 
 
 
@@ -115,15 +114,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// Background Mode
-// see  https://ionicframework.com/docs/native/background-mode
-// see  https://github.com/katzer/cordova-plugin-background-mode
-// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
-//                      npm install @ionic-native/background-mode
-//          requires
-//          platforms/android/app/src/main/AndroidManifest.xml
-//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
 // WebArtigiani Classes
 
 
@@ -137,7 +127,7 @@ let LoginVeichlePage = class LoginVeichlePage {
     // #region Constructor
     constructor(
     // WebArtigiani
-    app, api, utils, components, geolocation, localData, phone, backgroundMode, 
+    app, api, utils, components, geolocation, localData, phone, 
     // Angular
     platform, navCtrl) {
         this.app = app;
@@ -147,7 +137,6 @@ let LoginVeichlePage = class LoginVeichlePage {
         this.geolocation = geolocation;
         this.localData = localData;
         this.phone = phone;
-        this.backgroundMode = backgroundMode;
         this.platform = platform;
         this.navCtrl = navCtrl;
         // #region Variables
@@ -176,26 +165,9 @@ let LoginVeichlePage = class LoginVeichlePage {
     // #endregion Constructor
     // #region Component LifeCycle
     ngAfterViewInit() {
-        console.log('ngAfterViewInit');
-        console.log('this.utils.isDebug()', this.utils.isDebug());
-        // allows screen falling asleep
+        // allows screen falling asleep + keeps APP in foreground
         this.utils.allowScreenFallAsleep();
-        // - enables background mode
-        // - restores foreground when app is sent to background (background mode activated)
-        // - restores foreground by a 500ms timer, if app is in background mode
-        if (!this.utils.isDebug()) {
-            this.backgroundMode.enable();
-            this.backgroundMode.on('activate').subscribe(() => {
-                console.log('enter background mode');
-                this.backgroundMode.moveToForeground();
-            });
-            setInterval(() => {
-                if (this.backgroundMode.isActive()) {
-                    console.log('restore foreground');
-                    this.backgroundMode.moveToForeground();
-                }
-            }, 250);
-        }
+        //this.utils.keepForeground()
     }
     ngAfterViewChecked() {
         /**
@@ -231,9 +203,14 @@ let LoginVeichlePage = class LoginVeichlePage {
                     this.geolocation.locate().then((data) => {
                         this.api.startTrackingSession(this.utils.getDeviceData(), data, this.worker, this.veichle, this.code)
                             .then((result) => {
-                            // tracking-session created: gets session-id, saves it, and navigate to 'tracking' page
+                            // tracking-session created: gets session-id
                             const sessionID = result['message'];
+                            // saves data into local-storage:
+                            // session_id, current_worker, current_veichle
                             this.localData.writeValue('session_id', sessionID);
+                            this.localData.writeObject('current_worker', this.worker);
+                            this.localData.writeObject('current_veichle', this.veichle);
+                            // navigates to 'tracking' page
                             this.navCtrl.navigateRoot('tracking');
                             loading.dismiss();
                         }).catch((error) => {
@@ -290,14 +267,13 @@ let LoginVeichlePage = class LoginVeichlePage {
     }
 };
 LoginVeichlePage.ctorParameters = () => [
-    { type: _Classes_App__WEBPACK_IMPORTED_MODULE_7__["AppService"] },
-    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_8__["ApiService"] },
-    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_9__["UtilsService"] },
-    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_10__["ComponentsService"] },
-    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_11__["GeoLocationService"] },
-    { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_12__["LocalDataService"] },
-    { type: _Classes_Phone__WEBPACK_IMPORTED_MODULE_13__["PhoneServices"] },
-    { type: _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_6__["BackgroundMode"] },
+    { type: _Classes_App__WEBPACK_IMPORTED_MODULE_6__["AppService"] },
+    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_7__["ApiService"] },
+    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_8__["UtilsService"] },
+    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_9__["ComponentsService"] },
+    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_10__["GeoLocationService"] },
+    { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_11__["LocalDataService"] },
+    { type: _Classes_Phone__WEBPACK_IMPORTED_MODULE_12__["PhoneServices"] },
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["Platform"] },
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["NavController"] }
 ];

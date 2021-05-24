@@ -11,12 +11,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\TrackingSessionController;
 use App\Http\Controllers\UtilsController;
+use Illuminate\Routing\UrlGenerator;
 use DB;
 
 class ApiController extends Controller
 {
     private $utils;
     private $TSC;
+    protected $url;
 
 // #region Contructor
     /**
@@ -24,12 +26,31 @@ class ApiController extends Controller
      *
      * @return void
      */
-    public function __construct(TrackingSessionController $tsc, UtilsController $utils)
+    public function __construct(TrackingSessionController $tsc, UtilsController $utils, UrlGenerator $url)
     {
         $this->TSC = $tsc;
         $this->utils = $utils;
+        $this->url = $url;
     }
 // #endregion Contructor
+
+// #region App Update
+public function autoUpdate(Request $request) {
+    /**
+     * autoUpdate
+     * GET  app/update/
+     * returns XML for AppUpdate APP plugin
+     */
+    $appName =      env('APP_NAME');
+    $appVersion =   env('APP_VERSION');
+    $appUrl =       $this->url->to('/downloads/' . env('APP_URI')); ?>
+<update>
+<version><?= $appVersion ?></version>
+<name><?= $appName ?></name>
+<url><?= $appUrl ?></url>
+</update><?php
+}
+// #endregion App Update
 
 // #region Utils
     public function ping() {

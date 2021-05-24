@@ -127,7 +127,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
 /* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
 /* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
-/* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
+/* harmony import */ var _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/background-mode/ngx */ "1xeP");
+/* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
 /*
   UtilsService Class
   interacts with http://gestionale.mgnservice.it/ APIs
@@ -164,6 +165,15 @@ __webpack_require__.r(__webpack_exports__);
 // ScreenOrientation
 // see https://ionicframework.com/docs/native/screen-orientation
 
+// Background Mode
+// see  https://ionicframework.com/docs/native/background-mode
+// see  https://github.com/katzer/cordova-plugin-background-mode
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
+//                      npm install @ionic-native/background-mode
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
 // Insomina
 // Prevent the screen of the mobile device from falling asleep.
 // see  https://ionicframework.com/docs/native/insomnia
@@ -181,12 +191,13 @@ let UtilsService = class UtilsService {
     // #region Variables
     // #endregion Variables
     // #region Constructors
-    constructor(platform, device, network, screenOrientation, insomnia) {
+    constructor(platform, device, network, screenOrientation, backgroundMode, insomnia) {
         // constructor...
         this.platform = platform;
         this.device = device;
         this.network = network;
         this.screenOrientation = screenOrientation;
+        this.backgroundMode = backgroundMode;
         this.insomnia = insomnia;
         // Lock screen orientation and listen for screen-orientation changes
         /*this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY)
@@ -216,8 +227,8 @@ let UtilsService = class UtilsService {
             ret = {
                 'platform': 'browser',
                 'version': '0.0.0',
-                'manufacter': 'manufacter',
-                'model': 'model',
+                'manufacter': 'DEMO',
+                'model': 'DEMO',
                 'isVirtual': false,
                 'serial': 'unknown',
                 'uuid': 'debug_browser',
@@ -277,14 +288,43 @@ let UtilsService = class UtilsService {
         // prevent screen to fall asleep (requires insomnia plugin)
         if (!this.isDebug()) {
             this.insomnia.keepAwake()
-                .then(() => console.log('keepAwake success'), () => console.log('keepAwake error'));
+                .then(() => {
+                // onSuccess
+            }, () => {
+                // onError
+            });
         }
     }
     allowScreenFallAsleep() {
         // allows screen to fall asleep (requires insomnia plugin)
         if (!this.isDebug()) {
             this.insomnia.allowSleepAgain()
-                .then(() => console.log('allowScreenFallAsleep success'), () => console.log('allowScreenFallAsleep error'));
+                .then(() => {
+                // onSuccess
+            }, () => {
+                // onError
+            });
+        }
+    }
+    keepForeground() {
+        /**
+         * Keep APP in foreground
+         */
+        // - enables background mode
+        // - restores foreground when app is sent to background (background mode activated)
+        // - restores foreground by a 500ms timer, if app is in background mode
+        if (!this.isDebug()) {
+            this.backgroundMode.enable();
+            this.backgroundMode.on('activate').subscribe(() => {
+                // restores foreground when goes to background-mode
+                this.backgroundMode.moveToForeground();
+            });
+            setInterval(() => {
+                if (this.backgroundMode.isActive()) {
+                    // restores foreground if in background-mode
+                    this.backgroundMode.moveToForeground();
+                }
+            }, 250);
         }
     }
 };
@@ -293,7 +333,8 @@ UtilsService.ctorParameters = () => [
     { type: _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_4__["Device"] },
     { type: _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_5__["Network"] },
     { type: _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_6__["ScreenOrientation"] },
-    { type: _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_7__["Insomnia"] }
+    { type: _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_7__["BackgroundMode"] },
+    { type: _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_8__["Insomnia"] }
 ];
 UtilsService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
@@ -320,6 +361,8 @@ const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
     APP_VERSION: '0.0.1',
+    WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
+    WEB_SITE: 'http://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
     API_LOGGER_ENABLED: false,
     API_USE_LOCAL: true,
@@ -328,7 +371,7 @@ const environment = {
     LOCATION_TIMEOUT: 10,
     LOCATION_INERVAL: 15,
     MAX_PAUSE_TIMEOUT: .5,
-    DEBUG_GPS: true,
+    DEBUG_GPS: false,
     SOS_PHONE_NUMBER: '112',
 };
 /*
@@ -356,6 +399,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/environments/environment */ "AytR");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
+/* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
 /*
   AppService Class
   implements various components, such as loading, alert
@@ -379,11 +426,51 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+// WebArtigiani Classes
+
+
+// App Update
+// does self-update for android
+// The plugin will compare the app version and update it automatically if the API has a newer version to install.
+// see      https://ionicframework.com/docs/v3/native/app-update/
+// see      https://www.npmjs.com/package/cordova-plugin-app-update
+// sample   https://www.freakyjolly.com/ionic-4-in-app-version-check-and-updater-dialog-using-app-update-native-plugin/#Host_XML_file_to_a_server
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-app-update
+//                      npm install --save @ionic-native/app-update@latest
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+//
+/*          requires
+            a web url that returns an XML by
+            # APP_NAME              same name as config.xml
+            # APP_VERSION           version number without dots (eg. 5.2.1 => 50201)
+            # APP_URI               the APK filename located into public/downloads (its url will be website/downloads/<APP_URI>)
+
+            <update>
+              <version>50201</version>      <!-- version 5.2.1  -->
+              <name>MyApp</name>
+              <url>http://gestionale.mgnservice.it/downloads/app.apk</url>
+            </update>
+
+            where APP Config.xml is
+            <widget id="..." version="5.2.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+              <name>MyApp</name>
+            ...
+*/
+
 let AppService = class AppService {
     // #region Variables
     // #endregion Variables
     // #region Constructors
-    constructor() {
+    constructor(
+    // WebArtigiani
+    utils, api, platform, appUpdate) {
+        this.utils = utils;
+        this.api = api;
+        this.platform = platform;
+        this.appUpdate = appUpdate;
         // constructor...
     }
     // #endregion Constructors
@@ -397,8 +484,46 @@ let AppService = class AppService {
     debugGPS() {
         return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].DEBUG_GPS;
     }
+    checkUpdates() {
+        // we do not update in debug (browser)
+        if (this.utils.isDebug())
+            return;
+        const updateUrl = this.updateUrl();
+        this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
+            /**
+             * Returns
+             *
+              {"code": 202, "msg": "success, up to date."}          // when APP is updated
+              {code: 201, msg: "success, need date."}               // when Update is needed
+             */
+            console.log('checkUpdates', result);
+        }).catch((error) => {
+            console.error('checkUpdates errore', error);
+        });
+    }
+    updateUrl() {
+        // returns the App Update Url
+        let ret = '';
+        if (this.platform.is('cordova')) {
+            // running on device
+            ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].WEB_SITE;
+        }
+        else {
+            // running on localhost or public domain, depending on API_USE_LOCAL
+            if (src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].WEB_SITE)
+                ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].WEB_SITE_LOCAL;
+            else
+                ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].WEB_SITE;
+        }
+        return ret += 'app/update/';
+    }
 };
-AppService.ctorParameters = () => [];
+AppService.ctorParameters = () => [
+    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_4__["UtilsService"] },
+    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_5__["ApiService"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"] },
+    { type: _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__["AppUpdate"] }
+];
 AppService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
 ], AppService);
@@ -563,20 +688,21 @@ let ComponentsService = class ComponentsService {
     }
     // #endregion Constructors
     // #region Public Methods
-    showAlert(title, subtitle, message, timeout) {
+    showAlert(title, subtitle, message, timeout, buttonText) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             // shows device native alert by alertController
             // default timeout 0"
             if (timeout === undefined)
                 timeout = 0;
-            console.log(timeout);
+            if (buttonText === undefined)
+                buttonText = 'OK';
             const msg = yield this.alertController.create({
                 animated: true,
                 backdropDismiss: false,
                 header: title,
                 subHeader: subtitle,
                 message: message,
-                buttons: ['OK']
+                buttons: [buttonText]
             });
             yield msg.present();
             // sets timeout
@@ -586,10 +712,23 @@ let ComponentsService = class ComponentsService {
                     console.log('timeout scaduto');
                 }, timeout);
             }
+            yield msg.present();
+            return new Promise((resolve, reject) => {
+                msg.onDidDismiss().then((result) => {
+                    resolve(true);
+                });
+            });
         });
     }
-    showConfirm(title, subtitle, message) {
+    showConfirm(title, subtitle, message, buttons) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            // defaults buttons
+            if (buttons === undefined) {
+                buttons = [
+                    'Cancel',
+                    'OK'
+                ];
+            }
             // shows device native alert by alertController
             const msg = yield this.alertController.create({
                 animated: true,
@@ -599,14 +738,14 @@ let ComponentsService = class ComponentsService {
                 message: message,
                 buttons: [
                     {
-                        text: 'Cancel',
+                        text: buttons[0],
                         role: 'cancel',
                         handler: () => {
                             //console.log('Cancel clicked');
                         }
                     },
                     {
-                        text: 'OK',
+                        text: buttons[1],
                         role: 'ok',
                         handler: () => {
                             //console.log('OK clicked');
@@ -794,6 +933,7 @@ let ApiService = class ApiService {
                 "longitude": gpsData.longitude,
                 "accuracy": gpsData.accuracy,
             };
+            console.log('payload', payload);
             return new Promise((resolve, reject) => {
                 this.post('/devices/add/', payload).then((result) => {
                     resolve(result.data);
@@ -855,7 +995,7 @@ let ApiService = class ApiService {
             });
         });
     }
-    continueTracking(sessionID, gpsData) {
+    continueTracking(sessionID, gpsData, navigationStatus) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             /**
              * Continue Tracking
@@ -872,10 +1012,32 @@ let ApiService = class ApiService {
              */
             const payload = {
                 "gps": gpsData,
+                "session_id": sessionID,
+                "navigation_status": navigationStatus
+            };
+            console.log(payload);
+            return new Promise((resolve, reject) => {
+                this.post('/workers/continueTracking/', payload).then((result) => {
+                    resolve(result);
+                }).catch((error) => {
+                    reject(error);
+                });
+            });
+        });
+    }
+    stopTracking(sessionID) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            /**
+             * Stop Tracking
+              {
+                  "session_id": "20210518140719-1-1-2"
+              }
+             */
+            const payload = {
                 "session_id": sessionID
             };
             return new Promise((resolve, reject) => {
-                this.post('/workers/continueTracking/', payload).then((result) => {
+                this.post('/workers/stopTrackingSession/', payload).then((result) => {
                     resolve(result);
                 }).catch((error) => {
                     reject(error);
@@ -1014,13 +1176,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/call-number/ngx */ "Wwn5");
 /* harmony import */ var _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ionic-native/background-mode/ngx */ "1xeP");
 /* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
-/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
+/* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
 
 /*
 app.module.ts
@@ -1064,6 +1227,36 @@ src/app.module.ts
 // NOTES:   requires    ionic cordova plugin add cordova-plugin-insomnia
 //                      npm install @ionic-native/insomnia
 
+// App Update
+// does self-update for android
+// The plugin will compare the app version and update it automatically if the API has a newer version to install.
+// see      https://ionicframework.com/docs/v3/native/app-update/
+// see      https://www.npmjs.com/package/cordova-plugin-app-update
+// sample   https://www.freakyjolly.com/ionic-4-in-app-version-check-and-updater-dialog-using-app-update-native-plugin/#Host_XML_file_to_a_server
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-app-update
+//                      npm install --save @ionic-native/app-update@latest
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+//
+/*          requires
+            a web url that returns an XML by
+            # APP_NAME              same name as config.xml
+            # APP_VERSION           version number without dots (eg. 5.2.1 => 50201)
+            # APP_URI               the APK filename located into public/downloads (its url will be website/downloads/<APP_URI>)
+
+            <update>
+              <version>50201</version>      <!-- version 5.2.1  -->
+              <name>MyApp</name>
+              <url>http://gestionale.mgnservice.it/downloads/app.apk</url>
+            </update>
+
+            where APP Config.xml is
+            <widget id="..." version="5.2.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+              <name>MyApp</name>
+            ...
+*/
+
 // WebArtigiani Classes
 
 
@@ -1106,14 +1299,15 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__["CallNumber"],
             _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_14__["BackgroundMode"],
             _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_15__["Insomnia"],
+            _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_16__["AppUpdate"],
             // WebArtigiani
-            _Classes_App__WEBPACK_IMPORTED_MODULE_16__["AppService"],
-            _Classes_API__WEBPACK_IMPORTED_MODULE_17__["ApiService"],
-            _Classes_Utils__WEBPACK_IMPORTED_MODULE_18__["UtilsService"],
-            _Classes_Components__WEBPACK_IMPORTED_MODULE_19__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_20__["GeoLocationService"],
-            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_21__["LocalDataService"],
-            _Classes_Phone__WEBPACK_IMPORTED_MODULE_22__["PhoneServices"],
+            _Classes_App__WEBPACK_IMPORTED_MODULE_17__["AppService"],
+            _Classes_API__WEBPACK_IMPORTED_MODULE_18__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_19__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_20__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_21__["GeoLocationService"],
+            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_22__["LocalDataService"],
+            _Classes_Phone__WEBPACK_IMPORTED_MODULE_23__["PhoneServices"],
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })
@@ -1527,10 +1721,6 @@ const routes = [
         path: '',
         redirectTo: 'start',
         pathMatch: 'full'
-    },
-    {
-        path: 'home',
-        loadChildren: () => __webpack_require__.e(/*! import() | home-home-module */ "home-home-module").then(__webpack_require__.bind(null, /*! ./home/home.module */ "ct+p")).then(m => m.HomePageModule)
     },
     {
         path: 'start',

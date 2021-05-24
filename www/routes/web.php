@@ -15,9 +15,7 @@ use App\Http\Controllers\Api\APP\ApiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', function () { return view('welcome'); });
 
 /**
  * IonicAPP API
@@ -28,6 +26,7 @@ Route::group([
     'middleware' => ['api', 'cors'],
     'namespace' => 'App\\Http\\Controllers\\API\\APP'
 ], function ($router) {
+    Route::get('app/update/', 'ApiController@autoUpdate');
     Route::get('api/app/ping/', 'ApiController@ping');
     Route::get('api/app/workers/list/', 'ApiController@listWorkers');
     Route::get('api/app/veichles/list/', 'ApiController@listVeichles');
@@ -36,15 +35,6 @@ Route::group([
     Route::post('api/app/workers/continueTracking', 'ApiController@continueTracking');
     Route::post('api/app/workers/stopTrackingSession', 'ApiController@stopTrackingSession');
 });
-/*
-Route::namespace('App\\Http\\Controllers\\API\\APP')->group(function () {
-    Route::get('api/app/ping/', 'ApiController@ping');
-    Route::get('api/app/workers/list/', 'ApiController@listWorkers');
-    Route::get('api/app/veichles/list/', 'ApiController@listVeichles');
-    Route::post('api/app/devices/add/', 'ApiController@registerDevice');
-});
-*/
-
 
 Auth::routes(['verify' => true]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

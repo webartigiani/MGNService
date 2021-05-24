@@ -1250,6 +1250,10 @@ ion-title img {
   --background:red;
   --background-activated:red;
 }
+.btn-app.orange {
+  --background:orange;
+  --background-activated:orange;
+}
 /* Generic classes */
 .center {
   text-align: center;

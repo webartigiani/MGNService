@@ -100,43 +100,43 @@ export class UtilsService {
   }
 
   platformIs(platform) {
-  // returns true if the platform is the one specified
-  return (this.platform.is(platform))
+    // returns true if the platform is the one specified
+    return (this.platform.is(platform))
   }
 
   getDeviceData() {
-  // returns a full device-data object
-  // NOTE: uuid is calculated by constructor
+    // returns a full device-data object
+    // NOTE: uuid is calculated by constructor
 
-  let ret = {}
+    let ret = {}
 
-  if (this.isDebug()) {
-    // running on webbrowser: creates dummy device data
-    ret = {
-      'platform': 'browser',
-      'version': '0.0.0',
-      'manufacter': 'DEMO',
-      'model': 'DEMO',
-      'isVirtual': false,
-      'serial': 'unknown',
-      'uuid': 'debug_browser',
-      'connection_type': 'ethernet'
+    if (this.isDebug()) {
+      // running on webbrowser: creates dummy device data
+      ret = {
+        'platform': 'browser',
+        'version': '0.0.0',
+        'manufacter': 'DEMO',
+        'model': 'DEMO',
+        'isVirtual': false,
+        'serial': 'unknown',
+        'uuid': 'debug_browser',
+        'connection_type': 'ethernet'
+      }
+    } else {
+      // running on device: returns device data
+      ret = {
+        'platform': this.device.platform,
+        'version': this.device.version,
+        'manufacter': this.device.manufacturer,
+        'model': this.device.model,
+        'isVirtual': this.device.isVirtual,
+        'serial': this.device.serial,
+        'uuid': this.device.uuid,
+        'connection_type': this.network.type.toLocaleLowerCase(),
+        'app_version': environment.APP_VERSION
+      }
     }
-  } else {
-    // running on device: returns device data
-    ret = {
-      'platform': this.device.platform,
-      'version': this.device.version,
-      'manufacter': this.device.manufacturer,
-      'model': this.device.model,
-      'isVirtual': this.device.isVirtual,
-      'serial': this.device.serial,
-      'uuid': this.device.uuid,
-      'connection_type': this.network.type.toLocaleLowerCase(),
-      'app_version': environment.APP_VERSION
-    }
-  }
-  return ret
+    return ret
   }
 
   isDeviceOnLine() {
@@ -182,8 +182,12 @@ export class UtilsService {
     if (!this.isDebug()) {
       this.insomnia.keepAwake()
       .then(
-        () => console.log('keepAwake success'),
-        () => console.log('keepAwake error')
+        () => {
+          // onSuccess
+        },
+        () => {
+          // onError
+        }
       );
     }
   }
@@ -193,8 +197,12 @@ export class UtilsService {
     if (!this.isDebug()) {
       this.insomnia.allowSleepAgain()
       .then(
-        () => console.log('allowScreenFallAsleep success'),
-        () => console.log('allowScreenFallAsleep error')
+        () => {
+          // onSuccess
+        },
+        () => {
+          // onError
+        }
       );
     }
   }
@@ -221,5 +229,5 @@ export class UtilsService {
       }, 250);
     }
   }
-   //#endregion Public Methods
+  //#endregion Public Methods
 }

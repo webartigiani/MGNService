@@ -50,10 +50,16 @@
     },
     "cordova-plugin-insomnia": {
       "PACKAGE_NAME": "io.webartigiani.mgn"
+    },
+    "cordova-plugin-app-update": {
+      "PACKAGE_NAME": "io.webartigiani.mgn"
     }
   },
   "dependent_plugins": {
     "cordova-plugin-add-swift-support": {
+      "PACKAGE_NAME": "io.webartigiani.mgn"
+    },
+    "cordova-plugin-appversion": {
       "PACKAGE_NAME": "io.webartigiani.mgn"
     }
   }
