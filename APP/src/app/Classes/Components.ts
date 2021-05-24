@@ -39,7 +39,7 @@ export class ComponentsService {
   // #endregion Constructors
 
    // #region Public Methods
-   async showAlert(title: string, subtitle: string, message: string, timeout?: number, buttonText?:string) {
+  async showAlert(title: string, subtitle: string, message: string, timeout?: number, buttonText?:string) {
       // shows device native alert by alertController
 
       // default timeout 0"
@@ -64,9 +64,9 @@ export class ComponentsService {
             console.log('timeout scaduto')
         }, timeout);
       }
-   }
+  }
 
-   async showConfirm(title: string, subtitle: string, message: string, buttons?: string[]) {
+  async showConfirm(title: string, subtitle: string, message: string, buttons?: string[]) {
 
     // defaults buttons
     if (buttons === undefined) {
@@ -101,15 +101,14 @@ export class ComponentsService {
       ]
     });
     await msg.present()
-
     return new Promise((resolve, reject) => {
       msg.onDidDismiss().then((result) => {
         resolve(result.role === 'ok')
       })
     })
- }
+  }
 
-   async getLoader(message?: string, duration?: number) {
+  async getLoader(message?: string, duration?: number) {
     // returns a loading object
     if (message == undefined) message = 'Please wait...'
     if (duration == undefined) duration = 60000

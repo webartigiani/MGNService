@@ -199,6 +199,24 @@ export class ApiService {
         })
       })
     }
+    async stopTracking(sessionID: string) {
+      /**
+       * Stop Tracking
+        {
+            "session_id": "20210518140719-1-1-2"
+        }
+       */
+      const payload = {
+        "session_id": sessionID
+      }
+      return new Promise((resolve, reject) => {
+        this.post('/workers/stopTrackingSession/', payload).then((result) => {
+          resolve(result)
+        }).catch((error) => {
+          reject(error)
+        })
+      })
+    }
     // #region Public Methods
 
     // #region Http Base Functions

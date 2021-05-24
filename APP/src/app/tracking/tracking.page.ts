@@ -22,8 +22,13 @@ export class TrackingPage {
   // #region Variables
   current_worker = this.localData.readObject('current_worker', {})    // current worker and veichle
   current_veichle = this.localData.readObject('current_veichle', {})
-  statusDesc = 'procedi verso la tua destinazione...'
+  statusDesc = 'continua verso la tua destinazione...'
 
+  instructions = [
+    'raggiunta la tua destinazione, clicca "Stop"',
+    'per fermarti lungo il tragitto, clicca "Pausa',
+    'per emergenze, clicca "SOS"'
+  ]
   counter: number = 0           // contatore tracciamenti
   sessionID: string = ''
   gpsData: any = {}
@@ -70,7 +75,9 @@ export class TrackingPage {
 
   // #region Public Methods
   pause() {
-    // do a pause
+    /**
+     * Do a Pause
+     */
     if (this.alreadyPaused) {
       // pause already used
       this.components.showAlert('Pausa', 'Pausa non disponibile', 'Hai già usufruito di una pausa lungo il tragitto.',0,'Ho capito')
@@ -81,15 +88,44 @@ export class TrackingPage {
     this.components.showConfirm('Pausa','Hai a disposizione una sola pausa lungo il tragitto','Confermi di voler usufruire della tua pausa ora?', ['No', 'Si']).then((result) => {
       if (!result) return;
       this.isPaued = true
-      this.alreadyPaused = true
-
-      this.components.showAlert('In Pausa', 'Sistema in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "Riprendi" al termine della pausa.', environment.MAX_PAUSE_TIMEOUT * 60 * 1000, 'Riprendi')
+      this.alreadyPaused = true     // sets pause already used
+      this.components.showAlert('In Pausa', 'Sistema in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "Riprendi" al termine della pausa.', environment.MAX_PAUSE_TIMEOUT * 60 * 1000, 'Riprendi').then((result) => {
+        this.isPaued = false
+      })
     })
-
   }
   stop() {
+    /**
+     * Stops Geo-Locate
+     */
 
+    this.components.showConfirm('Conferma', 'Hai raggiunto la destinazione?', 'Confermi di volere interrompere il tragitto?', ['No', 'Si']).then((result) => {
+        if (result) {
+
+          // shows loader then calls API to login
+          this.components.getLoader('Attendi...').then((loading) => {
+            loading.present()
+
+            this.api.stopTracking(this.sessionID).then((result) => {
+              // stopTracking OK
+              this.localData.delete('session_id')
+              this.localData.delete('current_worker')
+              this.localData.delete('current_veichle')
+              loading.dismiss()
+              this.navCtrl.navigateRoot('login-veichle')
+
+            }).catch((error) => {
+              // API Error
+              console.error(error)
+              loading.dismiss()
+            })
+          })
+        } else {
+          // Do not stop!
+        }
+    })
   }
+
   SOS() {
     /**
      * starts a calling to the SOS number
@@ -105,18 +141,18 @@ export class TrackingPage {
      */
 
     this.geolocation.locate().then((data) => {
-      // Geo-location OK
-
+      /**
+       * Geo-location OK
+       * we call continueTracking API
+       */
       if (data.valid) {
         this.gpsData = data
         this.counter++
       }
-      console.log('Geo-location result', data)
-
+      const status =  this.isPaued ? 'P': 'R'     // status paused/running
       this.api.continueTracking(this.sessionID, data)
       .then((result) => {
-        // tracking-data saved
-        console.log('Geo-location API result', result)
+        // continueTracking OK
 
       }).catch((error) => {
         // API Error

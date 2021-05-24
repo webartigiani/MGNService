@@ -16,8 +16,20 @@
   <div id="statusDesc">
     <p [innerHTML]="statusDesc"></p>
   </div>
+  <ul class="instructions">
+    <li *ngFor="let sInstr of this.instructions" [value]="sInstr">{{ sInstr }}</li>
+  </ul>
 
-  <!-- debug GPS data -->
+  <!-- SOS Caller -->
+  <ion-button
+    (click)="SOS()"
+    shape="round"
+    size="large"
+    class="btn-app red"
+  ><ion-icon name="call-outline"></ion-icon>SOS</ion-button>
+
+
+  <!-- debug GPS data (if DEBUG_GPS==true) -->
   <div id="debug"
     *ngIf="app.debugGPS()"
     >
@@ -39,7 +51,7 @@
             (click)="pause()"
             shape="round"
             size="large"
-            class="btn-app yellow"
+            class="btn-app orange"
           >
             <ion-icon name="pause-circle-outline"></ion-icon>
           </ion-button>
@@ -48,16 +60,8 @@
             (click)="stop()"
             shape="round"
             size="large"
-            class="btn-app orange"
-          ><ion-icon name="stop-circle-outline"></ion-icon></ion-button>
-
-          <!-- SOS Caller -->
-          <ion-button
-            (click)="SOS()"
-            shape="round"
-            size="large"
             class="btn-app red"
-          >SOS</ion-button>
+          ><ion-icon name="stop-circle-outline"></ion-icon></ion-button>
         </ion-col>
     </ion-row>
   </ion-grid>
