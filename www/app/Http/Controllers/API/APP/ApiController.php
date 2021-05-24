@@ -18,7 +18,7 @@ class ApiController extends Controller
     private $utils;
     private $TSC;
 
-//#region Contructor
+// #region Contructor
     /**
      * Create a new controller instance.
      *
@@ -29,15 +29,15 @@ class ApiController extends Controller
         $this->TSC = $tsc;
         $this->utils = $utils;
     }
-//#endregion Contructor
+// #endregion Contructor
 
-//#region Utils
+// #region Utils
     public function ping() {
         return $this->sendResponse('OK', time());
     }
 // #endregion Utils
 
-//#region Tracking Methods
+// #region Tracking Methods
     public function startTrackingSession(Request $request)
     {/* startTrackingSession
         login worker with veichle and device and starts a tracking session
@@ -56,7 +56,8 @@ class ApiController extends Controller
 
         $payload = $request->json()->all();         // gets payload
 
-//#region Validations
+
+        //#region Validations
         // 1. checks veichle:   must have
         //                      - enabled=true
         //                      - status=0
@@ -96,7 +97,7 @@ class ApiController extends Controller
         } else {
             return $this->sendError('Operatore impegnato', ['L\'operatore selezionato risulta essere impegnato o non abilitato alla timbratura in mobilità.'], 403);
         }
-//#endregion Validations
+// #endregion Validations
 
         // converts GPS data into an object
         $gpsData = (object) $payload['gps'];
@@ -171,9 +172,9 @@ class ApiController extends Controller
             return $this->sendError('Sessione non trovata', ['Sessione di navigazione non trovata'], 403);
         }
     }
-//#endregion Tracking methods
+// #endregion Tracking methods
 
-//#region Workers
+// #region Workers
     public function listWorkers(Request $request)
     {/* listWorkers
         list free, enabled workers
@@ -200,9 +201,9 @@ class ApiController extends Controller
         $result = DB::table('app_v_workers')->get();
         return $this->sendResponse($result, 'Workers List');
     }
-//#endregion Workers
+// #endregion Workers
 
-//#region Veichles
+// #region Veichles
     public function listVeichles(Request $request)
     {/* listVeichles
         lists free, enabled veichles
@@ -231,9 +232,9 @@ class ApiController extends Controller
         $result = DB::table('app_v_veichles')->get();
         return $this->sendResponse($result, 'Veichles List');
     }
-//#endregion Veichles
+// #endregion Veichles
 
-//#region Devices
+// #region Devices
     public function registerDevice(Request $request)
     {/* registerDevice
         register/updates a device when APP starts
@@ -323,7 +324,10 @@ class ApiController extends Controller
             ->where('id', $thisID)
             ->update(
                 array(
+                    'version' => $payload['version'],
                     'is_online' => true,
+                    'connection_type' => $payload['connection_type'],
+                    'app_version' => $payload['app_version'],
                     'last_position' =>  $this->utils->OraItaliana(),
                     'updated_at' => $this->utils->OraItaliana()
                 )
@@ -359,9 +363,9 @@ class ApiController extends Controller
         }
         //return $data;
     }
-//#endregion Devices
+// #endregion Devices
 
-//#region Response/Utils
+// #region Response/Utils
     /**
      * Returns the specific result, by and additional message
      * Returns status 200
@@ -425,5 +429,5 @@ class ApiController extends Controller
     private function redicretHome() {
         return redirect('home');
     }
-//#endregion Response/Utils
+// #endregion Response/Utils
 }

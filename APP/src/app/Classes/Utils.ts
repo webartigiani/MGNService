@@ -115,8 +115,8 @@ export class UtilsService {
     ret = {
       'platform': 'browser',
       'version': '0.0.0',
-      'manufacter': 'manufacter',
-      'model': 'model',
+      'manufacter': 'DEMO',
+      'model': 'DEMO',
       'isVirtual': false,
       'serial': 'unknown',
       'uuid': 'debug_browser',
