@@ -45,7 +45,6 @@ export class ComponentsService {
       // default timeout 0"
       if (timeout === undefined) timeout = 0
       if (buttonText === undefined) buttonText = 'OK'
-      console.log(timeout)
 
       const msg = await this.alertController.create({
         animated: true,
@@ -64,6 +63,13 @@ export class ComponentsService {
             console.log('timeout scaduto')
         }, timeout);
       }
+
+      await msg.present()
+      return new Promise((resolve, reject) => {
+        msg.onDidDismiss().then((result) => {
+          resolve(true)
+        })
+      })
   }
 
   async showConfirm(title: string, subtitle: string, message: string, buttons?: string[]) {

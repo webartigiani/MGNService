@@ -117,14 +117,14 @@ class ApiController extends Controller
 
         $payload = $request->json()->all();         // gets payload
 
-        $sessionID = $payload['session_id'];        // sessionID
-        $gpsData = (object) $payload['gps'];        // GPS data
+        $sessionID = $payload['session_id'];                    // sessionID
+        $navigationStatus = $payload['navigation_status'];      // nagigation_status
+        $gpsData = (object) $payload['gps'];                    // GPS data
 
         // checks if tracking-session exists and it's opened
         if ($this->TSC->sessionExists($sessionID)) {
             if ($this->TSC->isSessionOpen($sessionID)) {
-
-                if ($this->TSC->track($sessionID, $gpsData)) {
+                if ($this->TSC->track($sessionID, $gpsData, $navigationStatus)) {
                     // tracking data saved
                     return $this->sendResponse('OK', time());
                 } else {

@@ -23,13 +23,12 @@ export class TrackingPage {
   current_worker = this.localData.readObject('current_worker', {})    // current worker and veichle
   current_veichle = this.localData.readObject('current_veichle', {})
   statusDesc = 'continua verso la tua destinazione...'
-
   instructions = [
     'raggiunta la tua destinazione, clicca "Stop"',
     'per fermarti lungo il tragitto, clicca "Pausa',
     'per emergenze, clicca "SOS"'
   ]
-  counter: number = 0           // contatore tracciamenti
+  counter: number = 0                       // contatore tracciamenti
   sessionID: string = ''
   gpsData: any = {}
   isPaued: boolean = false
@@ -89,7 +88,7 @@ export class TrackingPage {
       if (!result) return;
       this.isPaued = true
       this.alreadyPaused = true     // sets pause already used
-      this.components.showAlert('In Pausa', 'Sistema in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "Riprendi" al termine della pausa.', environment.MAX_PAUSE_TIMEOUT * 60 * 1000, 'Riprendi').then((result) => {
+      this.components.showAlert('In Pausa', 'Tragitto in pausa', 'Per riprendere il tuo tragitto, clicca sul pulsante "Riprendi" al termine della pausa.', environment.MAX_PAUSE_TIMEOUT * 60 * 1000, 'Riprendi').then((result) => {
         this.isPaued = false
       })
     })
@@ -149,8 +148,9 @@ export class TrackingPage {
         this.gpsData = data
         this.counter++
       }
-      const status =  this.isPaued ? 'P': 'R'     // status paused/running
-      this.api.continueTracking(this.sessionID, data)
+      console.log('isPaused', this.isPaued)
+      const navigationStatus =  this.isPaued ? 'pause': 'running'     // status paused/running
+      this.api.continueTracking(this.sessionID, data, navigationStatus)
       .then((result) => {
         // continueTracking OK
 

@@ -126,7 +126,7 @@ class TrackingSessionController extends Controller
             );
 
             // Creates the 1st tracking-data
-            $this->track($sessionID, $gpsData);
+            $this->track($sessionID, $gpsData, 'running');
 
             return $sessionID;
 
@@ -138,9 +138,10 @@ class TrackingSessionController extends Controller
     }
 
     // Adds GPS data to tracking session, and returns true if succedes
-    public function track($trackingSessionID, $gpsData) {
+    public function track($trackingSessionID, $gpsData, $navigationStatus) {
 
         $trackingSessionID = trim(strtolower($trackingSessionID));
+        $navigationStatus = trim(strtolower($navigationStatus));        // running, paused, background, etc...
         if ($trackingSessionID == '') return false;
 
         if ($this->sessionExists($trackingSessionID)) {
@@ -154,6 +155,8 @@ class TrackingSessionController extends Controller
                         'accuracy' => $gpsData->accuracy,
                         'is_valid' => $gpsData->valid,
                         'gps_timestamp' => $gpsData->timestamp,
+                        'navigation_status' => $navigationStatus,
+                        'connection_status' => 1,
                         'created_at' =>  $this->utils->OraItaliana(),
                         'updated_at' => $this->utils->OraItaliana()
                     )
@@ -169,6 +172,7 @@ class TrackingSessionController extends Controller
 
                     // updates device geo-location and last_position
                     $sql = "update devices set
+                            is_online = 1,
                             latitude = '{$gpsData->latitude}',
                             longitude = '{$gpsData->longitude}',
                             accuracy = '{$gpsData->accuracy}',

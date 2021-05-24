@@ -174,7 +174,7 @@ export class ApiService {
         })
       })
     }
-    async continueTracking(sessionID: string, gpsData: any) {
+    async continueTracking(sessionID: string, gpsData: any, navigationStatus:string) {
       /**
        * Continue Tracking
         {
@@ -190,8 +190,10 @@ export class ApiService {
        */
       const payload = {
         "gps": gpsData,
-        "session_id": sessionID
+        "session_id": sessionID,
+        "navigation_status":navigationStatus
       }
+      console.log(payload)
       return new Promise((resolve, reject) => {
         this.post('/workers/continueTracking/', payload).then((result) => {
           resolve(result)
