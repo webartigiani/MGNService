@@ -26,8 +26,8 @@ Route::group([
     'middleware' => ['api', 'cors'],
     'namespace' => 'App\\Http\\Controllers\\API\\APP'
 ], function ($router) {
-    Route::get('app/update/', 'ApiController@autoUpdate');
-    Route::get('api/app/ping/', 'ApiController@ping');
+    Route::get('app/update/', 'ApiController@autoUpdate');                                          // returns AppUpdate XML
+    Route::get('api/app/ping/', 'ApiController@ping');                                              // APP/API Routes
     Route::get('api/app/workers/list/', 'ApiController@listWorkers');
     Route::get('api/app/veichles/list/', 'ApiController@listVeichles');
     Route::post('api/app/devices/add/', 'ApiController@registerDevice');
