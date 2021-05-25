@@ -27,12 +27,13 @@ class TimbrataController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {   /*
         v_timbrate: see migration
         */
 
         // filters, order by, order direction, limit
+        /*
         $filter_date = trim(strtolower($request->filters_date));
         $order_by = trim(strtolower($request->order_by));
         $order_dir = trim(strtolower($request->order_dir));
@@ -57,6 +58,7 @@ class TimbrataController extends BaseController
             ->orderBy('date_time', 'desc')
             ->get();
         return $this->sendResponse($data, 'Timbrate List');
+        */
     }
 
     /**
@@ -69,6 +71,26 @@ class TimbrataController extends BaseController
     {
         // get form normalized data
         $data = $this->normalizeData($request->all());
+
+        if ($data['source'] == 'accesso_dipendenti') {
+            /**
+            * timbrata dipendente da home-page
+            *{
+            *    "worker":{
+            *        ...
+            *    }
+            *    "codice_timbrata":"1234",
+            *    "source":"accesso_dipendenti"
+            *}
+            */
+
+            $workerID = $data['worker']['id'];
+            $codice_timbrata = $data['codice_timbrata'];
+        } else {
+            /// timbrata editata da admin
+        }
+
+        return $this->sendResponse($data, 'Nuova Timbrata Creata');
 
         // inserts data
         $dbdata = $this->worker->create([

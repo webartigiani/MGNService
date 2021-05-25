@@ -36,6 +36,7 @@ class TimbrataRequest extends FormRequest
      */
     public function createRules(): array
     {
+        return [];
         return [
             'nome' => 'required|string|max:64',
             'cognome' => 'required|string|max:64',

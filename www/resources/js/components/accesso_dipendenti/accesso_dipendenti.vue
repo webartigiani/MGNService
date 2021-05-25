@@ -3,12 +3,14 @@
 -->
 <template>
     <div>
-        <form @submit.prevent="editmode ? updateItem() : createItem()">
+        <form @submit.prevent="timbra()">
             <!--
             <div class="modal-header">
                 <h5 class="modal-title">Timbra Presenza</h5>
             </div>
             -->
+            <input type="hidden" name="source" v-model="form.source" />
+
             <div class="modal-body">
                 <div class="form-group">
                     <select
@@ -21,7 +23,7 @@
                         {{ item.nome }} {{ item.cognome }}
                         </option>
                     </select>
-                    <has-error :form="form" field="nome"></has-error>
+                    <has-error :form="form" field="worker"></has-error>
                 </div>
                 <div class="form-group">
                 <input v-model="form.codice_timbrata" type="text" name="codice_timbrata"
@@ -30,16 +32,27 @@
                     :maxlength="10"
                     >
                 </div>
+                <has-error :form="form" field="codice_timbrata"></has-error>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-success btn-lg">Timbra</button>
+                <button type="submit"
+                class="btn btn-success btn-lg button"
+                :disabled="loading || posting"
+                ><i class="fa fa-spinner fa-spin spinner"
+                    v-if="loading || posting"
+                ></i>Timbra</button>
             </div>
         </form>
     </div>
 </template>
 
 <style scoped>
-
+button.button {
+    width: 100%;
+}
+.spinner {
+    margin-right: 10px;
+}
 </style>
 
 <script>
@@ -50,11 +63,14 @@ export default {
     // #region Properties
     data() {
         return {
+            loading: true,
+            posting: false,
             workers: [],
-            form: {
-                worker: '',
-                codice_timbrata: ''
-            }
+            form: new Form({
+                worker : '',
+                codice_timbrata: '',
+                source: 'accesso_dipendenti'
+            }),
         }
     },
     // #endregion Properties
@@ -71,15 +87,34 @@ export default {
     beforeMount() {
     },
     mounted() {
+        this.loading = false
     },
     beforeDestroy() {
     },
     destroyed() {
-    }
+    },
     // #endregion Component Life Cycle
 
     // #region Methods
+    methods: {
+        timbra() {
+            console.log(this.form.worker)
+            console.log(this.form.codice_timbrata)
 
+            this.posting = true
+
+            this.form.post('api/timbrata').then((result) => {
+                console.log(result)
+                this.posting = false
+            }).catch(() => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Si è verificato un errore! Prego, riprova'
+                });
+                this.posting = false
+            })
+        }
+    }
     // #endregion Methods
 }
 </script>

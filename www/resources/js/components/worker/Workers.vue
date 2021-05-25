@@ -294,11 +294,11 @@ export default {
                         this.$Progress.failed();
                     }
                     })
-                    .catch(()=>{
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Si è verificato un errore! Prego, riprova'
-                        });
+                .catch(()=>{
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Si è verificato un errore! Prego, riprova'
+                    });
                 })
         },
         updateItem(){
