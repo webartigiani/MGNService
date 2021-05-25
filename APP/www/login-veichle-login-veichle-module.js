@@ -167,7 +167,7 @@ let LoginVeichlePage = class LoginVeichlePage {
     ngAfterViewInit() {
         // allows screen falling asleep + keeps APP in foreground
         this.utils.allowScreenFallAsleep();
-        //this.utils.keepForeground()
+        this.utils.keepForeground();
     }
     ngAfterViewChecked() {
         /**

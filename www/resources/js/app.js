@@ -102,5 +102,29 @@ Vue.component('example-component', require('./components/ExampleComponent.vue'))
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+
+    // #region Properties
+    data() {
+        return {
+            loading: true
+        }
+    },
+    // #endregion Properties
+
+    // #region App Life Cycle
+    beforeCreate () {
+    },
+    created () {
+    },
+    beforeMount () {
+    },
+    mounted () {
+        this.loading = false
+    },
+    beforeDestroy() {
+    },
+    destroyed() {
+    }
+    // #endregion App Life Cycle
 });

@@ -37,10 +37,8 @@ Route::group([
 });
 
 Auth::routes(['verify' => true]);
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('home', function () {
-    return redirect('/dashboard');
-});
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('home', function () { return redirect('/dashboard'); });
 
 Route::get('/{vue_capture?}', function () {
     return view('home');

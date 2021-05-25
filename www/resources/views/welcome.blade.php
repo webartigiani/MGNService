@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{config('app.company')}}</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -74,12 +76,19 @@
                     @endauth
                 </div>
             @endif
-
             <div class="content">
                 <div class="title m-b-md">
-                    <img src="{{ asset('/images/logo.png') }}" alt="" class="brand-image img-circle elevation-3" style="opacity: .8; max-width:400px;">
+                    <img src="{{ asset('/images/logo.png') }}" alt="" class="brand-image elevation-0"
+                    style="opacity: .8; max-width:300px; margin-bottom:20px;"
+                    >
+                    <div id="app">
+                        <small v-if="loading">caricamento...</small>
+                        <router-view></router-view>
+                        <vue-progress-bar></vue-progress-bar>
+                    </div>
                 </div>
             </div>
         </div>
     </body>
+<script src="{{ mix('/js/app.js') }}"></script>
 </html>
