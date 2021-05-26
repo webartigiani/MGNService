@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
 
-
 class UserController extends BaseController
 {
     /**
@@ -30,7 +29,6 @@ class UserController extends BaseController
         if (!Gate::allows('isAdmin')) {
             return $this->unauthorizedResponse();
         }
-        // $this->authorize('isAdmin');
 
         if (Gate::allows('isWebMaster')) {
             $users = User::latest()->paginate(10);          // web master see al users

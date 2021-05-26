@@ -20,7 +20,7 @@
                         >
                         <option value="">&lt;seleziona&gt;</option>
                         <option v-for="item in workers" :value="item" :key="item.id">
-                        {{ item.nome }} {{ item.cognome }}
+                        {{ item.name }} {{ item.surname }}
                         </option>
                     </select>
                     <has-error :form="form" field="worker"></has-error>
@@ -80,7 +80,7 @@ export default {
     },
     created() {
         // lists workers
-        axios.get("api/worker").then(({ data }) => (
+        axios.get("api/ws/workers/list/").then(({ data }) => (
             this.workers = data.data
         ));
     },
@@ -103,7 +103,7 @@ export default {
 
             this.posting = true
 
-            this.form.post('api/timbrata').then((result) => {
+            this.form.post('api/attendance').then((result) => {
                 console.log(result)
                 this.posting = false
             }).catch(() => {

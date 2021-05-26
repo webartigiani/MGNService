@@ -5,23 +5,27 @@
  */
 namespace App\Http\Controllers\API\V1;
 
-use App\Http\Requests\Timbrate\TimbrataRequest;
-use App\Models\Timbrata;
+use App\Http\Requests\Attendance\AttendanceRequest;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Controllers\api\V1\WorkerController;
 use DB;
 
-class TimbrataController extends BaseController
+class AttendanceController extends BaseController
 {
-    protected $timbrata = '';
+    protected $attendance = '';
+    private $workerController;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(Timbrata $timbrata)
+    public function __construct(Attendance $attendance, WorkerController $workerController)
     {
-        $this->timbrata = $timbrata;
+        $this->attendance = $attendance;
+        $this->workerController = $workerController;
     }
 
     /**
@@ -33,46 +37,19 @@ class TimbrataController extends BaseController
     {   /*
         v_timbrate: see migration
         */
-
-        // filters, order by, order direction, limit
-        /*
-        $filter_date = trim(strtolower($request->filters_date));
-        $order_by = trim(strtolower($request->order_by));
-        $order_dir = trim(strtolower($request->order_dir));
-        $limit = intval(trim(strtolower($request->limit)));
-
-        if ($order_by == '') $order_by = 'date_time';
-        if ($order_dir != 'desc') $order_dir = 'asc';
-        if ($limit <= 0) $limit = 999999999;
-
-        // normalizes filters
-        $dateFrom = '';
-        $dateTo = '';
-
-        if ($filter_date != '') {
-            $dateFrom = $filter_date . ' 00:00:00';
-            $dateTo = $filter_date . ' 23:59:59';
-        }
-
-        $data = DB::table('v_timbrate')
-            ->whereBetween('date_time', [$dateFrom, $dateTo])
-            ->take($limit)
-            ->orderBy('date_time', 'desc')
-            ->get();
-        return $this->sendResponse($data, 'Timbrate List');
-        */
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  App\Http\Requests\Workers\TimbrataRequest  $request
+     * @param  App\Http\Requests\Attendance\AttendanceRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(TimbrataRequest $request)
+    public function store(AttendanceRequest $request)
     {
         // get form normalized data
         $data = $this->normalizeData($request->all());
+        $result = '';
 
         if ($data['source'] == 'accesso_dipendenti') {
             /**
@@ -88,11 +65,18 @@ class TimbrataController extends BaseController
 
             $workerID = $data['worker']['id'];
             $codice_timbrata = $data['codice_timbrata'];
+
+            if ($this->workerController->exists($workerID)) {
+
+            } else {
+                // worker doesn't exists
+            }
+
         } else {
             /// timbrata editata da admin
         }
 
-        return $this->sendResponse($data, 'Nuova Timbrata Creata');
+        return $this->sendResponse($result, 'Nuova Timbrata Creata');
 
         // inserts data
         $dbdata = $this->worker->create([
@@ -117,8 +101,8 @@ class TimbrataController extends BaseController
      */
     public function show($id)
     {
-        $data = $this->timbrata->findOrFail($id);
-        return $this->sendResponse($data, 'Dettagli timbrata');
+        $data = $this->attendance->findOrFail($id);
+        return $this->sendResponse($data, 'Dettagli Presenza');
     }
 
     /**
@@ -128,16 +112,16 @@ class TimbrataController extends BaseController
      * @param  \App\Worker  $worker
      * @return \Illuminate\Http\Response
      */
-    public function update(TimbrataRequest $request, $id)
+    public function update(AttendanceRequest $request, $id)
     {
-        $timbrata = $this->timbrata->findOrFail($id);
+        $attendance = $this->attendance->findOrFail($id);
 
         // get form normalized data
         $data = $this->normalizeData($request->all());
 
         // Updates data
-        $timbrata->update($data);
-        return $this->sendResponse($timbrata, 'Timbrata aggiornata');
+        $attendance->update($data);
+        return $this->sendResponse($attendance, 'Presenza aggiornata');
     }
 
     /**
@@ -148,13 +132,13 @@ class TimbrataController extends BaseController
     public function destroy($id)
     {
         $this->authorize('isAdmin');
-        $timbrata = $this->timbrata->findOrFail($id);
-        $timbrata->delete();
-        return $this->sendResponse($timbrata, 'Timbrata eliminata');
+        $attendance = $this->attendance->findOrFail($id);
+        $attendance->delete();
+        return $this->sendResponse($attendance, 'Presenza eliminata');
     }
 
     /*
-     * Normalizes worker data
+     * Normalizes data
      */
     public function normalizeData($data) {
         return $data;

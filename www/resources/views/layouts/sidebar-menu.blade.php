@@ -25,9 +25,6 @@
           </p>
         </router-link>
       </li>
-      @can('isAdmin')
-
-      @endcan
 
       @can('isAdmin')
       <li class="nav-item has-treeview">
@@ -48,19 +45,25 @@
               </p>
             </router-link>
           </li>
-          <li class="nav-item">
-            <router-link to="/devices" class="nav-link">
-              <i class="nav-icon fas fa-mobile-alt white"></i>
-              <p>
-                Dispositivi
-              </p>
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/users" class="nav-link">
-                <i class="fa fa-users nav-icon white"></i>
-                <p>Staff</p>
-            </router-link>
+            <li class="nav-item">
+                <router-link to="/devices" class="nav-link">
+                <i class="nav-icon fas fa-mobile-alt white"></i>
+                <p>
+                    Dispositivi
+                </p>
+                </router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/users" class="nav-link">
+                    <i class="fa fa-users nav-icon white"></i>
+                    <p>Staff</p>
+                </router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/download" class="nav-link">
+                    <i class="fa fa-download nav-icon white"></i>
+                    <p>Installa APP</p>
+                </router-link>
             </li>
         </ul>
       </li>

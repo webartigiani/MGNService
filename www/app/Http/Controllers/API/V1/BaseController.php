@@ -49,7 +49,6 @@ class BaseController extends Controller
         return response()->json($response, $code);
     }
 
-
     /**
      * return Unauthorized response.
      *
@@ -64,7 +63,6 @@ class BaseController extends Controller
             'success' => false,
             'message' => $error,
         ];
-
         return response()->json($response, $code);
     }
 }

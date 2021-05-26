@@ -42,8 +42,12 @@ public function autoUpdate(Request $request) {
      * returns XML for AppUpdate APP plugin
      */
     $appName =      env('APP_NAME');
-    $appVersion =   env('APP_VERSION');
-    $appUrl =       $this->url->to('/downloads/' . env('APP_URI')); ?>
+    $dummy =        explode('.', trim(strtolower(env('APP_VERSION'))));
+    $appUrl =       $this->url->to('/downloads/' . env('APP_URI'));
+
+    // converts version number from x.y.z format into x0y0z
+    $appVersion = $dummy[0] . '0' . $dummy[1] . '0' . $dummy[2];
+    ?>
 <update>
 <version><?= $appVersion ?></version>
 <name><?= $appName ?></name>
@@ -74,7 +78,6 @@ public function autoUpdate(Request $request) {
         */
         // validates APP authorization
         if (!$this->routeAPP($request)) return $this->redicretHome();
-
         $payload = $request->json()->all();         // gets payload
 
 
@@ -220,6 +223,29 @@ public function autoUpdate(Request $request) {
         // validates APP authorization
         if (!$this->routeAPP($request)) return $this->redicretHome();
         $result = DB::table('app_v_workers')->get();
+        return $this->sendResponse($result, 'Workers List');
+    }
+    public function listWorkersWS(Request $request)
+    {/* listWorkersWS
+        list free, enabled workers for website
+
+        GET api/app/workers/list/
+
+        RESPONSE:
+            {
+                "success": true,
+                "data": [
+                    {
+                        "id": 8,
+                        "name": "ANNA",
+                        "surname": "E. NACCAH"
+                    },
+                    ...
+                ],
+                "message": "Workers List"
+            }
+        */
+        $result = DB::table('website_v_workers')->get();
         return $this->sendResponse($result, 'Workers List');
     }
 // #endregion Workers

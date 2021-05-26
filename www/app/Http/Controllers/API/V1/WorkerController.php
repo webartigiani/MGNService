@@ -11,6 +11,7 @@ class WorkerController extends BaseController
 {
     protected $worker = '';
 
+// #region Constructor
     /**
      * Create a new controller instance.
      *
@@ -21,7 +22,9 @@ class WorkerController extends BaseController
         $this->middleware('auth:api');
         $this->worker = $worker;
     }
+// #endregion Constructor
 
+// #region API Methods
     /**
      * Display a listing of the resource.
      *
@@ -102,15 +105,40 @@ class WorkerController extends BaseController
         $worker->delete();
         return $this->sendResponse($worker, 'Il dipendente è stato eliminato');
     }
+// #endregion API Methods
 
+// #region Public API methods
+    /**
+     *
+     */
+    public function list() {
+        $workers = DB::table('workers')->get();
+        return $this->sendResponse($workers, 'Workers List');
+    }
+// #endregion Public API methods
+
+// #region Public Methods
+    /**
+     * Returns true if the specified id exists
+     */
+    public function exists($id) {
+        $tableName = 'workers';
+        $data = DB::table($tableName)->where('id', $id)->take(1)->get();
+        if (isset($data)) return isset($data[0]);
+        return false;
+    }
+// #endregion Public Methods
+
+// #region Private Methods
     /*
      * Normalizes worker data
      */
-    public function normalizeData($data) {
+    private function normalizeData($data) {
         $data['nome'] =  strtoupper(trim($data['nome']));
         $data['cognome'] =  strtoupper(trim($data['cognome']));
         $data['codice_fiscale'] =  strtoupper(trim($data['codice_fiscale']));
         $data['matricola'] =  strtoupper(trim($data['matricola']));
         return $data;
     }
+// #endregion Private Methods
 }

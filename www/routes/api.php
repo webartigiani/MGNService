@@ -19,12 +19,10 @@ Route::get('version', function () {
     return response()->json(['version' => config('app.version')]);
 });
 
-
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     Log::debug('User:' . serialize($request->user()));
     return $request->user();
 });
-
 
 Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
     Route::get('profile', 'ProfileController@profile');
@@ -37,5 +35,6 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
         'timbrata' => 'TimbrataController',
         'veicolo' => 'VeicoloController',
         'device' => 'DeviceController',
+        'attendance' => 'AttendanceController'
     ]);
 });

@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Http\\Controllers\\API\\V1\\AttendanceController' => $baseDir . '/app/Http/Controllers/API/V1/AttendanceController.php',
     'App\\Http\\Controllers\\API\\V1\\BaseController' => $baseDir . '/app/Http/Controllers/API/V1/BaseController.php',
     'App\\Http\\Controllers\\API\\V1\\DeviceController' => $baseDir . '/app/Http/Controllers/API/V1/DeviceController.php',
     'App\\Http\\Controllers\\API\\V1\\ProfileController' => $baseDir . '/app/Http/Controllers/API/V1/ProfileController.php',
@@ -41,6 +42,7 @@ return array(
     'App\\Http\\Middleware\\TrustHosts' => $baseDir . '/app/Http/Middleware/TrustHosts.php',
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
+    'App\\Http\\Requests\\Attendance\\AttendanceRequest' => $baseDir . '/app/Http/Requests/Attendance/AttendanceRequest.php',
     'App\\Http\\Requests\\Devices\\DeviceRequest' => $baseDir . '/app/Http/Requests/Device/DeviceRequest.php',
     'App\\Http\\Requests\\Products\\ProductRequest' => $baseDir . '/app/Http/Requests/Products/ProductRequest.php',
     'App\\Http\\Requests\\Timbrate\\TimbrataRequest' => $baseDir . '/app/Http/Requests/Timbrate/TimbrataRequest.php',
@@ -49,6 +51,7 @@ return array(
     'App\\Http\\Requests\\Users\\UserRequest' => $baseDir . '/app/Http/Requests/Users/UserRequest.php',
     'App\\Http\\Requests\\Veicoli\\VeicoloRequest' => $baseDir . '/app/Http/Requests/Veicoli/VeicoloRequest.php',
     'App\\Http\\Requests\\Workers\\WorkerRequest' => $baseDir . '/app/Http/Requests/Workers/WorkerRequest.php',
+    'App\\Models\\Attendance' => $baseDir . '/app/Models/Attendance.php',
     'App\\Models\\Device' => $baseDir . '/app/Models/Device.php',
     'App\\Models\\Product' => $baseDir . '/app/Models/Product.php',
     'App\\Models\\Role' => $baseDir . '/app/Models/Role.php',

@@ -9,7 +9,6 @@
             <div class="card">
               <div class="card-header">
                 <div class="card-title">
-
                 </div>
 
                 <div class="card-tools">
@@ -237,9 +236,9 @@ export default {
     },
     computed: {
         filteredItems() {
-        return this.autocompleteItems.filter(i => {
-            return i.text.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1;
-        });
+            return this.autocompleteItems.filter(i => {
+                return i.text.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1;
+            });
         },
     },
     // #endregion Properties

@@ -577,6 +577,7 @@ class ComposerStaticInit3e7e9e2f230c1643a7368a0702f7e091
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Http\\Controllers\\API\\V1\\AttendanceController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/V1/AttendanceController.php',
         'App\\Http\\Controllers\\API\\V1\\BaseController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/V1/BaseController.php',
         'App\\Http\\Controllers\\API\\V1\\DeviceController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/V1/DeviceController.php',
         'App\\Http\\Controllers\\API\\V1\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/V1/ProfileController.php',
@@ -610,6 +611,7 @@ class ComposerStaticInit3e7e9e2f230c1643a7368a0702f7e091
         'App\\Http\\Middleware\\TrustHosts' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustHosts.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Http\\Requests\\Attendance\\AttendanceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Attendance/AttendanceRequest.php',
         'App\\Http\\Requests\\Devices\\DeviceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Device/DeviceRequest.php',
         'App\\Http\\Requests\\Products\\ProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Products/ProductRequest.php',
         'App\\Http\\Requests\\Timbrate\\TimbrataRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Timbrate/TimbrataRequest.php',
@@ -618,6 +620,7 @@ class ComposerStaticInit3e7e9e2f230c1643a7368a0702f7e091
         'App\\Http\\Requests\\Users\\UserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Users/UserRequest.php',
         'App\\Http\\Requests\\Veicoli\\VeicoloRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Veicoli/VeicoloRequest.php',
         'App\\Http\\Requests\\Workers\\WorkerRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Workers/WorkerRequest.php',
+        'App\\Models\\Attendance' => __DIR__ . '/../..' . '/app/Models/Attendance.php',
         'App\\Models\\Device' => __DIR__ . '/../..' . '/app/Models/Device.php',
         'App\\Models\\Product' => __DIR__ . '/../..' . '/app/Models/Product.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',

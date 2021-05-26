@@ -107,7 +107,9 @@ const app = new Vue({
     // #region Properties
     data() {
         return {
-            loading: true
+            loading: true,
+            url: window.location.origin,
+            apkUrl: window.location.origin + '/downloads/app.apk'
         }
     },
     // #endregion Properties

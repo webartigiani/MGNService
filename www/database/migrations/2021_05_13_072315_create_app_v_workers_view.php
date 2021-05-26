@@ -18,8 +18,9 @@ class CreateAppVWorkersView extends Migration
             select id, nome name, cognome surname from workers
             where
                 stato = 0
-                and  modo_timbratura <= 1
+                and modo_timbratura <= 1
                 and deleted_at is null
+                and data_cessazione is null
                 order by nome, cognome
         ");
     }
