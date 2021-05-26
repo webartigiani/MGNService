@@ -12,6 +12,8 @@
             <input type="hidden" name="source" v-model="form.source" />
 
             <div class="modal-body">
+                <VueClock />
+
                 <div class="form-group">
                     <select
                         name="worker"
@@ -56,8 +58,13 @@ button.button {
 </style>
 
 <script>
+import Vue from 'vue';
+import VueClock from '@dangvanthanh/vue-clock';
+Vue.use(VueClock);
+
 export default {
     components: {
+        VueClock
     },
 
     // #region Properties
