@@ -4,11 +4,6 @@
 <template>
     <div>
         <form @submit.prevent="timbra()">
-            <!--
-            <div class="modal-header">
-                <h5 class="modal-title">Timbra Presenza</h5>
-            </div>
-            -->
             <input type="hidden" name="source" v-model="form.source" />
 
             <div class="modal-body">
@@ -59,6 +54,13 @@ button.button {
 
 <script>
 import Vue from 'vue';
+
+/**
+ * @dangvanthanh/vue-clock
+ * source:      https://github.com/dangvanthanh/vue-clock
+ * install:     npm install @dangvanthanh/vue-clock --save
+ * notes:       to customize see "Customizations.md"
+ */
 import VueClock from '@dangvanthanh/vue-clock';
 Vue.use(VueClock);
 
