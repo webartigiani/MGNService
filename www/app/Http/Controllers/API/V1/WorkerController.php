@@ -5,11 +5,14 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Requests\Workers\WorkerRequest;
 use App\Models\Worker;
 use Illuminate\Http\Request;
+use App\Http\Controllers\UtilsController;
 use DB;
+use Hamcrest\Util;
 
 class WorkerController extends BaseController
 {
     protected $worker = '';
+    private $utils;
 
 // #region Constructor
     /**
@@ -17,10 +20,11 @@ class WorkerController extends BaseController
      *
      * @return void
      */
-    public function __construct(Worker $worker)
+    public function __construct(Worker $worker, UtilsController $utilsController)
     {
         $this->middleware('auth:api');
         $this->worker = $worker;
+        $this->utils = $utilsController;
     }
 // #endregion Constructor
 
@@ -126,6 +130,113 @@ class WorkerController extends BaseController
         $data = DB::table($tableName)->where('id', $id)->take(1)->get();
         if (isset($data)) return isset($data[0]);
         return false;
+    }
+
+    /**
+     * Returns true if the specified worker exists, and has the specified password_timbratura
+     */
+    public function verifyCodiceTimbrata($id, $codice_timbratura) {
+        $tableName = 'workers';
+        $data = DB::table($tableName)->where('id', $id)->where('password_timbratura', $codice_timbratura)->whereNull('deleted_at')->whereNull('data_cessazione')->take(1)->get();
+        if (isset($data)) return isset($data[0]);
+        return false;
+    }
+
+    /**
+     * Returns true if the specified worker exists and is hired
+     */
+    public function isHired($id) {
+        $tableName = 'workers';
+        $data = DB::table($tableName)->where('id', $id)->whereNull('deleted_at')->whereNull('data_cessazione')->take(1)->get();
+        if (isset($data)) return isset($data[0]);
+        return false;
+    }
+
+    /**
+     * Esegue timbratura dipendente in data odierna
+     * Esegue:
+     * - timbratura in entrata se non sono presenti timbrature in data odierna
+     * - timbratura in uscita se presente quella in entrata, ma manca quella in uscita
+     * - non esegue alcuna timbratura se entrambe presenti in data odierna
+     */
+    public function timbra($id, $codice_timbratura, &$errorMessage) {
+
+        $codice_timbratura = trim($codice_timbratura);
+        $errorMessage = '';
+
+        // verifica se il dipendente esiste
+        if ($this->exists($id)) {
+            // verifica se il dipendente è assunto
+            if ($this->isHired($id)) {
+                // checks worker's password
+                if ($this->verifyCodiceTimbrata($id, $codice_timbratura)) {
+
+                    $today = $this->utils->OraItaliana()->format('Y-m-d');          // today's date
+                    $id = $this->hasTimbrataEntrata($id, $today);
+
+                    if ($id == 0) {
+                        // timbrata in entrata non esistente: esegue timbrata in entrata e ottiene il suo ID
+                    } else {
+                        // timbrata in entrata già esistente: verifica timbrata in uscita
+                        if ($this->hasTimbrataUscita($id, $today) == 0) {
+                            // esegue timbrata in uscita
+                            return true;
+                        } else {
+                            // timbrata E/U entrambi esistenti
+                            $errorMessage = 'Hai già timbrato';
+                            return false;
+                        }
+                    }
+                } else {
+                    // password not valid
+                    $errorMessage = 'Codice Timbrata non valido';
+                    return false;
+                }
+            } else {
+                // worker not hired
+                $errorMessage = 'Dipendente non assunto';
+                return false;
+            }
+        } else {
+            // worker doesn't exists
+            $errorMessage = 'Dipendente non trovato';
+            return false;
+        }
+    }
+
+    /**
+     * if the specified worker has en attendace entrance in the specified date
+     * returns its id
+     * otherwise returns 0
+     */
+    public function hasTimbrataEntrata($id, $date) {
+        $ret = 0;
+        $startDate = $date . ' 00:00:00';
+        $toDate = $date . ' 23:59:59';
+
+        $tableName = 'attendances';
+        $data = DB::table($tableName)->where('worker', $id)->whereBetween('entrance_date', [$startDate, $toDate])->take(1)->get();
+        if (isset($data)) {
+          if (isset($data[0])) $ret = $data[0]->id;
+        }
+        return $ret;
+    }
+    /**
+     * if the specified worker has en attendace exit in the specified date
+     * returns its id
+     * otherwise returns 0
+     */
+    public function hasTimbrataUscita($id, $date) {
+        $ret = 0;
+        $startDate = $date . ' 00:00:00';
+        $toDate = $date . ' 23:59:59';
+
+        $tableName = 'attendances';
+        $data = DB::table($tableName)->where('worker', $id)->whereBetween('exit_date', [$startDate, $toDate])->take(1)->get();
+        if (isset($data)) {
+            if (isset($data[0])) $ret = $data[0]->id;
+          }
+        return $ret;
     }
 // #endregion Public Methods
 

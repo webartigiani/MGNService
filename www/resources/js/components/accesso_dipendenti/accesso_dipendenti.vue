@@ -106,10 +106,14 @@ export default {
             this.form.post('api/attendance').then((result) => {
                 console.log(result)
                 this.posting = false
+                Toast.fire({
+                    icon: 'info',
+                    html: 'Bravo!'
+                });
             }).catch(() => {
                 Toast.fire({
-                    icon: 'error',
-                    title: 'Si è verificato un errore! Prego, riprova'
+                    icon: 'info',
+                    title: 'Si è verificato un errore<br>Prego, riprova'
                 });
                 this.posting = false
             })

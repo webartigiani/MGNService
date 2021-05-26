@@ -49,7 +49,8 @@ class AttendanceController extends BaseController
     {
         // get form normalized data
         $data = $this->normalizeData($request->all());
-        $result = '';
+
+
 
         if ($data['source'] == 'accesso_dipendenti') {
             /**
@@ -65,20 +66,20 @@ class AttendanceController extends BaseController
 
             $workerID = $data['worker']['id'];
             $codice_timbrata = $data['codice_timbrata'];
+            $error = '';
 
-            if ($this->workerController->exists($workerID)) {
-
+            if ($this->workerController->timbra($workerID, $codice_timbrata, $error)) {
+                return $this->sendResponse('OK', 'Timbrata Creata');
             } else {
-                // worker doesn't exists
+                // timbrata fallita
+                return $this->sendError($error, $errorMessages = [], $code = 404);
             }
-
         } else {
             /// timbrata editata da admin
         }
 
-        return $this->sendResponse($result, 'Nuova Timbrata Creata');
-
         // inserts data
+        /*
         $dbdata = $this->worker->create([
             'codice_azienda' => env('CODICE_AZIENDA'),
             'denominazione_azienda' => env('DENOMINAZIONE_AZIENDA'),
@@ -91,6 +92,7 @@ class AttendanceController extends BaseController
             'data_cessazione' => $data['data_cessazione']
         ]);
         return $this->sendResponse($dbdata, 'Nuova Timbrata Creata');
+        */
     }
 
     /**
