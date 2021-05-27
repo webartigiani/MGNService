@@ -9,12 +9,17 @@
 
             <div class="card" v-if="$gate.isAdminOrWebMaster()">
               <div class="card-header">
-                <div class="card-title">
-
+                <!-- filters  -->
+                <div class="card-title col-10">
+                    <div class="row">
+                        <div class="col-12">
+                            <!--- filters here... -->
+                        </div>
+                    </div>
                 </div>
 
-                <div class="card-tools">
-
+                <!-- tools -->
+                <div class="card-tools col-2 text-right">
                   <button type="button" class="btn btn-sm btn-primary" @click="newModal">
                       <i class="fa fa-plus-square"></i>
                       Aggiungi

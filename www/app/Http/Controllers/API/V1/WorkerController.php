@@ -35,8 +35,56 @@ class WorkerController extends BaseController
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-        $workers = DB::table('workers')->latest()->paginate(10);
+    {   /**
+        * GET       api/workers
+        * params    {"show":true,"hiring_status":"1","status":"1","hiring_date_start":"2021-05","hiring_date_end":"2021-06","query":"filippo"}
+        */
+
+        $params = $request->all();
+        $query = DB::table('workers');
+
+        // applies filters
+        if (isset($params['hiring_status'] )) {
+            /**
+             * hiring_status
+             * -1:  tutti
+             * 1:   assunti
+             * 0:   cessati
+             */
+            if ($params['hiring_status'] == 0) $query->whereNotNull('data_cessazione');
+            if ($params['hiring_status'] == 1) $query->whereNull('data_cessazione');
+        }
+        if ($params['status'] >= 0) {
+            /**
+             * status
+             * -1:  tutti
+             * 1:   presente oggi
+             * 0:   assente oggi
+             */
+            $query->where('stato', $params['status']);
+        }
+
+        if (isset($params['hiring_date_start'])) {
+            $fromDate = $params['hiring_date_start'] . '-01';
+            $query->where('data_assunzione', '>=', $fromDate);
+        }
+
+        if (isset($params['hiring_date_end'])) {
+            // finds the last day of the specified month
+            $toDate = date("Y-m-t", strtotime($params['hiring_date_end'] . '-01'));
+            $query->where('data_assunzione', '<=', $toDate);
+        }
+        if (isset($params['query'])) {
+            $search = trim(strtolower($params['query']));
+            if ($search != '') {
+                $query->where(function($q) use ($search) {
+                    $q->where('cognome', 'like', '%' . $search . '%')
+                    ->orWhere('nome', 'like', '%' . $search . '%')
+                    ->orWhere('codice_fiscale', 'like', '%' . $search . '%');
+                });
+            }
+        }
+        $workers = $query->latest()->paginate(10);
         return $this->sendResponse($workers, 'Workers List');
     }
 

@@ -113,6 +113,10 @@ const app = new Vue({
             url: window.location.origin,
             apkUrl: window.location.origin + '/downloads/app.apk',
 
+            search: {
+                query: ''
+            },
+
             /**
              * Global Methods
              */

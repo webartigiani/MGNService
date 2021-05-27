@@ -35,7 +35,7 @@ class UserController extends BaseController
         }
 
         if (Gate::allows('isWebMaster')) {
-            $users = User::filter(['type'])->latest()->paginate(10);          // web master see al users
+            $users = User::latest()->paginate(10);          // web master see al users
         } else {
             $users = User::where('type','<>','webmaster')->latest()->paginate(10);
         }

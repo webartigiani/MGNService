@@ -8,10 +8,18 @@
 
             <div class="card">
               <div class="card-header">
-                <div class="card-title">
+                <!-- filters  -->
+                <div class="card-title col-10">
+                    <div class="row">
+                        <div class="col-12">
+                            <!--- filters here... -->
+                        </div>
+                    </div>
                 </div>
+
                 <!-- tools -->
-                <div class="card-tools">
+                <div class="card-tools col-2 text-right">
+                    <!-- tools here... -->
                 </div>
               </div>
 
@@ -96,10 +104,8 @@
                   <pagination :data="items" @pagination-change-page="getResults"></pagination>
               </div>
             </div>
-
           </div>
         </div>
-
     </div>
   </section>
 </template>

@@ -8,9 +8,17 @@
 
             <div class="card">
               <div class="card-header">
-                <div class="card-title"></div>
+                <!-- filters  -->
+                <div class="card-title col-10">
+                    <div class="row">
+                        <div class="col-12">
+                            <!-- filters here... -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- tools -->
-                <div class="card-tools">
+                <div class="card-tools col-2 text-right">
                   <button type="button" class="btn btn-sm btn-primary" @click="newModal()">
                       <i class="fa fa-plus-square"></i>
                       Aggiungi

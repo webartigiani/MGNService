@@ -7,23 +7,101 @@
             <h3>Dipendenti</h3>
 
             <div class="card">
-              <div class="card-header">
-                <div class="card-title">
+                <div class="card-header">
+                    <!-- tools -->
+                    <div class="card-tools col-12 text-right">
+                        <button type="button"
+                            class="btn btn-sm btn-primary"
+                            title="Aggiungi un dipendente"
+                            @click="newModal()">
+                            <i class="fa fa-plus-square"></i>
+                            Aggiungi
+                        </button>
+                        <button type="button"
+                            class="btn btn-sm btn-primary btn-green"
+                            title="Esporta Anagrafica Dipendenti"
+                            @click="exportData()">
+                            <i class="fa fa-file-excel"></i>
+                            Esporta
+                        </button>
+                        <!-- filters toggler -->
+                        <button type="button"
+                            class="btn btn-sm"
+                            title="Mostra/Nascondi Filtri"
+                            @click="filters.show = !filters.show"
+                            >
+                            <i class="fas fa-sort-down" v-show="!filters.show"></i>
+                            <i class="fas fa-sort-up" v-show="filters.show"></i>
+                        </button>
+                    </div>
                 </div>
-                <!-- tools -->
-                <div class="card-tools">
-                  <button type="button" class="btn btn-sm btn-primary" @click="newModal()">
-                      <i class="fa fa-plus-square"></i>
-                      Aggiungi
-                  </button>
-                  <button type="button"
-                    class="btn btn-sm btn-primary btn-green"
-                    @click="exportData()">
-                      <i class="fa fa-file-excel"></i>
-                      Esporta
-                  </button>
+
+                <!-- filters -->
+                <transition name="slide">
+                <div class="card-header filters"
+                    v-show="filters.show"
+                    >
+                    <h6><i class="fas fa-filter"></i> Filtri</h6>
+                    <div class="card-title col-12">
+                        <div class="row">
+                            <div class="col-10">
+                                <label for="hiring_date_start">Periodo</label>
+                                <input
+                                    v-model="filters.hiring_date_start"
+                                    type="month"
+                                    id="hiring_date_start"
+                                    class="form-control"
+                                    :min="`2019-01`"
+                                    :max="$root.utils.datetime.formatDateISO(new Date())"
+                                    @change="list()"
+                                    title="Inizio Periodo"
+                                />
+                                <input
+                                    v-model="filters.hiring_date_end"
+                                    type="month"
+                                    class="form-control"
+                                    :min="`2019-01`"
+                                    :max="$root.utils.datetime.formatDateISO(new Date())"
+                                    @change="list()"
+                                    title="Fine Periodo"
+                                />
+
+                                &nbsp;&nbsp;
+                                <label for="hiring_status">Assunzione</label>
+                                <select name="hiring_status" id="hiring_status"
+                                    class="form-control"
+                                    v-model="filters.hiring_status"
+                                    @change="list()"
+                                    >
+                                    <option value="-1">-- tutti --</option>
+                                    <option value="1">Assunti</option>
+                                    <option value="0">Cessati</option>
+                                </select>
+
+                                &nbsp;&nbsp;
+                                <label for="status">Presenza</label>
+                                <select name="status" id="status"
+                                    class="form-control"
+                                    v-model="filters.status"
+                                    @change="list()"
+                                    >
+                                    <option value="-1">-- tutti --</option>
+                                    <option value="1">Presente ora</option>
+                                    <option value="0">Assente ora</option>
+                                </select>
+
+                                <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    title="Resetta Filtri"
+                                    @click="resetFilters()">
+                                    Cancella Filtri
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
+                </transition>
+
               <!-- body -->
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
@@ -223,13 +301,17 @@ export default {
                 data_assunzione: '',
                 data_cessazione: ''
             }),
-            autocompleteItems: [],
+            // filters
+            filters: {
+                show: false,
+                hiring_status: -1,
+                status: -1,
+                hiring_date_start: null,
+                hiring_date_end: null
+            },
         }
     },
     filters: {
-        truncate: function (text, length, suffix) {
-            return text.substring(0, length) + suffix;
-        },
     },
     computed: {
         filteredItems() {
@@ -243,7 +325,13 @@ export default {
     methods: {
         getResults(page = 1) {
             this.$Progress.start();
-            axios.get('api/worker?page=' + page).then(({ data }) => (this.items = data.data));
+
+            let params = this.filters                           // appends filters and search
+            params.query = this.$root.$route.query.search
+
+            axios.get('api/worker?page=' + page, {
+                params: params
+            }).then(({ data }) => (this.items = data.data));
             this.$Progress.finish();
         },
 
@@ -257,16 +345,18 @@ export default {
             this.editmode = true;
             this.form.reset();
             $('#addNew').modal('show');
-            console.log(item)
             this.form.fill(item);
         },
         // #endregion Modals
 
         // #region CRUD Functions
-        list(){
-        // if(this.$gate.isAdmin()){
-            axios.get('api/worker').then(({ data }) => (this.items = data.data));
-        // }
+        list() {
+            let params = this.filters                           // appends filters and search
+            params.query = this.$root.$route.query.search
+            console.log(JSON.stringify(params))
+            axios.get('api/worker', {
+                params: params
+            }).then(({ data }) => (this.items = data.data));
         },
         createItem(){
             this.$Progress.start();
@@ -347,6 +437,18 @@ export default {
         },
         // #endregion CRUD Functions
 
+        // #region Filters Functions
+        resetFilters() {
+            // resets filters
+            this.filters.hiring_status = -1
+            this.filters.status = -1
+            this.filters.hiring_date_start = ''
+            this.filters.hiring_date_end = ''
+            this.$root.$route.query.search = ''
+            this.list()
+        },
+        // #endregion Filters Functions
+
         // #region Utils
         modoTimbraturaToString(modo) {
             // returns modo-timbtratura description
@@ -369,7 +471,6 @@ export default {
 
     // #region Component Life Cycle
     beforeCreate() {
-
     },
     created() {
         this.$Progress.start();
@@ -377,15 +478,14 @@ export default {
         this.$Progress.finish();
     },
     beforeMount() {
-
     },
     mounted() {
+        // sets search-query fron url
+        this.$root.search.query = this.$root.$route.query.search
     },
     beforeDestroy() {
-
     },
     destroyed() {
-
     }
     // #endregion Component Life Cycle
 }

@@ -1,0 +1,34 @@
+
+/*
+    Custom.scss
+*/
+
+/* #region Search */
+input[type="search"]:focus {
+    color:blue!important;
+}
+/* #region Search */
+
+/* #region Form */
+div.filters {
+    * {
+        display: inline!important;
+    }
+    label {
+        /* labels into table filters */
+        font-size: .8em;
+        margin-right: .4em!important;
+        text-transform: lowercase!important;
+    }
+    div.filters input[type="date"].form-control {
+        max-width: 160px;
+    }
+    input[type="month"].form-control {
+        max-width: 190px;
+    }
+    select.form-control {
+        max-width: 160px!important;
+    }
+}
+
+/* #endregion Form */
