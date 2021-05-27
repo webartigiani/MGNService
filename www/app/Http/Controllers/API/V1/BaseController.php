@@ -25,7 +25,6 @@ class BaseController extends Controller
         return response()->json($response, 200);
     }
 
-
     /**
      * return error response.
      *
@@ -49,6 +48,22 @@ class BaseController extends Controller
         return response()->json($response, $code);
     }
 
+    /**
+     * success response method.
+     *
+     * @param $result
+     * @param $message
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function sendErrorLight($message)
+    {
+        $response = [
+            'success' => false,
+            'message' => $message,
+        ];
+        return response()->json($response, 200);
+    }
     /**
      * return Unauthorized response.
      *

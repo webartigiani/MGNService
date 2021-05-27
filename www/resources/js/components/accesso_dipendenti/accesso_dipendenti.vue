@@ -15,7 +15,7 @@
                         v-model="form.worker"
                         class="form-control"
                         >
-                        <option value="">&lt;seleziona&gt;</option>
+                        <option value="">- SELEZIONA NOMINATIVO -</option>
                         <option v-for="item in workers" :value="item" :key="item.id">
                         {{ item.name }} {{ item.surname }}
                         </option>
@@ -24,7 +24,8 @@
                 </div>
                 <div class="form-group">
                 <input v-model="form.codice_timbrata" type="text" name="codice_timbrata"
-                    placeholder="Codice Timbrata"
+                    placeholder="- Codice Timbrata -"
+                    autocomplete="off"
                     class="form-control upper"
                     :maxlength="10"
                     >
@@ -107,27 +108,93 @@ export default {
     // #region Methods
     methods: {
         timbra() {
-            console.log(this.form.worker)
-            console.log(this.form.codice_timbrata)
+            // #region Form Validation
+            if (typeof this.form.worker == 'string') {
+                Swal.fire({
+                    title: 'Errore',
+                    icon: 'error',
+                    html: 'Seleziona il tuo nominativo e ripeti la timbrata'
+                });
+                return;
+            }
+            if (this.form.codice_timbrata == '') {
+                Swal.fire({
+                    title: 'Errore',
+                    icon: 'error',
+                    html: 'Inserisci il tuo codice e ripeti la timbrata'
+                });
+                return;
+            }
+            // #endregion Form Validation
 
+            // #region API Post
             this.posting = true
+            this.form.post('api/website/workers/timbra').then((result) => {
+                // API Succeded
+                const response = result.data
+                const data = result.data.data
 
-            this.form.post('api/attendance').then((result) => {
-                console.log(result)
-                this.posting = false
-                Toast.fire({
-                    icon: 'info',
-                    html: 'Bravo!'
+                console.log(data);
+
+                if (response.success) {
+                    // timbrata OK
+                    let title = ''
+                    let msg = this.form.worker.name + ' ' + this.form.worker.surname
+
+                    if (data.check == 0) {
+                        // entrance
+                        title = 'Entrata'
+                        msg = this.form.worker.name + ' ' + this.form.worker.surname
+                        msg += '<br><br>timbrata entrata alle ore ' + this.formatTime(data.entrance_date)
+                    }
+                    if (data.check == 1) {
+                        // exit
+                        title = 'Uscita'
+                        msg = this.form.worker.name + ' ' + this.form.worker.surname
+                        msg += '<br><br>timbrata uscita alle ore ' + this.formatTime(data.exit_date)
+                    }
+
+                    Swal.fire({
+                        title: title,
+                        icon:'info',
+                        html: msg,
+                        timer: 10000
+                    });
+
+                } else {
+                    // errore timbrata
+                    Swal.fire({
+                        title: 'Errore',
+                        icon:'error',
+                        html: 'La timbrata non è andata a buon fine a causa del seguente problema:<br><br>' + response.message,
+                        timer: 10000
+                    });
+                }
+                this.resetForm()
+            }).catch((error) => {
+                // API Error
+                Swal.fire({
+                    title: 'Errore',
+                    icon:'error',
+                    html: 'Si è verificato un errore.<br>Prego, riprova.',
+                    timer: 10000
                 });
-            }).catch(() => {
-                Toast.fire({
-                    icon: 'info',
-                    title: 'Si è verificato un errore<br>Prego, riprova'
-                });
-                this.posting = false
+                this.resetForm()
             })
-        }
-    }
+            // #endregion API Post
+        },
+
+        resetForm() {
+            this.posting = false
+            this.form.worker = ''
+            this.form.codice_timbrata = ''
+        },
+        formatTime(date) {
+            // formats date by moment hh:mm:ss
+            if (date==null) return ''
+            return this.$moment(date).format('HH:mm:ss')
+        },
+    },
     // #endregion Methods
 }
 </script>

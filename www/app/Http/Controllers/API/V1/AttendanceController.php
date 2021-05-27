@@ -17,6 +17,7 @@ class AttendanceController extends BaseController
     protected $attendance = '';
     private $workerController;
 
+// #region Constructor
     /**
      * Create a new controller instance.
      *
@@ -27,7 +28,9 @@ class AttendanceController extends BaseController
         $this->attendance = $attendance;
         $this->workerController = $workerController;
     }
+// #endregion Constructor
 
+// #region API Methods
     /**
      * Display a listing of the resource.
      *
@@ -47,36 +50,6 @@ class AttendanceController extends BaseController
      */
     public function store(AttendanceRequest $request)
     {
-        // get form normalized data
-        $data = $this->normalizeData($request->all());
-
-
-
-        if ($data['source'] == 'accesso_dipendenti') {
-            /**
-            * timbrata dipendente da home-page
-            *{
-            *    "worker":{
-            *        ...
-            *    }
-            *    "codice_timbrata":"1234",
-            *    "source":"accesso_dipendenti"
-            *}
-            */
-
-            $workerID = $data['worker']['id'];
-            $codice_timbrata = $data['codice_timbrata'];
-            $error = '';
-
-            if ($this->workerController->timbra($workerID, $codice_timbrata, $error)) {
-                return $this->sendResponse('OK', 'Timbrata Creata');
-            } else {
-                // timbrata fallita
-                return $this->sendError($error, $errorMessages = [], $code = 404);
-            }
-        } else {
-            /// timbrata editata da admin
-        }
 
         // inserts data
         /*
@@ -138,11 +111,37 @@ class AttendanceController extends BaseController
         $attendance->delete();
         return $this->sendResponse($attendance, 'Presenza eliminata');
     }
+// #endregion API Methods
 
-    /*
-     * Normalizes data
+// #region Public Methods
+    /**
+     * Returns true if the specified id exists
      */
-    public function normalizeData($data) {
+    public function exists($id) {
+        $tableName = 'attendances';
+        $data = DB::table($tableName)->where('id', $id)->take(1)->get();
+        if (isset($data)) return isset($data[0]);
+        return false;
+    }
+
+    /**
+     * Returns the specified record
+     */
+    public function get($id) {
+        //if (!$this->exists($id)) return null;
+        $tableName = 'attendances';
+        $data = DB::table($tableName)->where('id', $id)->take(1)->get();
+        return $data[0];
+    }
+
+// #endregion Public Methods
+
+// #region Private Methods
+    /*
+     * Normalizes worker data
+     */
+    private function normalizeData($data) {
         return $data;
     }
+// #endregion Private Methods
 }

@@ -34,6 +34,7 @@ Route::group([
     Route::post('api/app/workers/startTrackingSession', 'ApiController@startTrackingSession');      // tracking-session management
     Route::post('api/app/workers/continueTracking', 'ApiController@continueTracking');
     Route::post('api/app/workers/stopTrackingSession', 'ApiController@stopTrackingSession');
+    Route::post('api/website/workers/timbra', 'ApiController@timbra');
 
     // WebSite Called APIs
     Route::get('api/ws/workers/list/', 'ApiController@listWorkersWS');

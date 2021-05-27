@@ -9,6 +9,8 @@ namespace App\Http\Controllers\Api\APP;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\api\V1\WorkerController;
+use App\Http\Controllers\api\V1\AttendanceController;
 use App\Http\Controllers\TrackingSessionController;
 use App\Http\Controllers\UtilsController;
 use Illuminate\Routing\UrlGenerator;
@@ -18,6 +20,8 @@ class ApiController extends Controller
 {
     private $utils;
     private $TSC;
+    private $workerController;
+    private $attendanceController;
     protected $url;
 
 // #region Contructor
@@ -26,11 +30,13 @@ class ApiController extends Controller
      *
      * @return void
      */
-    public function __construct(TrackingSessionController $tsc, UtilsController $utils, UrlGenerator $url)
+    public function __construct(TrackingSessionController $tsc, UtilsController $utils, UrlGenerator $url, WorkerController $workerController, AttendanceController $attendanceController)
     {
         $this->TSC = $tsc;
         $this->utils = $utils;
         $this->url = $url;
+        $this->workerController = $workerController;
+        $this->attendanceController = $attendanceController;
     }
 // #endregion Contructor
 
@@ -199,6 +205,25 @@ public function autoUpdate(Request $request) {
 // #endregion Tracking methods
 
 // #region Workers
+    public function timbra(Request $request) {
+
+        $data = $request->json()->all();         // gets payload
+
+        $workerID = $data['worker']['id'];
+        $codice_timbrata = $data['codice_timbrata'];
+        $error = '';
+
+        $tID =  $this->workerController->timbra($workerID, $codice_timbrata, $error);
+
+        if ($tID > 0) {
+            $dbdata = $this->attendanceController->get($tID);
+            return $this->sendResponse($dbdata, 'Timbrata Creata');
+        } else {
+            // timbrata fallita
+            return $this->sendErrorLight($error);
+        }
+    }
+
     public function listWorkers(Request $request)
     {/* listWorkers
         list free, enabled workers
@@ -468,6 +493,23 @@ public function autoUpdate(Request $request) {
             $response['data'] = $errorMessages;
         }
         return response()->json($response, $code);
+    }
+
+    /**
+     * success response method.
+     *
+     * @param $result
+     * @param $message
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function sendErrorLight($message)
+    {
+        $response = [
+            'success' => false,
+            'message' => $message,
+        ];
+        return response()->json($response, 200);
     }
 
     private function routeAPP(Request $request) {
