@@ -58,6 +58,12 @@ import { ApiService } from '../Classes/API';
 */
 import { AppUpdate } from '@ionic-native/app-update/ngx';
 
+// Autostart
+// see  https://ionicframework.com/docs/native/autostart
+// install  ionic cordova plugin add cordova-plugin-autostart
+//          npm install @ionic-native/autostart
+import { Autostart } from '@ionic-native/autostart/ngx';
+
 @Injectable()
 export class AppService {
 
@@ -72,6 +78,7 @@ export class AppService {
 
       private platform: Platform,
       private appUpdate: AppUpdate,
+      private autostart: Autostart,
    ) {
       // constructor...
    }
@@ -90,7 +97,10 @@ export class AppService {
 
   checkUpdates() {
     // we do not update in debug (browser)
-    if (this.utils.isDebug()) return
+    if (this.utils.isDebug()) {
+      console.warn('checkUpdates disabled on browser');
+      return
+    }
 
     const updateUrl = this.updateUrl()
     this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
@@ -106,6 +116,26 @@ export class AppService {
     })
   }
 
+  setAutostart(enable) {
+    /**
+     * Enables/Disables APP autostart
+     */
+
+    if (this.utils.isDebug()) {
+      console.warn('setAutostart disabled on browser');
+      return
+    }
+    console.log('setAutostart', enable)
+
+    if (enable) {
+      this.autostart.enable()
+    } else {
+      this.autostart.disable()
+    }
+  }
+  // #endregion Public Methods
+
+  // #region Private Methods
   private updateUrl() {
     // returns the App Update Url
 
@@ -122,5 +152,5 @@ export class AppService {
     }
     return ret += 'app/update/'
   }
-  // #endregion Public Methods
+  // #endregion Private Methods
 }

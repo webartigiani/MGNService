@@ -53,6 +53,9 @@
     },
     "cordova-plugin-app-update": {
       "PACKAGE_NAME": "io.webartigiani.mgn"
+    },
+    "cordova-plugin-autostart": {
+      "PACKAGE_NAME": "io.webartigiani.mgn"
     }
   },
   "dependent_plugins": {

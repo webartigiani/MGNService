@@ -126,6 +126,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "AppUpdate"
       ]
+    },
+    {
+      "id": "cordova-plugin-autostart.AutoStart",
+      "file": "plugins/cordova-plugin-autostart/www/auto-start.js",
+      "pluginId": "cordova-plugin-autostart",
+      "clobbers": [
+        "cordova.plugins.autoStart"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -145,6 +153,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-background-mode": "0.7.3",
     "cordova-plugin-insomnia": "4.3.0",
     "cordova-plugin-appversion": "1.0.0",
-    "cordova-plugin-app-update": "2.0.2"
+    "cordova-plugin-app-update": "2.0.2",
+    "cordova-plugin-autostart": "2.3.0"
   };
 });

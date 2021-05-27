@@ -166,7 +166,7 @@ public function export(Request $request) {
     $dbdata = DB::table('export_v_workers_view')->get();
     return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
-// #region API Export Methods
+// #endregion API Export Methods
 
 // #region Public API methods
     /**

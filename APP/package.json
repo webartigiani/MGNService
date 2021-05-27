@@ -25,6 +25,7 @@
     "@capacitor/core": "2.4.7",
     "@ionic-native/android-permissions": "^5.32.1",
     "@ionic-native/app-update": "^5.33.0",
+    "@ionic-native/autostart": "^5.33.0",
     "@ionic-native/background-mode": "^5.33.0",
     "@ionic-native/call-number": "^5.33.0",
     "@ionic-native/core": "^5.32.1",
@@ -69,6 +70,7 @@
     "cordova-plugin-android-permissions": "^1.1.2",
     "cordova-plugin-app-update": "^2.0.2",
     "cordova-plugin-appversion": "^1.0.0",
+    "cordova-plugin-autostart": "^2.3.0",
     "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-geolocation": "^4.1.0",
@@ -118,7 +120,8 @@
       "mx.ferreyra.callnumber": {},
       "cordova-plugin-background-mode": {},
       "cordova-plugin-insomnia": {},
-      "cordova-plugin-app-update": {}
+      "cordova-plugin-app-update": {},
+      "cordova-plugin-autostart": {}
     },
     "platforms": [
       "android"

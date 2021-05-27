@@ -80,9 +80,14 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
               <name>MyApp</name>
             ...
 */
-
-
 import { AppUpdate } from '@ionic-native/app-update/ngx';
+
+// Autostart
+// see  https://ionicframework.com/docs/native/autostart
+// install  ionic cordova plugin add cordova-plugin-autostart
+//          npm install @ionic-native/autostart
+import { Autostart } from '@ionic-native/autostart/ngx';
+
 
 // WebArtigiani Classes
 import { AppService } from './Classes/App';
@@ -127,6 +132,7 @@ enableProdMode()
     BackgroundMode,
     Insomnia,
     AppUpdate,
+    Autostart,
 
     // WebArtigiani
     AppService,

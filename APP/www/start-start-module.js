@@ -81,7 +81,8 @@ let StartPage = class StartPage {
         after Angular first displays the data-bound properties and sets the directive or component's input properties.
         Called once
         */
-        this.app.checkUpdates();
+        this.app.checkUpdates(); // checks for APP updates
+        this.app.setAutostart(true); // sets APP for auto-start
     }
     ngAfterViewInit() {
         console.log('start', 'ngAfterViewInit');

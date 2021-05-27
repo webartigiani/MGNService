@@ -115,7 +115,6 @@ export class ApiService {
             "longitude": gpsData.longitude,
             "accuracy": gpsData.accuracy,
         }
-        console.log('payload', payload)
         return new Promise((resolve, reject) => {
           this.post('/devices/add/', payload).then((result) => {
             resolve(result.data)
@@ -193,7 +192,6 @@ export class ApiService {
         "session_id": sessionID,
         "navigation_status":navigationStatus
       }
-      console.log(payload)
       return new Promise((resolve, reject) => {
         this.post('/workers/continueTracking/', payload).then((result) => {
           resolve(result)

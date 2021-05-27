@@ -9,8 +9,8 @@ namespace App\Http\Controllers\Api\APP;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Controllers\api\V1\WorkerController;
-use App\Http\Controllers\api\V1\AttendanceController;
+use App\Http\Controllers\API\V1\WorkerController;
+use App\Http\Controllers\API\V1\AttendanceController;
 use App\Http\Controllers\TrackingSessionController;
 use App\Http\Controllers\UtilsController;
 use Illuminate\Routing\UrlGenerator;

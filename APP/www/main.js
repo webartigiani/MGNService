@@ -403,6 +403,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
 /* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
 /* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
+/* harmony import */ var _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/autostart/ngx */ "F6t2");
 /*
   AppService Class
   implements various components, such as loading, alert
@@ -460,17 +461,23 @@ __webpack_require__.r(__webpack_exports__);
             ...
 */
 
+// Autostart
+// see  https://ionicframework.com/docs/native/autostart
+// install  ionic cordova plugin add cordova-plugin-autostart
+//          npm install @ionic-native/autostart
+
 let AppService = class AppService {
     // #region Variables
     // #endregion Variables
     // #region Constructors
     constructor(
     // WebArtigiani
-    utils, api, platform, appUpdate) {
+    utils, api, platform, appUpdate, autostart) {
         this.utils = utils;
         this.api = api;
         this.platform = platform;
         this.appUpdate = appUpdate;
+        this.autostart = autostart;
         // constructor...
     }
     // #endregion Constructors
@@ -486,8 +493,10 @@ let AppService = class AppService {
     }
     checkUpdates() {
         // we do not update in debug (browser)
-        if (this.utils.isDebug())
+        if (this.utils.isDebug()) {
+            console.warn('checkUpdates disabled on browser');
             return;
+        }
         const updateUrl = this.updateUrl();
         this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
             /**
@@ -501,6 +510,24 @@ let AppService = class AppService {
             console.error('checkUpdates errore', error);
         });
     }
+    setAutostart(enable) {
+        /**
+         * Enables/Disables APP autostart
+         */
+        if (this.utils.isDebug()) {
+            console.warn('setAutostart disabled on browser');
+            return;
+        }
+        console.log('setAutostart', enable);
+        if (enable) {
+            this.autostart.enable();
+        }
+        else {
+            this.autostart.disable();
+        }
+    }
+    // #endregion Public Methods
+    // #region Private Methods
     updateUrl() {
         // returns the App Update Url
         let ret = '';
@@ -522,7 +549,8 @@ AppService.ctorParameters = () => [
     { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_4__["UtilsService"] },
     { type: _Classes_API__WEBPACK_IMPORTED_MODULE_5__["ApiService"] },
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"] },
-    { type: _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__["AppUpdate"] }
+    { type: _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__["AppUpdate"] },
+    { type: _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_7__["Autostart"] }
 ];
 AppService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
@@ -933,7 +961,6 @@ let ApiService = class ApiService {
                 "longitude": gpsData.longitude,
                 "accuracy": gpsData.accuracy,
             };
-            console.log('payload', payload);
             return new Promise((resolve, reject) => {
                 this.post('/devices/add/', payload).then((result) => {
                     resolve(result.data);
@@ -1015,7 +1042,6 @@ let ApiService = class ApiService {
                 "session_id": sessionID,
                 "navigation_status": navigationStatus
             };
-            console.log(payload);
             return new Promise((resolve, reject) => {
                 this.post('/workers/continueTracking/', payload).then((result) => {
                     resolve(result);
@@ -1177,13 +1203,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ionic-native/background-mode/ngx */ "1xeP");
 /* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
 /* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
-/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
+/* harmony import */ var _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @ionic-native/autostart/ngx */ "F6t2");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
 
 /*
 app.module.ts
@@ -1257,6 +1284,11 @@ src/app.module.ts
             ...
 */
 
+// Autostart
+// see  https://ionicframework.com/docs/native/autostart
+// install  ionic cordova plugin add cordova-plugin-autostart
+//          npm install @ionic-native/autostart
+
 // WebArtigiani Classes
 
 
@@ -1300,14 +1332,15 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_14__["BackgroundMode"],
             _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_15__["Insomnia"],
             _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_16__["AppUpdate"],
+            _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_17__["Autostart"],
             // WebArtigiani
-            _Classes_App__WEBPACK_IMPORTED_MODULE_17__["AppService"],
-            _Classes_API__WEBPACK_IMPORTED_MODULE_18__["ApiService"],
-            _Classes_Utils__WEBPACK_IMPORTED_MODULE_19__["UtilsService"],
-            _Classes_Components__WEBPACK_IMPORTED_MODULE_20__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_21__["GeoLocationService"],
-            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_22__["LocalDataService"],
-            _Classes_Phone__WEBPACK_IMPORTED_MODULE_23__["PhoneServices"],
+            _Classes_App__WEBPACK_IMPORTED_MODULE_18__["AppService"],
+            _Classes_API__WEBPACK_IMPORTED_MODULE_19__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_20__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_21__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_22__["GeoLocationService"],
+            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_23__["LocalDataService"],
+            _Classes_Phone__WEBPACK_IMPORTED_MODULE_24__["PhoneServices"],
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })
