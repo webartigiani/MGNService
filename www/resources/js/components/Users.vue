@@ -35,7 +35,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                     <tr v-for="item in items" :key="item.id">
+                     <tr v-for="item in items.data" :key="item.id">
 
                       <td>{{ item.id }}</td>
                       <td class="text-capitalize">{{ item.type }}</td>
@@ -150,7 +150,7 @@ export default {
     data () {
         return {
             editmode: false,
-            items :[],
+            items: {},
             form: new Form({
                 id : '',
                 type : '',
@@ -166,8 +166,8 @@ export default {
     methods: {
         getResults(page = 1) {
             this.$Progress.start();
-            axios.get('api/user?page=' + page).then(({ data }) => (this.items = data.data.data));
-            this.$Progress.finish();
+            aaxios.get('api/user?page=' + page).then(({ data }) => (this.items = data.data));
+            this.$Progress.finish()
         },
 
         // #region Modal Functions
@@ -187,11 +187,12 @@ export default {
         // #region CRUD functions
         list(){
             // lists users
+            const self = this
             this.$Progress.start();
             if(this.$gate.isAdminOrWebMaster()){
-                axios.get("api/user").then(({ data }) => (this.items = data.data.data));
+              axios.get("api/user").then(({ data }) => (this.items = data.data));
             }
-            this.$Progress.finish();
+            this.$Progress.finish()
         },
         createItem(){
             this.form.post('api/user')
@@ -268,13 +269,21 @@ export default {
     },
 
     // #region Life Cycle
-    mounted() {
-        console.log('User Component mounted.')
+    beforeCreate() {
+
     },
     created() {
         this.$Progress.start();
         this.list();
         this.$Progress.finish();
+    },
+    beforeMount() {
+    },
+    mounted() {
+    },
+    beforeDestroy() {
+    },
+    destroyed() {
     }
     // #endregion Life Cycle
 }

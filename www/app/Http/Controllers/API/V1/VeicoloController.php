@@ -29,7 +29,7 @@ class VeicoloController extends BaseController
      */
     public function index()
     {
-        $veicoli = DB::table('v_veichles')->get();
+        $veicoli = DB::table('v_veichles')->latest()->paginate(10);
         return $this->sendResponse($veicoli, 'Veichles List');
     }
 

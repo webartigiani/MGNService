@@ -10,7 +10,7 @@
               <div class="card-header">
                 <div class="card-title">
                 </div>
-
+                <!-- tools -->
                 <div class="card-tools">
                   <button type="button" class="btn btn-sm btn-primary" @click="newModal()">
                       <i class="fa fa-plus-square"></i>
@@ -24,7 +24,7 @@
                   </button>
                 </div>
               </div>
-              <!-- /.card-header -->
+              <!-- body -->
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                   <thead>
@@ -43,7 +43,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                     <tr v-for="item in items" :key="item.id">
+                     <tr v-for="item in items.data" :key="item.id">
                       <td style="width:20px;">
                           <i class="fa fa-dot-circle"
                             :title="(item.stato==1 ? 'presente' : 'non presente')"
@@ -236,7 +236,7 @@ export default {
     },
     computed: {
         filteredItems() {
-            return this.autocompleteItems.filter(i => {
+            return this.items.filter(i => {
                 return i.text.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1;
             });
         },
@@ -268,7 +268,7 @@ export default {
         // #region CRUD Functions
         list(){
         // if(this.$gate.isAdmin()){
-            axios.get("api/worker").then(({ data }) => (this.items = data.data));
+            axios.get('api/worker').then(({ data }) => (this.items = data.data, console.log('check', this.items)));
         // }
         },
         createItem(){

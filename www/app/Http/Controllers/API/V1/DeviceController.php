@@ -29,7 +29,7 @@ class DeviceController extends BaseController
      */
     public function index()
     {
-        $device = DB::table('v_devices')->get();
+        $device = DB::table('v_devices')->latest()->paginate(10);
         return $this->sendResponse($device, 'Devices List');
     }
 

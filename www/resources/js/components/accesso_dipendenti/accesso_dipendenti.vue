@@ -141,6 +141,7 @@ export default {
                     let title = ''
                     let msg = this.form.worker.name + ' ' + this.form.worker.surname
 
+                    // genera messaggio a seconda se timbrata di entrata o uscita
                     if (data.check == 0) {
                         // entrance
                         title = 'Entrata'
@@ -153,14 +154,12 @@ export default {
                         msg = this.form.worker.name + ' ' + this.form.worker.surname
                         msg += '<br><br>timbrata uscita alle ore ' + this.formatTime(data.exit_date)
                     }
-
                     Swal.fire({
                         title: title,
                         icon:'info',
                         html: msg,
                         timer: 10000
                     });
-
                 } else {
                     // errore timbrata
                     Swal.fire({
@@ -185,6 +184,7 @@ export default {
         },
 
         resetForm() {
+            // resets form
             this.posting = false
             this.form.worker = ''
             this.form.codice_timbrata = ''

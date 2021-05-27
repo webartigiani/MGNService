@@ -36,7 +36,7 @@ class WorkerController extends BaseController
      */
     public function index()
     {
-        $workers = DB::table('workers')->get();
+        $workers = DB::table('workers')->latest()->paginate(10);
         return $this->sendResponse($workers, 'Workers List');
     }
 

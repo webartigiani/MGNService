@@ -10,11 +10,12 @@
               <div class="card-header">
                 <div class="card-title">
                 </div>
-
+                <!-- tools -->
                 <div class="card-tools">
                 </div>
               </div>
 
+                <!-- body -->
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                   <thead>
@@ -33,7 +34,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                     <tr v-for="item in items" :key="item.id">
+                     <tr v-for="item in items.data" :key="item.id">
                       <td style="width:20px;">
                           <i class="fa fa-dot-circle"
                             :title="(item.is_online==1 ? 'online' : 'offline')"
