@@ -11,6 +11,7 @@ class VeicoloController extends BaseController
 {
     protected $veicolo = '';
 
+// #region Constructor
     /**
      * Create a new controller instance.
      *
@@ -21,13 +22,15 @@ class VeicoloController extends BaseController
         $this->middleware('auth:api');
         $this->veicolo = $veicolo;
     }
+// #endregion Constructor
 
+// #region API Methods
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $veicoli = DB::table('v_veichles')->latest()->paginate(10);
         return $this->sendResponse($veicoli, 'Veichles List');
@@ -99,14 +102,20 @@ class VeicoloController extends BaseController
         $veicolo->delete();
         return $this->sendResponse($veicolo, 'Il veicolo è stato eliminato');
     }
+// #endregion API Methods
 
+// #region Public Methods
+// #endregion Public Methods
+
+// #region Private Methods
     /*
      * Normalizes veicolo data
      */
-    public function normalizeData($data) {
+    private function normalizeData($data) {
         $data['manufacter'] =  strtoupper(trim($data['manufacter']));
         $data['model'] =  strtoupper(trim($data['model']));
         $data['licence_plate'] =  strtoupper(trim($data['licence_plate']));
         return $data;
     }
+// #endregion Private Methods
 }

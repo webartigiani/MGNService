@@ -11,6 +11,7 @@ class DeviceController extends BaseController
 {
     protected $device = '';
 
+// #region Constructor
     /**
      * Create a new controller instance.
      *
@@ -21,13 +22,15 @@ class DeviceController extends BaseController
         $this->middleware('auth:api');
         $this->device = $device;
     }
+// #endregion Constructor
 
+// #region API Methods
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $device = DB::table('v_devices')->latest()->paginate(10);
         return $this->sendResponse($device, 'Devices List');
@@ -102,15 +105,21 @@ class DeviceController extends BaseController
         $device->delete();
         return $this->sendResponse($device, 'Il dispositivo è stato eliminato');
     }
+// #endregion API Methods
 
+// #region Public Methods
+// #endregion Public Methods
+
+// #region Private Methods
     /*
      * Normalizes worker data
      */
-    public function normalizeData($data) {
+    private function normalizeData($data) {
         $data['nome'] =  strtoupper(trim($data['nome']));
         $data['cognome'] =  strtoupper(trim($data['cognome']));
         $data['codice_fiscale'] =  strtoupper(trim($data['codice_fiscale']));
         $data['matricola'] =  strtoupper(trim($data['matricola']));
         return $data;
     }
+// #endregion Private Methods
 }

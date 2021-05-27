@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
+
+    public function index(Request $request)
+    {
+        return 'ok';
+    }
+
     /**
      * success response method.
      *

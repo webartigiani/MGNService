@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\Users\UserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends BaseController
 {
+// #region Constructor
     /**
      * Create a new controller instance.
      *
@@ -18,20 +20,22 @@ class UserController extends BaseController
     {
         $this->middleware('auth:api');
     }
+// #endregion Constructor
 
+// #region API Methods
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         if (!Gate::allows('isAdmin')) {
             return $this->unauthorizedResponse();
         }
 
         if (Gate::allows('isWebMaster')) {
-            $users = User::latest()->paginate(10);          // web master see al users
+            $users = User::filter(['type'])->latest()->paginate(10);          // web master see al users
         } else {
             $users = User::where('type','<>','webmaster')->latest()->paginate(10);
         }
@@ -96,4 +100,17 @@ class UserController extends BaseController
         $user->delete();
         return $this->sendResponse([$user], 'Utente cancellato');
     }
+// #endregion API Methods
+
+// #region Public Methods
+// #endregion Public Methods
+
+// #region Private Methods
+    /*
+     * Normalizes worker data
+     */
+    private function normalizeData($data) {
+        return $data;
+    }
+// #endregion Private Methods
 }

@@ -34,7 +34,7 @@ class WorkerController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $workers = DB::table('workers')->latest()->paginate(10);
         return $this->sendResponse($workers, 'Workers List');

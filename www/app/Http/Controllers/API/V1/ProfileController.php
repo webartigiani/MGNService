@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
+// #region Constructor
     /**
      * Create a new controller instance.
      *
@@ -19,7 +20,9 @@ class ProfileController extends Controller
     {
         $this->middleware('auth:api');
     }
+// #endregion Constructor
 
+// #region API Methods
     /**
      * Return the user data
      *
@@ -34,7 +37,6 @@ class ProfileController extends Controller
         ];
         return response()->json($response, 200);
     }
-
 
     /**
      * Update the profile by users
@@ -56,7 +58,6 @@ class ProfileController extends Controller
         return response()->json($response, 200);
     }
 
-
     /**
      * Update the specified resource in storage.
      *
@@ -74,4 +75,17 @@ class ProfileController extends Controller
         ];
         return response()->json($response, 200);
     }
+// #region API Methods
+
+// #region Public Methods
+// #endregion Public Methods
+
+// #region Private Methods
+    /*
+     * Normalizes worker data
+     */
+    private function normalizeData($data) {
+        return $data;
+    }
+// #endregion Private Methods
 }

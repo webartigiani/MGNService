@@ -36,7 +36,7 @@ class AttendanceController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {   /*
         v_timbrate: see migration
         */
