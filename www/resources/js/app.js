@@ -99,6 +99,8 @@ Vue.filter('yesno', value => (value ? '<i class="fas fa-check green"></i>' : '<i
 // end Filter
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
+import VueMoment from 'vue-moment'
+Vue.use(VueMoment)
 
 const app = new Vue({
     el: '#app',
@@ -109,10 +111,55 @@ const app = new Vue({
         return {
             loading: true,
             url: window.location.origin,
-            apkUrl: window.location.origin + '/downloads/app.apk'
+            apkUrl: window.location.origin + '/downloads/app.apk',
+
+            /**
+             * Global Methods
+             */
+            utils: {
+                generic: {
+                    // Generic Methods
+                    demo() {
+                        console.warn('qui funzione demo')
+                    },
+                    functionNotAvailable() {
+                        alert('Questa funzione sarà disponibile a breve.')
+                        return
+                    }
+                },
+                datetime: {
+                    // dateTime Methods
+                    dateAddDays(fromDate, days) {
+                        if (fromDate == null) return ''
+                        let ret = new Date()
+                        ret.setDate(fromDate.getDate() + days)
+                        return ret;
+                    },
+                    formatDate(date) {
+                        // formats date by moment DD/MM/YYY
+                        if (date==null) return ''
+                        return new moment(date).format('DD/MM/YYYY')
+                    },
+                    formatDateISO(date) {
+                        // formats date by moment
+                        if (date==null) return ''
+                        return new moment(date).format('YYYY-MM-DD')
+                    },
+                    formatDateTime(date) {
+                        // formats date by moment DD/MM/YYY
+                        if (date==null) return ''
+                        return new moment(date).format('DD/MM/YYYY HH:mm:ss')
+                    },
+                }
+            }
         }
     },
     // #endregion Properties
+
+    // #region Methods
+    methods: {
+    },
+    // #endregion Methods
 
     // #region App Life Cycle
     beforeCreate () {

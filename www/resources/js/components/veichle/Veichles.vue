@@ -156,9 +156,6 @@ a.action {
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
 import Vue from 'vue'
-import VueMoment from 'vue-moment'
-
-Vue.use(VueMoment)
 
 export default {
     components: {
@@ -333,13 +330,25 @@ export default {
     },
 
     // #region Component Life Cycle
-    mounted() {
+    beforeCreate() {
+
     },
     created() {
         this.$Progress.start();
         this.list();
         this.$Progress.finish();
     },
+    beforeMount() {
+
+    },
+    mounted() {
+    },
+    beforeDestroy() {
+
+    },
+    destroyed() {
+
+    }
     // #endregion Component Life Cycle
 }
 </script>

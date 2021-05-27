@@ -41,7 +41,7 @@
                       <td class="text-capitalize">{{ item.type }}</td>
                       <td class="text-capitalize">{{ item.name }}</td>
                       <td>{{ item.email }}</td>
-                      <td>{{ formatDate(item.created_at) }}</td>
+                      <td>{{ $root.utils.datetime.formatDateTime(item.created_at) }}</td>
                       <td>
                         <a href="#"
                             class="action"
@@ -141,9 +141,6 @@ a.action {
 
 <script>
 import Vue from 'vue'
-import VueMoment from 'vue-moment'
-
-Vue.use(VueMoment)
 
 export default {
     // #region Properties
@@ -261,10 +258,6 @@ export default {
         // #endregion CRUD functions
 
         // #region Utils Functions
-        formatDate(date) {
-            if (date==null) return ''
-            return this.$moment(date).format('DD/MM/YYYY HH:mm:ss')
-        }
         // #endregion Utils Functions
     },
 

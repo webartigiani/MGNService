@@ -60,13 +60,13 @@
                           >{{ modoTimbraturaToString(item.modo_timbratura) }}</span>
                       </td>
                       <td>{{ item.password_timbratura}}</td>
-                      <td>{{ formatDate(item.data_assunzione) }}</td>
-                      <td>{{ formatDate(item.data_cessazione) }}</td>
+                      <td>{{ $root.utils.datetime.formatDate(item.data_assunzione) }}</td>
+                      <td>{{ $root.utils.datetime.formatDate(item.data_cessazione) }}</td>
                       <td>
                         <a href="#"
                             class="action"
                             title="Visualizza Timbrate"
-                            @click="functionNotAvailable()"
+                            @click="$root.utils.generic.functionNotAvailable()"
                             >
                             <i class="fa fa-tag blue"></i>
                         </a>
@@ -162,8 +162,8 @@
                             <input v-model="form.data_assunzione" type="date" name="data_assunzione"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('data_assunzione') }"
                                 :readonly="editmode"
-                                :min="formatDateISO(dateAddDays(new Date(), -7))"
-                                :max="formatDateISO(dateAddDays(new Date(), 7))"
+                                :min="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), -7))"
+                                :max="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), 7))"
                                 >
                             <has-error :form="form" field="data_assunzione"></has-error>
                         </div>
@@ -174,8 +174,8 @@
                             <input v-model="form.data_cessazione" type="date" name="data_cessazione"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('data_cessazione') }"
                                 :readonly="(form.data_cessazione != null)"
-                                :min="formatDateISO(form.data_assunzione)"
-                                :max="formatDateISO(dateAddDays(new Date(), 7))"
+                                :min="$root.utils.datetime.formatDateISO(form.data_assunzione)"
+                                :max="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), 7))"
                                 >
                             <has-error :form="form" field="data_cessazione"></has-error>
                         </div>
@@ -202,9 +202,6 @@ a.action {
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
 import Vue from 'vue'
-import VueMoment from 'vue-moment'
-
-Vue.use(VueMoment)
 
 export default {
     components: {
@@ -268,7 +265,7 @@ export default {
         // #region CRUD Functions
         list(){
         // if(this.$gate.isAdmin()){
-            axios.get('api/worker').then(({ data }) => (this.items = data.data, console.log('check', this.items)));
+            axios.get('api/worker').then(({ data }) => (this.items = data.data));
         // }
         },
         createItem(){
@@ -351,22 +348,6 @@ export default {
         // #endregion CRUD Functions
 
         // #region Utils
-        formatDate(date) {
-            // formats date by moment DD/MM/YYY
-            if (date==null) return ''
-            return this.$moment(date).format('DD/MM/YYYY')
-        },
-        dateAddDays(fromDate, days) {
-            if (fromDate == null) return ''
-            let ret = new Date()
-            ret.setDate(fromDate.getDate() + days)
-            return ret;
-        },
-        formatDateISO(date) {
-            // formats date by moment
-            if (date==null) return ''
-            return this.$moment(date).format('YYYY-MM-DD')
-        },
         modoTimbraturaToString(modo) {
             // returns modo-timbtratura description
             switch (modo) {
@@ -383,21 +364,29 @@ export default {
                 case 2: return 'badge-info';
             }
         },
-        functionNotAvailable() {
-            alert('Questa funzione sarà disponibile a breve.')
-            return
-        }
         // #endregion utils
     },
 
     // #region Component Life Cycle
-    mounted() {
+    beforeCreate() {
+
     },
     created() {
         this.$Progress.start();
         this.list();
         this.$Progress.finish();
     },
+    beforeMount() {
+
+    },
+    mounted() {
+    },
+    beforeDestroy() {
+
+    },
+    destroyed() {
+
+    }
     // #endregion Component Life Cycle
 }
 </script>

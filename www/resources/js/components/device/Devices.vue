@@ -60,8 +60,8 @@
                       </td>
                         <td>{{ item.uuid }}</td>
                         <td>{{ (item.serial == 'unknown') ? '-': item.serial }}</td>
-                        <td>{{ formatDateTime(item.created_at) }}</td>
-                        <td>{{ formatDateTime(item.updated_at) }}</td>
+                        <td>{{ $root.utils.datetime.formatDateTime(item.created_at) }}</td>
+                        <td>{{ $root.utils.datetime.formatDateTime(item.updated_at) }}</td>
                         <td>
                             <i class="fas fa-wifi"
                                 :title="item.connection_type"
@@ -76,7 +76,7 @@
                         <a href="#"
                             class="action"
                             title="Elimina"
-                            @click="functionNotAvailable(item.id)">
+                            @click="$root.utils.generic.functionNotAvailable(item.id)">
                             <i class="fa fa-trash blue"></i>
                         </a>
                         <a :href="'tracking/?session_id=' + item.tracking_session_id"
@@ -113,9 +113,6 @@ a.action {
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
 import Vue from 'vue'
-import VueMoment from 'vue-moment'
-
-Vue.use(VueMoment)
 
 export default {
     components: {
@@ -127,9 +124,6 @@ export default {
         return {
             editmode: false,
             items : {},
-            filters: {
-                date: this.formatDateISO(new Date())
-            },
             autocompleteItems: [],
         }
     },
@@ -253,21 +247,6 @@ export default {
         // #endregion CRUD Functions
 
         // #region Utils
-        formatDate(date) {
-            // formats date by moment DD/MM/YYY
-            if (date==null) return ''
-            return this.$moment(date).format('DD/MM/YYYY')
-        },
-        formatDateTime(date) {
-            // formats date by moment DD/MM/YYY
-            if (date==null) return ''
-            return this.$moment(date).format('DD/MM/YYYY hh:mm:ss')
-        },
-        formatDateISO(date) {
-            // formats date by moment
-            if (date==null) return ''
-            return this.$moment(date).format('YYYY-MM-DD')
-        },
         typeToString(t) {
             // returns modo-timbtratura description
             switch (t) {
@@ -282,21 +261,29 @@ export default {
                 case 'U': return 'badge-warning';
             }
         },
-        functionNotAvailable() {
-            alert('Questa funzione sarà disponibile a breve.')
-            return
-        }
         // #endregion utils
     },
 
     // #region Component Life Cycle
-    mounted() {
+    beforeCreate() {
+
     },
     created() {
         this.$Progress.start();
         this.list();
         this.$Progress.finish();
     },
+    beforeMount() {
+
+    },
+    mounted() {
+    },
+    beforeDestroy() {
+
+    },
+    destroyed() {
+
+    }
     // #endregion Component Life Cycle
 }
 </script>
