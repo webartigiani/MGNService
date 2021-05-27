@@ -124,10 +124,12 @@ const app = new Vue({
                      * CSV data comes from response.data
                      * see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
                      */
+                    let data = response.data;
+                    data = data.replace(new RegExp('<br>', 'g'), "\r\n")    // replaces <br> by CRLF
 
                     // Creates a dynamic download link from blob
                     const url = window.URL.createObjectURL(
-                        new Blob([response.data], { type: "text/csv" })
+                        new Blob([data], { type: "text/csv" })
                     );
 
                     // Creates a dynamic <a> element, sets this url and download-name, then clicks it

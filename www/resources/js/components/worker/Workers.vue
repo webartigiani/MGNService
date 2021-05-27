@@ -436,9 +436,8 @@ export default {
             const response = await axios({
                 method: 'get',
                 url: 'api/workers/export',
-                responseType: 'blob',
             })
-            this.$root.download.saveCSV(response, 'dipendenti')
+            this.$root.download.saveCSV(response, 'ELEDIP')     // ELEDIP.csv
         },
         // #endregion Export Functions
 
