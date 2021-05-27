@@ -117,6 +117,28 @@ const app = new Vue({
                 query: ''
             },
 
+            download: {
+                saveCSV(response, filenName) {
+                    /**
+                     * Saves a download as CSV
+                     * CSV data comes from response.data
+                     * see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
+                     */
+
+                    // Creates a dynamic download link from blob
+                    const url = window.URL.createObjectURL(
+                        new Blob([response.data], { type: "text/csv" })
+                    );
+
+                    // Creates a dynamic <a> element, sets this url and download-name, then clicks it
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute("download", filenName + '.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                }
+            },
+
             /**
              * Global Methods
              */

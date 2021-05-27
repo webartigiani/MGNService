@@ -159,6 +159,12 @@ class WorkerController extends BaseController
     }
 // #endregion API Methods
 
+// #region API Export Methods
+public function export(Request $request) {
+    return 'ciao da me ' . time();
+}
+// #region API Export Methods
+
 // #region Public API methods
     /**
      *

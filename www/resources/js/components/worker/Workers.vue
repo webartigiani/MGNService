@@ -325,10 +325,8 @@ export default {
     methods: {
         getResults(page = 1) {
             this.$Progress.start();
-
             let params = this.filters                           // appends filters and search
             params.query = this.$root.$route.query.search
-
             axios.get('api/worker?page=' + page, {
                 params: params
             }).then(({ data }) => (this.items = data.data));
@@ -353,7 +351,6 @@ export default {
         list() {
             let params = this.filters                           // appends filters and search
             params.query = this.$root.$route.query.search
-            console.log(JSON.stringify(params))
             axios.get('api/worker', {
                 params: params
             }).then(({ data }) => (this.items = data.data));
@@ -431,11 +428,19 @@ export default {
                     }
                 })
         },
-        exportData() {
-            alert('Questa funzione sarà disponibile a breve.')
-            return
-        },
         // #endregion CRUD Functions
+
+        // #region Export Functions
+        exportData: async function() {
+            // see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
+            const response = await axios({
+                method: 'get',
+                url: 'api/workers/export',
+                responseType: 'blob',
+            })
+            this.$root.download.saveCSV(response, 'dipendenti')
+        },
+        // #endregion Export Functions
 
         // #region Filters Functions
         resetFilters() {
