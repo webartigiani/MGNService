@@ -1,140 +1,587 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Fornitura>
-<Dipendente CodAziendaUfficiale="011201" CodDipendenteUfficiale="000348 ">
-<Movimenti GenerazioneAutomaticaDaTeorico="N">
-<Movimento><Data>2020-08-01</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-02</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-03</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-04</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-05</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-06</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-07</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-08</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-09</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-10</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-11</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-12</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-13</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-14</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-15</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>F</CodGiustificativoUfficiale><Data>2020-08-15</Data><NumOre>8</NumOre><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-16</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-17</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-18</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-19</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-20</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-21</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-22</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-23</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-24</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-25</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>LD</CodGiustificativoUfficiale><Data>2020-08-25</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-26</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-27</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>LD</CodGiustificativoUfficiale><Data>2020-08-27</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-28</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-29</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-30</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-31</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>LD</CodGiustificativoUfficiale><Data>2020-08-31</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-</Movimenti>
-</Dipendente>
-<Dipendente CodAziendaUfficiale="011201" CodDipendenteUfficiale="000353 ">
-<Movimenti GenerazioneAutomaticaDaTeorico="N">
-<Movimento><Data>2020-08-01</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-02</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-03</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-04</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-05</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-06</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-07</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-08</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-09</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-10</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-11</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-12</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-13</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-14</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-15</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>F</CodGiustificativoUfficiale><Data>2020-08-15</Data><NumOre>8</NumOre><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-16</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-17</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-18</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-19</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-20</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-21</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-22</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-23</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-24</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-25</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-26</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-27</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-28</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-29</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-30</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-31</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-</Movimenti>
-</Dipendente>
-<Dipendente CodAziendaUfficiale="011201" CodDipendenteUfficiale="000365 ">
-<Movimenti GenerazioneAutomaticaDaTeorico="N">
-<Movimento><Data>2020-08-01</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-02</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-03</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-04</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-05</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-06</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-07</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>LT</CodGiustificativoUfficiale><Data>2020-08-07</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-08</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-09</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-10</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-11</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale><Data>2020-08-11</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-12</Data><NumOre>6</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>PE</CodGiustificativoUfficiale><Data>2020-08-12</Data><NumOre>2</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-13</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale><Data>2020-08-13</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-14</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale><Data>2020-08-14</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-15</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>F</CodGiustificativoUfficiale><Data>2020-08-15</Data><NumOre>8</NumOre><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-16</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-17</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale><Data>2020-08-17</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-18</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale><Data>2020-08-18</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-19</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale><Data>2020-08-19</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-20</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale><Data>2020-08-20</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-21</Data><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento>
-<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale><Data>2020-08-21</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-22</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-23</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-24</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-25</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-26</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-27</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-28</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-29</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><Data>2020-08-30</Data><GiornoDiRiposo>S</GiornoDiRiposo></Movimento>
-<Movimento><CodGiustificativoUfficiale>01</CodGiustificativoUfficiale><Data>2020-08-31</Data><NumOre>8</NumOre><GiornoDiRiposo>N</GiornoDiRiposo></Movimento>
-</Movimenti>
-</Dipendente>
+	<Dipendente CodAziendaUfficiale="011201" CodDipendenteUfficiale="000348 ">
+		<Movimenti GenerazioneAutomaticaDaTeorico="N">
+			<Movimento>
+				<Data>2020-08-01</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-02</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-03</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-04</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-05</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-06</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-07</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-08</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-09</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-10</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-11</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-12</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-13</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-14</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-15</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>F</CodGiustificativoUfficiale>
+				<Data>2020-08-15</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-16</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-17</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-18</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-19</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-20</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-21</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-22</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-23</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-24</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-25</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>LD</CodGiustificativoUfficiale>
+				<Data>2020-08-25</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-26</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-27</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>LD</CodGiustificativoUfficiale>
+				<Data>2020-08-27</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-28</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-29</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-30</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-31</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>LD</CodGiustificativoUfficiale>
+				<Data>2020-08-31</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+		</Movimenti>
+	</Dipendente>
+	<Dipendente CodAziendaUfficiale="011201" CodDipendenteUfficiale="000353 ">
+		<Movimenti GenerazioneAutomaticaDaTeorico="N">
+			<Movimento>
+				<Data>2020-08-01</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-02</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-03</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-04</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-05</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-06</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-07</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-08</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-09</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-10</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-11</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-12</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-13</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-14</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-15</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>F</CodGiustificativoUfficiale>
+				<Data>2020-08-15</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-16</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-17</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-18</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-19</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-20</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-21</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-22</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-23</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-24</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-25</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-26</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-27</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-28</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-29</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-30</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-31</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+		</Movimenti>
+	</Dipendente>
+	<Dipendente CodAziendaUfficiale="011201" CodDipendenteUfficiale="000365 ">
+		<Movimenti GenerazioneAutomaticaDaTeorico="N">
+			<Movimento>
+				<Data>2020-08-01</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-02</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-03</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-04</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-05</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-06</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-07</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>LT</CodGiustificativoUfficiale>
+				<Data>2020-08-07</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-08</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-09</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-10</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-11</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale>
+				<Data>2020-08-11</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-12</Data>
+				<NumOre>6</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>PE</CodGiustificativoUfficiale>
+				<Data>2020-08-12</Data>
+				<NumOre>2</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-13</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale>
+				<Data>2020-08-13</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-14</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale>
+				<Data>2020-08-14</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-15</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>F</CodGiustificativoUfficiale>
+				<Data>2020-08-15</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-16</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-17</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale>
+				<Data>2020-08-17</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-18</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale>
+				<Data>2020-08-18</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-19</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale>
+				<Data>2020-08-19</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-20</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale>
+				<Data>2020-08-20</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-21</Data>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>FE</CodGiustificativoUfficiale>
+				<Data>2020-08-21</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-22</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-23</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-24</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-25</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-26</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-27</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-28</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-29</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<Data>2020-08-30</Data>
+				<GiornoDiRiposo>S</GiornoDiRiposo>
+			</Movimento>
+			<Movimento>
+				<CodGiustificativoUfficiale>01</CodGiustificativoUfficiale>
+				<Data>2020-08-31</Data>
+				<NumOre>8</NumOre>
+				<GiornoDiRiposo>N</GiornoDiRiposo>
+			</Movimento>
+		</Movimenti>
+	</Dipendente>
 </Fornitura>

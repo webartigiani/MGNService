@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DateTime;
 use DateTimeZone;
+use DatePeriod;
+use DateInterval;
 
 class UtilsController extends Controller
 {
@@ -12,6 +14,29 @@ class UtilsController extends Controller
     public function OraItaliana() {
         // data ora correnti in timezone Europe/Rome
         return new DateTime("now", new DateTimeZone('Europe/Rome'));
+    }
+
+    function getWeekday($date) {
+        // returns the day-of-week for the given date
+        // NOTE:    Sunday is 0
+        $date = $date->format("Y-m-d");
+        return date('w', strtotime($date));
+    }
+
+    function getPeriodDays($begin, $end) {
+        /**
+         * Returns a DatePeriod, day-by-day, from $begin and $end date
+         * SAMPLE:
+         *      $s = new DateTime('2021-05-06');    // start date
+         *      $e = new DateTime('2021-05-28');    // end date
+         *      $p = getPeriodDays($s, $e)  // get period
+         *      foreach ($p as $dt) {
+         *          echo $dt->format("Y-m-d l\n");
+         *      }
+         */
+
+        $interval = DateInterval::createFromDateString('1 day');
+        return new DatePeriod($begin, $interval, $end);
     }
     #endregion Date/Time Functions
 
