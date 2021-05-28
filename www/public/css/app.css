@@ -70478,7 +70478,7 @@ div.filters label {
   text-transform: lowercase !important;
 }
 
-div.filters div.filters input[type=date].form-control {
+div.filters input[type=date].form-control {
   max-width: 160px;
 }
 
@@ -70551,10 +70551,12 @@ div.filters select.form-control {
 
 .btn-green {
   background-color: #38c172;
+  border-color: #38c172 !important;
 }
 
 .btn-green:hover {
   background-color: #40da81;
+  border-color: #40da81 !important;
 }
 
 /* text classes */

@@ -163,7 +163,7 @@ class WorkerController extends BaseController
 public function export(Request $request) {
     // based on the view 'export_v_workers_view'
     $header = 'Codice azienda;Denominazione;Dipendente;Cognome;Nome;Codice fiscale;Data assunzione;Data cessazione';
-    $dbdata = DB::table('export_v_workers_view')->get();
+    $dbdata = DB::table('export_v_workers')->get();
     return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
 // #endregion API Export Methods

@@ -153,6 +153,9 @@ const app = new Vue({
                     functionNotAvailable() {
                         alert('Questa funzione sarà disponibile a breve.')
                         return
+                    },
+                    padZero(n) {
+                        return (parseInt(n, 10) >= 10 ? '' : '0') + n
                     }
                 },
                 datetime: {

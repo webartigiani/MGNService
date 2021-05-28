@@ -37,5 +37,7 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
         'device' => 'DeviceController',
         'attendance' => 'AttendanceController'
     ]);
-    Route::get('workers/export', 'WorkerController@export');        // export CSV
+    Route::get('workers/export', 'WorkerController@export');                    // export worker as CSV
+    Route::get('attendances/export', 'AttendanceController@export');            // export attendances as CSV
+    Route::get('attendances/export-xml', 'AttendanceController@exportXML');     // export attendances as XML
 });

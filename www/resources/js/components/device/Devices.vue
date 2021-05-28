@@ -101,7 +101,10 @@
               </div>
 
               <div class="card-footer">
-                  <pagination :data="items" @pagination-change-page="getResults"></pagination>
+                  <pagination
+                    :data="items" @pagination-change-page="getResults"
+                    :limit=10
+                  ></pagination>
               </div>
             </div>
           </div>

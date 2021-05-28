@@ -13,7 +13,7 @@ class CreateExportVWorkersView extends Migration
      */
     public function up()
     {
-        DB::statement('CREATE VIEW export_v_workers_view AS
+        DB::statement('CREATE VIEW export_v_workers AS
                 select
                     codice_azienda, denominazione_azienda, id dipendente, cognome, nome, codice_fiscale,
                     DATE_FORMAT(data_assunzione, "%d/%m/%Y") data_assunzione ,
@@ -30,6 +30,6 @@ class CreateExportVWorkersView extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('export_v_workers_view');
+        Schema::dropIfExists('export_v_workers');
     }
 }

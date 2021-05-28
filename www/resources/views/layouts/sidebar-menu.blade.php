@@ -18,7 +18,7 @@
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link to="/timbrate" class="nav-link">
+        <router-link to="/attendances" class="nav-link">
           <i class="nav-icon fas fa-tags white"></i>
           <p>
             Presenze

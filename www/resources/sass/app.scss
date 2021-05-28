@@ -41,10 +41,12 @@
 .facebook_gray {color: $facebook_gray;}
 
 .btn-green {
-    background-color: $green
+    background-color: $green;
+    border-color: #38c172!important;
 }
 .btn-green:hover {
     background-color: #40da81;
+    border-color: #40da81!important;
 }
 
 /* text classes */

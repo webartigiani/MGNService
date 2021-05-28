@@ -5,7 +5,7 @@ export default [
     { path: '/profile', component: require('./components/user/Profile.vue').default },
 
     { path: '/workers', component: require('./components/worker/Workers.vue').default },
-    { path: '/timbrate', component: require('./components/timbrata/Timbrate.vue').default },
+    { path: '/attendances', component: require('./components/attendance/Attendances.vue').default },
     { path: '/tracking', component: require('./components/tracking/Tracking.vue').default },
 
     { path: '/veichles', component: require('./components/veichle/Veichles.vue').default },

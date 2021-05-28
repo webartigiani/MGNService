@@ -13,7 +13,7 @@ class CreateVReportPresenzeView extends Migration
      */
     public function up()
     {
-        DB::statement('CREATE VIEW report_v_presenze AS
+        DB::statement("CREATE VIEW report_v_presenze AS
             select
                 att.id, att.worker worker_id,
                 w.nome, w.cognome, w.codice_fiscale, w.matricola,
@@ -29,7 +29,7 @@ class CreateVReportPresenzeView extends Migration
             inner join workers w
                 on att.worker = w.id
             order by day_date, att.worker
-        ');
+        ");
     }
 
     /**
