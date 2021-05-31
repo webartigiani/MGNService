@@ -9,7 +9,7 @@ use App\Http\Requests\Attendance\AttendanceRequest;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use App\Http\Controllers\api\V1\WorkerController;
+use App\Http\Controllers\API\V1\WorkerController;
 use App\Http\Controllers\UtilsController;
 use DB;
 use DateTime;
@@ -57,7 +57,8 @@ class AttendanceController extends BaseController
         $params = $request->all();
         $s = new DateTime($params['date_start']);               // start date
         $e = new DateTime($params['date_end']);                 // end date
-        $search = trim(strtolower($params['query']));           // search string
+        $search = '';
+        if (isset($params['query'])) $search = trim(strtolower($params['query']));           // search string
         $notatwork = $params['notatwork'];                      // notatwork
 
         $p = $this->utils->getPeriodDays($s, $e);       // get period

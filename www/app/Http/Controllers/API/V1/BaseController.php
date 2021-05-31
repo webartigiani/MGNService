@@ -76,11 +76,11 @@ class BaseController extends Controller
         if ($contentType == '') $contentType = 'text/plain';
 
         // inserts header
-        if ($header != '') $output = $header . '<br>';
+        if ($header != '') $output = $header . "\r\n";
 
         // creates data
         foreach ($data as $row) {
-            $output .= implode($columnSeparator, (array)$row) . '<br>';
+            $output .= implode($columnSeparator, (array)$row) . "\r\n";
         }
 
         // sets headers
@@ -89,7 +89,7 @@ class BaseController extends Controller
         );
 
         // exports
-        return Response::make(rtrim($output, "<br>"), 200, $headers);
+        return Response::make(rtrim($output, "\r\n"), 200, $headers);
     }
 
     /**
