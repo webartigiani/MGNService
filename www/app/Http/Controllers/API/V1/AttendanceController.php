@@ -136,25 +136,24 @@ class AttendanceController extends BaseController
 
         // get form normalized data
         $data = $this->normalizeData($request->all());
+        $data['check'] = 0;
 
         // updaters entrance/exit time with input times and ref_date
         if (isset($data['entrance_time'])) {
             $data['entrance_date'] = $data['ref_date'] . ' ' . $data['entrance_time'];
             $data['entrance_ip'] = '0.0.0.0';
+        } else {
+            $data['entrance_date'] = null;
+            $data['entrance_ip'] = '0.0.0.0';
+            $data['check']  = -1;
         }
         if (isset($data['exit_time'])) {
             $data['exit_date'] = $data['ref_date'] . ' ' . $data['exit_time'];
             $data['exit_ip'] = '0.0.0.0';
-        }
-
-        if (isset($data['entrance_time']) && isset($data['entrance_time'])) {
             $data['check'] = 1;
         } else {
-            if (!isset($data['entrance_time']) || !isset($data['entrance_time'])) {
-                $data['check'] = 0;
-            } else {
-                $data['check'] = -1;
-            }
+            $data['exit_date'] = null;
+            $data['exit_ip'] = '0.0.0.0';
         }
 
         // Updates data

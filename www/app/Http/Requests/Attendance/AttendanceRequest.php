@@ -53,13 +53,21 @@ class AttendanceRequest extends FormRequest
      */
     public function updateRules(): array
     {
-        return [];
         return [
-            'nome' => 'required|string|max:64',
-            'cognome' => 'required|string|max:64',
-            'codice_fiscale' => 'required|string|max:16',
-            'matricola' => 'required|string|max:30',
-            'data_assunzione' => 'required|date'
+            'entrance_time' => 'required|string|max:10'
+        ];
+    }
+
+    /**
+     * validation messages
+     */
+    public function messages()
+    {
+        return [
+            'required' => 'Il campo è obbligatorio',
+            'unique' => 'Numero di targa già in uso',
+            'min' => 'Richiesti min. caratteri',
+            'max' => 'Lunghezza eccessiva'
         ];
     }
 }

@@ -130,7 +130,7 @@
                   <thead>
                     <tr>
                       <th></th>
-                      <th>ID</th>
+                      <!-- <th>ID</th> -->
                       <th>Data</th>
                       <th>Nome</th>
                       <th>Cognome</th>
@@ -148,7 +148,7 @@
                             :title="(item.worker_status==1 ? 'attualmente presente' : 'attualmente assente')"
                             :class="(item.worker_status==1 ? 'green' : 'orange')"></i>
                       </td>
-                      <td>{{ (item.chk >= 0) ? item.id: '' }}</td>
+                      <!-- <td>{{ item.id }}</td> -->
                       <td>{{ item.day_date }}</td>
                       <td>{{ item.nome }}</td>
                       <td>{{ item.cognome }}</td>
@@ -219,13 +219,13 @@
 
                         <div class="form-group">
                             <label>Entrata</label>
-                            <input type="time" name="entrance_date"
+                            <input type="time" name="entrance_time"
                                 class="form-control"
-                                :class="{ 'is-invalid': form.errors.has('entrance_date') }"
+                                :class="{ 'is-invalid': form.errors.has('entrance_time') }"
                                 step="1"
                                 v-model="form.entrance_time"
                                 >
-                            <has-error :form="form" field="entrance_date"></has-error>
+                            <has-error :form="form" field="entrance_time"></has-error>
                         </div>
                         <div class="form-group">
                             <label>Uscita</label>
