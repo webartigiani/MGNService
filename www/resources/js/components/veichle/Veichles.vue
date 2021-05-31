@@ -225,9 +225,8 @@ export default {
 
         // #region CRUD Functions
         list(){
-        // if(this.$gate.isAdmin()){
-            axios.get("api/veicolo").then(({ data }) => (this.items = data.data));
-        // }
+            this.$Progress.start();
+            axios.get("api/veicolo").then(({ data }) => (this.items = data.data), this.$Progress.finish());
         },
         createItem(){
             this.$Progress.start();

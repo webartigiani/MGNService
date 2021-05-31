@@ -352,11 +352,12 @@ export default {
 
         // #region CRUD Functions
         list() {
+            this.$Progress.start();
             let params = this.filters                           // appends filters and search
             params.query = this.$root.$route.query.search
             axios.get('api/worker', {
                 params: params
-            }).then(({ data }) => (this.items = data.data));
+            }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
         },
         createItem(){
             this.$Progress.start();
@@ -436,11 +437,15 @@ export default {
         // #region Export Functions
         exportData: async function() {
             // see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
+            this.$Progress.start();
             const response = await axios({
                 method: 'get',
                 url: 'api/workers/export',
             })
-            this.$root.download.saveCSV(response, 'ELEDIP')     // ELEDIP.csv
+            // choose filename
+            const fileName = 'ELEDIP'
+            this.$root.download.saveFile(response, fileName + '.csv', 'text/csv')   // exports CSV
+            this.$Progress.finish();
         },
         // #endregion Export Functions
 

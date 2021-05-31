@@ -307,7 +307,7 @@ export default {
             }),
             // filters
             filters: {
-                show: true,
+                show: false,
                 date_start: null,
                 date_end: null,
                 description: 'di oggi',
@@ -351,13 +351,13 @@ export default {
 
         // #region CRUD Functions
         list() {
-            console.log('list')
+            this.$Progress.start();
             this.checkFilters()
             let params = this.filters                           // appends filters and search
             params.query = this.$root.$route.query.search
             axios.get('api/attendance', {
                 params: params
-            }).then(({ data }) => (this.items = data));
+            }).then(({ data }) => (this.items = data, this.$Progress.finish()));
         },
         createItem(){
             this.$Progress.start();
@@ -437,6 +437,7 @@ export default {
         // #region Export Functions
         exportData: async function() {
             // see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
+            this.$Progress.start();
             const response = await axios({
                 method: 'get',
                 url: 'api/attendances/export',
@@ -444,18 +445,21 @@ export default {
             })
             // choose filename
             const fileName = 'presenze_' + this.filters.date_start + '_' + this.filters.date_end
-            this.$root.download.saveCSV(response, fileName)     // file.csv
+            this.$root.download.saveFile(response, fileName + '.csv', 'text/csv')   // exports CSV
+            this.$Progress.finish();
         },
         exportDataXML: async function() {
             // see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
+            this.$Progress.start();
             const response = await axios({
                 method: 'get',
-                url: 'api/attendances/export',
+                url: 'api/attendances/export-xml',
                 params: this.filters
             })
             // choose filename
             const fileName = 'presenze_' + this.filters.date_start + '_' + this.filters.date_end
-            this.$root.download.saveCSV(response, fileName)     // file.xml
+            this.$root.download.saveFile(response, fileName + '.xml', 'text/xml')   // exports XML
+            this.$Progress.finish();
         },
         // #endregion Export Functions
 
@@ -475,6 +479,9 @@ export default {
                 this.filters.date_end = y + '-' + m + '-' + d;
                 this.setPeriod()
             }
+
+            // checks dates
+            if (this.filters.date_start > this.filters.date_end) this.filters.date_end = this.filters.date_start
         },
         setCurrentYear() {
             // sets period to current year

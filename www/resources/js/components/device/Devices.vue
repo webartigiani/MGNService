@@ -174,7 +174,8 @@ export default {
 
         // #region CRUD Functions
         list() {
-            axios.get("api/device").then(({ data }) => (this.items = data.data));
+            this.$Progress.start();
+            axios.get("api/device").then(({ data }) => (this.items = data.data), this.$Progress.finish());
         },
         createItem(){
             this.$Progress.start();

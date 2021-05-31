@@ -229,6 +229,24 @@ public function export(Request $request) {
     $dbdata = $query->orderBy('ref_date')->orderBy('worker_id')->get();
     return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
+public function exportXML(Request $request) {
+    // based on the view 'export_v_workers_view'
+
+    $params = $request->all();
+    $query = DB::table('export_v_attendances')
+    ->select('day_date', 'worker_id', 'nome','cognome', 'codice_fiscale', 'matricola', 'entrance_date', 'entrance_ip', 'exit_date', 'exit_ip',  'duration_h', 'chk');
+
+    // applies filters
+    if (isset($params['date_start'])) {
+        $query->where('ref_date', '>=', $params['date_start'] . ' 00:00:00');
+    }
+    if (isset($params['date_end'])) {
+        $query->where('ref_date', '<=', $params['date_end'] . ' 23:59:59');
+    }
+    $header = 'Giorno;Dipendente;Nome;Cognome;Codice Fiscale;Matricola;Entrata;IP Entrata;Uscita;IP Uscita;Ore Lavorate;Controllo';
+    $dbdata = $query->orderBy('worker_id')->orderBy('ref_date')->get();
+    return $this->sendExport($header, $dbdata, ';', 'text/csv');
+}
 // #endregion API Export Methods
 
 // #region Public Methods
