@@ -575,8 +575,10 @@ export default {
             }
         },
         attendanceTime(dayDate, t) {
-            if (t == null) return '';
-            if (dayDate == '') return '';
+            if (t == null) return ''
+            if (dayDate == '') return ''
+            //t = this.$root.utils.datetime.formatDateTime(t)
+            console.log(t)
             return t.replace(dayDate, '')
         }
         // #endregion utils
