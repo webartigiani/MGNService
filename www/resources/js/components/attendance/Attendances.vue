@@ -8,8 +8,20 @@
 
             <div class="card">
                 <div class="card-header">
+                    <div class="card-title col-9 filters">
+                        <label for="per_page">Visualizza</label>
+                        <select name="per_page" id="per_page"
+                            class="form-control"
+                            v-model="filters.per_page"
+                            @change="list()"
+                            >
+                            <option value="10">10 per pagina</option>
+                            <option value="25">25 per pagina</option>
+                            <option value="50">50 per pagina</option>
+                        </select>
+                    </div>
                     <!-- tools -->
-                    <div class="card-tools col-12 text-right">
+                    <div class="card-tools col-3 text-right">
                         <button type="button"
                             class="btn btn-sm btn-primary btn-green"
                             title="Esporta Presenze in formato Excel/CSV"
@@ -311,7 +323,8 @@ export default {
                 date_start: null,
                 date_end: null,
                 description: 'di oggi',
-                notatwork: false
+                notatwork: false,
+                per_page: 10
             },
         }
     },
@@ -357,7 +370,7 @@ export default {
             params.query = this.$root.$route.query.search
             axios.get('api/attendance', {
                 params: params
-            }).then(({ data }) => (this.items = data, this.$Progress.finish()));
+            }).then(({ data }) => (this.items = data.data, console.log(data.data), this.$Progress.finish()));
         },
         createItem(){
             this.$Progress.start();

@@ -13,6 +13,8 @@ use App\Http\Controllers\API\V1\WorkerController;
 use App\Http\Controllers\UtilsController;
 use DB;
 use DateTime;
+use Illuminate\Pagination\Paginator;
+use \Illuminate\Pagination\LengthAwarePaginator;
 
 class AttendanceController extends BaseController
 {
@@ -52,9 +54,35 @@ class AttendanceController extends BaseController
         if (isset($params['query'])) $search = trim(strtolower($params['query']));           // search string
         $notatwork = ($params['notatwork'] == 'true');                  // notatwork (as bool)
 
-        $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, id');    // get SQL to list attendances
+        // pagination
+        $perPage = $request->input("per_page", 10);         // records per page
+        $page = $request->input("page", 1);                 // page number
+        if($page < 1) { $page = 1; }
+        $skip = ($page - 1) * $perPage;                     // records to skip
+        if($skip < 0) { $skip = 0; }
+
+        // generates SQL query for pagination
+        $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, nome, cognome');
         $dbdata = DB::select(DB::raw($sql));
-        return $this->sendResponse($dbdata, 'Attendances List');
+
+        /** To paginate RAW Data for LaravelPaginator
+         * *****************************************
+         * - turn array into a collection
+         * - count records
+         * - skip records to skip
+         * - take records to take
+         * - gets all
+         * - get a paginator by LengthAwarePaginator
+         */
+        $dbdata = collect($dbdata);
+        $totalCount = $dbdata->count();
+        $results = $dbdata
+            ->skip($skip)
+            ->take($perPage)
+            ->all();
+
+        $result_p = new LengthAwarePaginator($results, $totalCount, $perPage, $page);
+        return $this->sendResponse($result_p, 'Attendances List');
     }
 
     /**
