@@ -45,98 +45,16 @@ class AttendanceController extends BaseController
         * GET       api/attendance
         * params    {"show":true,"date_start":"2021-05-01","date_end":"2021-05-31","query":"filippo"}
         */
-
-        /*
-            Creates an inner SQL query to select all days in calendar between start/end date
-            es:
-                select '28/05/2021' as day_date, '2021-05-28' as ref_date
-                union
-                select '27/05/2021' as day_date, '2021-05-27' as ref_date
-                ...
-        */
         $params = $request->all();
-        $s = new DateTime($params['date_start']);               // start date
-        $e = new DateTime($params['date_end']);                 // end date
+        $s = new DateTime($params['date_start']);                       // start date
+        $e = new DateTime($params['date_end']);                         // end date
         $search = '';
         if (isset($params['query'])) $search = trim(strtolower($params['query']));           // search string
-        $notatwork = $params['notatwork'];                      // notatwork
+        $notatwork = ($params['notatwork'] == 'true');                  // notatwork (as bool)
 
-        $p = $this->utils->getPeriodDays($s, $e);       // get period
-
-        //return $this->sendResponse($notatwork, 'CHECK');
-
-        $innerSQL = '';
-        $sql = '';
-
-        // selected a period higher than just one day?
-        if ($s != $e) {
-            // loops through days in period
-            // NOTE: period DOES NOT CONSIDER last day in interval
-            foreach ($p as $dt) {
-                $dow = $this->utils->getWeekday($dt);       // gets the day-of-week (sunday:0)
-                if (($dow > 0) && ($dow < 6)) {
-                    if ($innerSQL != '') $innerSQL .= "union\n";
-                    $innerSQL .= "select '" . $dt->format("d/m/Y") . "' as day_date, ";
-                    $innerSQL .= "'" . $dt->format("Y-m-d") . "' as ref_date\n";
-                } else {
-                    // Saturday or Sunday...
-                }
-            }
-        } else {
-            // just one day interval
-        }
-
-        // Add or Use last day
-        if ($innerSQL != '') $innerSQL .= "union\n";
-        $innerSQL .= "select '" . $e->format("d/m/Y") . "' as day_date, ";
-        $innerSQL .= "'" . $e->format("Y-m-d") . "' as ref_date\n";
-
-        // Creates the main SQL query
-        $sql = "select *
-                from (
-                    select
-                        IFNULL(att.id, 0) id, calendar.ref_date,
-                        w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola,
-                        calendar.day_date,
-                        att.entrance_date, att.entrance_ip,
-                        att.exit_date, att.exit_ip,
-                        IFNULL(att.duration_m, 0) duration_m,
-                        IFNULL(att.duration_h, 0) duration_h,
-                        IFNULL(att.duration_h_int, 0) duration_h_int,
-                        IFNULL(att.chk, -1) chk
-                    from
-                    (
-                        {$innerSQL}
-                    ) calendar
-                    cross join workers w
-                    left outer join export_v_attendances att
-                        on att.day_date = calendar.day_date
-                        and att.worker_id = w.id
-                ) presenze
-            where
-                1=1
-                ";
-
-            if ($notatwork == 'true') {
-                //$sql .= " and (chk <= 0 or IFNULL(att.chk, -1) = -1)";   // show only not at work?
-                $sql .= " and chk <= 0";   // show only not at work?
-            }
-            if ($search != '') {
-                $sql .= " and (
-                    nome like '%" . $search . "%'
-                    or cognome like '%" . $search . "%'
-                    or codice_fiscale like '%" . $search . "%'
-                )";
-            }
-            $sql .= " order by ref_date, id";
-
-            //return $this->sendResponse($sql, 'QUERY');
-
+        $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, id');    // get SQL to list attendances
         $dbdata = DB::select(DB::raw($sql));
         return $this->sendResponse($dbdata, 'Attendances List');
-
-        //$dbdata = $query->orderBy('day_date')->orderBy('worker_id')->paginate(50);
-        //return $this->sendResponse($dbdata, 'Attendances List');
     }
 
     /**
@@ -212,40 +130,105 @@ class AttendanceController extends BaseController
 
 // #region API Export Methods
 public function export(Request $request) {
-    // based on the view 'export_v_workers_view'
+    /**
+     * Exports presenze as CSV
+     * NOTES: uses all filters
+     */
 
+    // gets filters
     $params = $request->all();
-    $query = DB::table('export_v_attendances')
-    ->select('day_date', 'worker_id', 'nome','cognome', 'codice_fiscale', 'matricola', 'entrance_date', 'entrance_ip', 'exit_date', 'exit_ip',  'duration_h', 'chk');
+    $s = new DateTime($params['date_start']);                       // start date
+    $e = new DateTime($params['date_end']);                         // end date
+    $search = '';
+    if (isset($params['query'])) $search = trim(strtolower($params['query']));           // search string
+    $notatwork = ($params['notatwork'] == 'true');                  // notatwork (as bool)
 
-    // applies filters
-    if (isset($params['date_start'])) {
-        $query->where('ref_date', '>=', $params['date_start'] . ' 00:00:00');
-    }
-    if (isset($params['date_end'])) {
-        $query->where('ref_date', '<=', $params['date_end'] . ' 23:59:59');
-    }
+    // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
+    $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, worker_id');
+    $sql = "select
+        day_date, worker_id, nome, cognome, codice_fiscale, matricola, entrance_date, entrance_ip, exit_date, exit_ip,  duration_h, chk
+    from (
+        {$sql}
+    ) tbl";
+
     $header = 'Giorno;Dipendente;Nome;Cognome;Codice Fiscale;Matricola;Entrata;IP Entrata;Uscita;IP Uscita;Ore Lavorate;Controllo';
-    $dbdata = $query->orderBy('ref_date')->orderBy('worker_id')->get();
     return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
 public function exportXML(Request $request) {
-    // based on the view 'export_v_workers_view'
+    /**
+     * Exports presenze as XML (Zucchetti, TRRIPW.XML)
+     * NOTES: filters by dates
+     */
 
+    // gets filters
     $params = $request->all();
-    $query = DB::table('export_v_attendances')
-    ->select('day_date', 'worker_id', 'nome','cognome', 'codice_fiscale', 'matricola', 'entrance_date', 'entrance_ip', 'exit_date', 'exit_ip',  'duration_h', 'chk');
+    $s = new DateTime($params['date_start']);                       // start date
+    $e = new DateTime($params['date_end']);                         // end date
+    $search = '';
+    if (isset($params['query'])) $search = trim(strtolower($params['query']));           // search string
+    $notatwork = ($params['notatwork'] == 'true');                  // notatwork (as bool)
 
-    // applies filters
-    if (isset($params['date_start'])) {
-        $query->where('ref_date', '>=', $params['date_start'] . ' 00:00:00');
-    }
-    if (isset($params['date_end'])) {
-        $query->where('ref_date', '<=', $params['date_end'] . ' 23:59:59');
-    }
-    $header = 'Giorno;Dipendente;Nome;Cognome;Codice Fiscale;Matricola;Entrata;IP Entrata;Uscita;IP Uscita;Ore Lavorate;Controllo';
-    $dbdata = $query->orderBy('worker_id')->orderBy('ref_date')->get();
-    return $this->sendExport($header, $dbdata, ';', 'text/csv');
+    // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
+    $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'worker_id, ref_date');
+    $sql = "select
+        matricola , ref_date, duration_h_int hours, chk
+    from (
+        {$sql}
+    ) tbl";
+    $dbdata = DB::select(DB::raw($sql));
+
+    $output = '';
+    $lastMatricola = '';
+    $matricola = '';
+
+    // creates data
+    foreach ($dbdata as $row) {
+
+        $codiceazienda = env("CODICE_AZIENDA");
+        $giustificativo = "01";                     // giustificativo ufficiale
+        $matricola = $row->matricola;               // dipendente corrente
+        $refdate = $row->ref_date;                  // data riferimento YYYY-MM-DD
+        $hours = $row->hours;                       // ore lavorate
+        $giornodiriposo = 'N';
+        if ($row->chk <= 0) $giornodiriposo = 'S';  // giorno di riposo se assente o incompleto
+
+        // se cambia il dipendente...
+        if ($matricola != $lastMatricola) {
+            if ($lastMatricola != '') {
+                // chiude ramo XML dipendente precedente
+                $output .= "\t\t</Movimenti>
+\t</Dipendente>\r\n";
+            }
+
+            // apre ramo XML dipendente corrente
+            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$matricola}\">
+\t\t<Movimenti GenerazioneAutomaticaDaTeorico=\"N\">\r\n";
+        }   // /se cambia il dipendente...
+        $lastMatricola = $matricola;            // memorizza dipendente corrente
+
+        // esporta dati presenze (del dipendente corrente)
+        $output .= "\t\t\t<Movimento>
+\t\t\t\t<CodGiustificativoUfficiale>{$giustificativo}</CodGiustificativoUfficiale>
+\t\t\t\t<Data>{$refdate}</Data>\r\n";
+
+        if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$hours}</NumOre>\r\n";   // giorno lavorativo
+        $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>
+\t\t\t</Movimento>\r\n";
+    }   // /foreach...
+
+
+    // chiude dati ultimo dipendente elaborato
+    $output .= "\t\t</Movimenti>
+\t</Dipendente>";
+
+    // aggiunge header e footer
+    $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<Fornitura>
+{$output}
+</Fornitura>";
+
+    // export as plain text
+    return $this->sendExportPlain($output, 'text/xml');
 }
 // #endregion API Export Methods
 
@@ -278,6 +261,93 @@ public function exportXML(Request $request) {
      */
     private function normalizeData($data) {
         return $data;
+    }
+
+    /**
+     * Extracts and returns attendances
+     * from date $startDate
+     * to date $endDate
+     * with $searchQuery
+     * only not-at-work if $notAtWork
+     */
+    private function listAttendancesQuery($startDate, $endDate, $searchQuery, $notAtWork, $orderBy) {
+        /*  Returns an SQL Query to select attendances
+            Creates an inner SQL query to select all days in calendar between start/end date
+            es:
+                select '28/05/2021' as day_date, '2021-05-28' as ref_date
+                union
+                select '27/05/2021' as day_date, '2021-05-27' as ref_date
+                ...
+        */
+
+        $innerSQL = '';
+        $sql = '';
+
+        // normalizes arguments
+        $searchQuery = trim(strtolower($searchQuery));
+        $orderBy = trim(strtolower($orderBy));
+
+        $p = $this->utils->getPeriodDays($startDate, $endDate);     // gets the period
+
+        // selected a period higher than just one day?
+        if ($startDate != $endDate) {
+            // loops through days in period
+            // NOTE: period DOES NOT CONSIDER last day in interval
+            foreach ($p as $dt) {
+                $dow = $this->utils->getWeekday($dt);       // gets the day-of-week (sunday:0)
+                if (($dow > 0) && ($dow < 6)) {
+                    if ($innerSQL != '') $innerSQL .= "union\n";
+                    $innerSQL .= "select '" . $dt->format("d/m/Y") . "' as day_date, ";
+                    $innerSQL .= "'" . $dt->format("Y-m-d") . "' as ref_date\n";
+                } else {
+                    // Saturday or Sunday...
+                }
+            }
+        } else {
+            // just one day interval
+        }
+
+        // Add or Use last day
+        if ($innerSQL != '') $innerSQL .= "union\n";
+        $innerSQL .= "select '" . $endDate->format("d/m/Y") . "' as day_date, ";
+        $innerSQL .= "'" . $endDate->format("Y-m-d") . "' as ref_date\n";
+
+        // Creates the main SQL query
+        $sql = "select *
+                from (
+                    select
+                        IFNULL(att.id, 0) id, calendar.ref_date,
+                        w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola,
+                        calendar.day_date,
+                        att.entrance_date, att.entrance_ip,
+                        att.exit_date, att.exit_ip,
+                        IFNULL(att.duration_m, 0) duration_m,
+                        IFNULL(att.duration_h, 0) duration_h,
+                        IFNULL(att.duration_h_int, 0) duration_h_int,
+                        IFNULL(att.chk, -1) chk
+                    from
+                    (
+                        {$innerSQL}
+                    ) calendar
+                    cross join workers w
+                    left outer join export_v_attendances att
+                        on att.day_date = calendar.day_date
+                        and att.worker_id = w.id
+                ) presenze
+            where
+                1=1
+                ";
+
+        if ($notAtWork) $sql .= " and chk <= 0";        // show only not at work?
+        if ($searchQuery != '') {
+            $sql .= " and (
+                nome like '%" . $searchQuery . "%'
+                or cognome like '%" . $searchQuery . "%'
+                or codice_fiscale like '%" . $searchQuery . "%'
+            )";
+        }
+        if ($orderBy != '') $sql .= " order by " . $orderBy;
+        return $sql;
     }
 // #endregion Private Methods
 }

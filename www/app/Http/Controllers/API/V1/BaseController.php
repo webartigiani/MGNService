@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Response;
 class BaseController extends Controller
 {
 
+    /**
+     * index
+     */
     public function index(Request $request)
     {
         return 'ok';
@@ -57,15 +60,12 @@ class BaseController extends Controller
 
     /**
      * Sends export
-     * - of the specified data
+     * exports data
      * - as contentType
      * - with the specified header
-     * NOTES:
-     *      by default, uses <br> ad row terminator
-     *      this will be replaced client-side by \n\r
+     * - with the specified column-separator
      */
     public function sendExport($header, $data, $columnSeparator = ';', $contentType = 'text/plain') {
-
         $output = '';                   // output
         $columnSeparator = ';';         // default column separator
 
@@ -90,6 +90,24 @@ class BaseController extends Controller
 
         // exports
         return Response::make(rtrim($output, "\r\n"), 200, $headers);
+    }
+
+    /**
+     * sendExportPlain
+     * sends data to export plain text
+     */
+    public function sendExportPlain($data, $contentType = 'text/plain') {
+
+        // normalizes arguments
+        if ($contentType == '') $contentType = 'text/plain';
+
+        // sets headers
+        $headers = array(
+            'Content-Type' => $contentType
+        );
+
+        // exports
+        return Response::make($data, 200, $headers);
     }
 
     /**

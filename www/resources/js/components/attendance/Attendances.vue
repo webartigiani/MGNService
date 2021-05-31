@@ -20,7 +20,7 @@
                         <button type="button"
                             class="btn btn-sm btn-primary btn-green"
                             title="Esporta Presenze in formato XML per Zucchetti"
-                            @click="exportData()">
+                            @click="exportDataXML()">
                             <i class="fa fa-file-alt"></i>
                             Esporta XML
                         </button>
@@ -443,8 +443,16 @@ export default {
                 url: 'api/attendances/export',
                 params: this.filters
             })
+
+            // search query
+            let query = this.$root.$route.query.search.trim().toLowerCase();
+
             // choose filename
-            const fileName = 'presenze_' + this.filters.date_start + '_' + this.filters.date_end
+            let fileName = this.filters.notatwork ? 'assenze': 'presenze'
+            fileName += '_' + this.filters.date_start + '_' + this.filters.date_end
+            fileName += (query != '') ? '_' + query : ''
+
+            // download
             this.$root.download.saveFile(response, fileName + '.csv', 'text/csv')   // exports CSV
             this.$Progress.finish();
         },
@@ -456,8 +464,9 @@ export default {
                 url: 'api/attendances/export-xml',
                 params: this.filters
             })
+
             // choose filename
-            const fileName = 'presenze_' + this.filters.date_start + '_' + this.filters.date_end
+            const fileName = 'TRRIPW_' + this.filters.date_start + '_' + this.filters.date_end
             this.$root.download.saveFile(response, fileName + '.xml', 'text/xml')   // exports XML
             this.$Progress.finish();
         },
