@@ -94,10 +94,14 @@
     <footer class="main-footer">
         {{-- To the right --}}
         <div class="float-right d-none d-sm-block">
-        <b>Versione</b> {{config('app.version')}}
+            <small>
+                <strong>Powered by <a href="https://www.webartigiani.it/">WebArtigiani</a></strong>
+            </small>
         </div>
         {{-- Default to the left --}}
-        <strong>Copyright &copy; 2021 <a href="https://www.webartigiani.it/">WebArtigiani</a>.</strong> Tutti i diritti sono riservati.
+        <small>
+            <b>versione Sito</b> {{config('app.version')}} | <b>versione APP</b> {{config('app.app_version')}}
+        </small>
     </footer>
     </div>
 {{-- ./wrapper --}}

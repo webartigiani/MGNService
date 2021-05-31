@@ -22,6 +22,7 @@ class CreateExportVAttendancesView extends Migration
                 w.cognome,
                 w.codice_fiscale,
                 w.matricola,
+                w.stato worker_status,
                 date_format(DATE(att.created_at), '%d/%m/%Y') day_date,
                 date_format(att.entrance_date, '%d/%m/%Y %T') entrance_date,
                 att.entrance_ip,
@@ -34,6 +35,8 @@ class CreateExportVAttendancesView extends Migration
             FROM
                 attendances att
                 INNER JOIN workers w ON att.worker = w.id
+            WHERE
+                att.deleted_at is null
             ORDER BY
                 day_date,
                 att.worker

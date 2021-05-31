@@ -137,6 +137,26 @@ class AttendanceController extends BaseController
         // get form normalized data
         $data = $this->normalizeData($request->all());
 
+        // updaters entrance/exit time with input times and ref_date
+        if (isset($data['entrance_time'])) {
+            $data['entrance_date'] = $data['ref_date'] . ' ' . $data['entrance_time'];
+            $data['entrance_ip'] = '0.0.0.0';
+        }
+        if (isset($data['exit_time'])) {
+            $data['exit_date'] = $data['ref_date'] . ' ' . $data['exit_time'];
+            $data['exit_ip'] = '0.0.0.0';
+        }
+
+        if (isset($data['entrance_time']) && isset($data['entrance_time'])) {
+            $data['check'] = 1;
+        } else {
+            if (!isset($data['entrance_time']) || !isset($data['entrance_time'])) {
+                $data['check'] = 0;
+            } else {
+                $data['check'] = -1;
+            }
+        }
+
         // Updates data
         $attendance->update($data);
         return $this->sendResponse($attendance, 'Presenza aggiornata');
@@ -149,7 +169,7 @@ class AttendanceController extends BaseController
      */
     public function destroy($id)
     {
-        $this->authorize('isAdmin');
+        //$this->authorize('isAdmin');              // NOTE: it doesn't work!!!!
         $attendance = $this->attendance->findOrFail($id);
         $attendance->delete();
         return $this->sendResponse($attendance, 'Presenza eliminata');
@@ -345,7 +365,7 @@ public function exportXML(Request $request) {
                 from (
                     select
                         IFNULL(att.id, 0) id, calendar.ref_date,
-                        w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola,
+                        w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status,
                         calendar.day_date,
                         att.entrance_date, att.entrance_ip,
                         att.exit_date, att.exit_ip,

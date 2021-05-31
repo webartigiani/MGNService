@@ -124,7 +124,7 @@
                      <tr v-for="item in items.data" :key="item.id">
                       <td style="width:20px;">
                           <i class="fa fa-dot-circle"
-                            :title="(item.stato==1 ? 'presente' : 'non presente')"
+                            :title="(item.stato==1 ? 'attualmente presente' : 'attualmente assente')"
                             :class="(item.stato==1 ? 'green' : 'orange')"></i>
                       </td>
                       <td>{{ item.id }}</td>
@@ -157,7 +157,7 @@
                         <a href="#"
                             class="action"
                             title="Elimina"
-                            @click="deleteItem(item.id)">
+                            @click="deleteItem(item)">
                             <i class="fa fa-trash blue"></i>
                         </a>
                       </td>
@@ -407,9 +407,9 @@ export default {
             });
 
         },
-        deleteItem(id){
+        deleteItem(item) {
             Swal.fire({
-                title: 'Conferma',
+                title: 'Attenzione',
                 icon:'question',
                 html: "Confermi la cancellazione del dipendente?",
                 showCancelButton: true,
@@ -418,7 +418,7 @@ export default {
                 }).then((result) => {
                     // Send request to the server
                     if (result.value) {
-                        this.form.delete('api/worker/'+id).then(()=>{
+                        this.form.delete('api/worker/' + item.id).then(()=>{
                             Swal.fire(
                                 'Eliminato!',
                                 'Dipendente correttamente eliminato.',

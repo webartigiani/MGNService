@@ -15,7 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Gestionale MGN Multiservice'),
     'company' => env('APP_COMPANY', 'MGN Multiservice'),
-    'version' => env('APP_VERSION', 'beta 0.0.4'),
+    'version' => env('WS_VERSION', '1.0.3'),
+    'app_version' => env('APP_VERSION', '1.0.0'),
+
 
     /*
     |--------------------------------------------------------------------------

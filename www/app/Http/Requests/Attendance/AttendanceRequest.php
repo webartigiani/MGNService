@@ -53,6 +53,7 @@ class AttendanceRequest extends FormRequest
      */
     public function updateRules(): array
     {
+        return [];
         return [
             'nome' => 'required|string|max:64',
             'cognome' => 'required|string|max:64',

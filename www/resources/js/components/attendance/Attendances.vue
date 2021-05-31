@@ -9,7 +9,6 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title col-9 filters">
-                        <label for="per_page">Visualizza</label>
                         <select name="per_page" id="per_page"
                             class="form-control"
                             v-model="filters.per_page"
@@ -118,7 +117,7 @@
                                     v-model="filters.notatwork"
                                     @change="list()"
                                 title="Spunta per visualizzare solo le assenze">
-                                <label for="notatwork">Visualizza Assenze</label>
+                                <label for="notatwork">trova Assenze</label>
                             </div>
                         </div>
                     </div>
@@ -130,6 +129,7 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
+                      <th></th>
                       <th>ID</th>
                       <th>Data</th>
                       <th>Nome</th>
@@ -143,6 +143,11 @@
                   </thead>
                   <tbody>
                      <tr v-for="item in items.data" :key="item.id">
+                      <td style="width:20px;">
+                          <i class="fa fa-dot-circle"
+                            :title="(item.worker_status==1 ? 'attualmente presente' : 'attualmente assente')"
+                            :class="(item.worker_status==1 ? 'green' : 'orange')"></i>
+                      </td>
                       <td>{{ (item.chk >= 0) ? item.id: '' }}</td>
                       <td>{{ item.day_date }}</td>
                       <td>{{ item.nome }}</td>
@@ -167,7 +172,7 @@
                         <a href="#"
                             class="action"
                             title="Elimina"
-                            @click="deleteItem(item.id)"
+                            @click="deleteItem(item)"
                             v-if="item.chk >= 0"
                             >
                             <i class="fa fa-trash blue"></i>
@@ -195,8 +200,8 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" v-show="!editmode">Nuovo Dipentente</h5>
-                    <h5 class="modal-title" v-show="editmode">Modifca Dipendente</h5>
+                    <h5 class="modal-title" v-show="!editmode">NON IMPLEMENTATA</h5>
+                    <h5 class="modal-title" v-show="editmode">Modifca Timbrate</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -205,73 +210,32 @@
                 <form @submit.prevent="editmode ? updateItem() : createItem()">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>Nome</label>
-                            <input v-model="form.nome" type="text" name="nome"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('nome') }"
-                                :maxlength="64" :readonly="editmode"
-                                >
-                            <has-error :form="form" field="nome"></has-error>
+                            <b>
+                            {{ form.nome }} {{ form.cognome }}<br>
+                            {{ form.day_date }}
+                            </b>
                         </div>
+
+
                         <div class="form-group">
-                            <label>Cognome</label>
-                            <input v-model="form.cognome" type="text" name="cognome"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('cognome') }"
-                                :maxlength="64" :readonly="editmode"
-                                >
-                            <has-error :form="form" field="cognome"></has-error>
-                        </div>
-                        <div class="form-group">
-                            <label>Codice Fiscale</label>
-                            <input v-model="form.codice_fiscale" type="text" name="codice_fiscale"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('codice_fiscale') }"
-                                :maxlength="16" :readonly="editmode"
-                                >
-                            <has-error :form="form" field="codice_fiscale"></has-error>
-                        </div>
-                        <div class="form-group">
-                            <label>Matricola</label>
-                            <input v-model="form.matricola" type="text" name="matricola"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('matricola') }"
-                                :maxlength="16" :readonly="editmode"
-                                >
-                            <has-error :form="form" field="matricola"></has-error>
-                        </div>
-                        <div class="form-group">
-                            <label>Modalità Timbrata</label>
-                            <select name="modo_timbratura"
-                                v-model="form.modo_timbratura"
+                            <label>Entrata</label>
+                            <input type="time" name="entrance_date"
                                 class="form-control"
+                                :class="{ 'is-invalid': form.errors.has('entrance_date') }"
+                                step="1"
+                                v-model="form.entrance_time"
                                 >
-                                <option value="0">Tutte</option>
-                                <option value="1">Veicolo Aziendale</option>
-                                <option value="2">Veicolo Proprio</option>
-                            </select>
+                            <has-error :form="form" field="entrance_date"></has-error>
                         </div>
                         <div class="form-group">
-                            <!--
-                                data_assunzione
-                                between date-7 => date+7
-                            -->
-                            <label>Data Assunzione</label>
-                            <input v-model="form.data_assunzione" type="date" name="data_assunzione"
-                                class="form-control" :class="{ 'is-invalid': form.errors.has('data_assunzione') }"
-                                :readonly="editmode"
-                                :min="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), -7))"
-                                :max="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), 7))"
+                            <label>Uscita</label>
+                            <input type="time" name="exit_date"
+                                class="form-control"
+                                :class="{ 'is-invalid': form.errors.has('exit_date') }"
+                                step="1"
+                                v-model="form.exit_time"
                                 >
-                            <has-error :form="form" field="data_assunzione"></has-error>
-                        </div>
-                        <div class="form-group"
-                            v-if="editmode"
-                            >
-                            <label>Data Cessazione</label>
-                            <input v-model="form.data_cessazione" type="date" name="data_cessazione"
-                                class="form-control" :class="{ 'is-invalid': form.errors.has('data_cessazione') }"
-                                :readonly="(form.data_cessazione != null)"
-                                :min="$root.utils.datetime.formatDateISO(form.data_assunzione)"
-                                :max="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), 7))"
-                                >
-                            <has-error :form="form" field="data_cessazione"></has-error>
+                            <has-error :form="form" field="exit_date"></has-error>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -313,9 +277,16 @@ export default {
                 cognome: '',
                 codice_fiscale: '',
                 matricola: '',
-                modo_timbratura: 0,
-                data_assunzione: '',
-                data_cessazione: ''
+                entrance_date: '',
+                entrance_time: '',
+                entrance_ip: '',
+                exit_date: '',
+                exit_time: '',
+                exit_ip: '',
+                ref_date: '',
+                worker_id: '',
+                worker_status: '',
+                day_date: ''
             }),
             // filters
             filters: {
@@ -359,6 +330,10 @@ export default {
             this.form.reset();
             $('#addNew').modal('show');
             this.form.fill(item);
+
+            // sets entrance/exit time
+            this.form.entrance_time = this.attendanceTime(item.day_date, item.entrance_date)
+            this.form.exit_time = this.attendanceTime(item.day_date, item.exit_date)
         },
         // #endregion Modals
 
@@ -403,7 +378,8 @@ export default {
         },
         updateItem(){
             this.$Progress.start();
-            this.form.put('api/attendance/'+this.form.id)
+
+            this.form.put('api/attendance/' + this.form.id)
             .then((response) => {
                 // success
                 $('#addNew').modal('hide');
@@ -412,7 +388,6 @@ export default {
                     title: response.data.message
                 });
                 this.$Progress.finish();
-                //  Fire.$emit('AfterCreate');
                 this.list();
             })
             .catch(() => {
@@ -420,21 +395,23 @@ export default {
             });
 
         },
-        deleteItem(id){
+        deleteItem(item) {
+            const msg = "Eliminare le timbrate giornaliere del dipendente?<br><br>Il dipendente<br>" + item.nome + " " + item.cognome + "<br>risulterà assente in data " + item.day_date + "<br><br>Attenzione: questa operazione è irreversibile.";
+
             Swal.fire({
                 title: 'Conferma',
                 icon:'question',
-                html: "Confermi la cancellazione del dipendente?",
+                html: msg,
                 showCancelButton: true,
-                confirmButtonText: 'Si, procedi',
+                confirmButtonText: 'Si, elimina',
                 cancelButtonText: 'Annulla'
                 }).then((result) => {
                     // Send request to the server
                     if (result.value) {
-                        this.form.delete('api/attendance/'+id).then(()=>{
+                        this.form.delete('api/attendance/' + item.id).then(()=>{
                             Swal.fire(
-                                'Eliminato!',
-                                'Dipendente correttamente eliminato.',
+                                'Timbrate Eliminate!',
+                                'Timbrate correttamente eliminate.',
                                 'success'
                             );
                             // Fire.$emit('AfterCreate');
@@ -590,9 +567,7 @@ export default {
         attendanceTime(dayDate, t) {
             if (t == null) return ''
             if (dayDate == '') return ''
-            //t = this.$root.utils.datetime.formatDateTime(t)
-            console.log(t)
-            return t.replace(dayDate, '')
+            return t.replace(dayDate, '').trim()
         }
         // #endregion utils
     },
