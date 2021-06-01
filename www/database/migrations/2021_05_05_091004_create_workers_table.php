@@ -25,6 +25,7 @@ class CreateWorkersTable extends Migration
             $table->integer('modo_timbratura')->default(0)->comment('modo timbratura. 0=tutte; 1=con veicolo aziendale; 2=con veicolo personale');
             $table->string('password_timbratura', 10)->comment('la password del dipendente per la timbratura tramite APP o sito');
             $table->string('matricola', 30)->unique()->comment('numero di matricola del dipendente');
+            $table->integer('ore_settimanali')->default(31)->comment('numero ore settimanali da contratto');
             $table->integer('stato')->default(0)->comment('stato. 0=fuori; 1=al lavoro');                   // 0: fuori; 1: accesso
             $table->timestamp('data_stato')->nullable()->comment('data ultimo aggiornamento stato');        // data stato
             $table->string('tracking_session', 20)->nullable()->default('')->comment('id sessione geo-localizzazione. geo_tracking.session_id');
