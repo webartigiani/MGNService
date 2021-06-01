@@ -151,6 +151,7 @@ export default {
     // #region Properties
     data () {
         return {
+            loadingTable: true,
             editmode: false,
             items: {},
             form: new Form({
@@ -168,8 +169,11 @@ export default {
     methods: {
         getResults(page = 1) {
             this.$Progress.start();
-            aaxios.get('api/user?page=' + page).then(({ data }) => (this.items = data.data));
-            this.$Progress.finish()
+            aaxios.get('api/user?page=' + page).then(({ data }) => {
+                this.items = data.data
+                this.$Progress.finish()
+                this.loadingTable = false
+            });
         },
 
         // #region Modal Functions
@@ -189,12 +193,16 @@ export default {
         // #region CRUD functions
         list(){
             // lists users
-            const self = this
-            this.$Progress.start();
+            this.$Progress.start()
+            this.loadingTable = true
             if(this.$gate.isAdminOrWebMaster()){
-              axios.get("api/user").then(({ data }) => (this.items = data.data));
+              axios.get("api/user").then(({ data }) => {
+                this.items = data.data
+                this.$Progress.finish()
+                this.loadingTable = false
+              }
+              );
             }
-            this.$Progress.finish()
         },
         createItem(){
             this.form.post('api/user')

@@ -4,7 +4,7 @@
         <div class="row">
           <div class="col-12">
 
-            <h3>Veicoli</h3>
+            <h3>{{ loadingTable ? `Veicoli` : `Veicoli` }}</h3>
 
             <div class="card">
               <div class="card-header">
@@ -176,6 +176,7 @@ export default {
     // #region Properties
     data () {
         return {
+            loadingTable: true,
             editmode: false,
             items : {},
             form: new Form({
@@ -189,24 +190,20 @@ export default {
         }
     },
     filters: {
-        truncate: function (text, length, suffix) {
-            return text.substring(0, length) + suffix;
-        },
     },
     computed: {
-        filteredItems() {
-        return this.autocompleteItems.filter(i => {
-            return i.text.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1;
-        });
-        },
     },
     // #endregion Properties
 
     methods: {
         getResults(page = 1) {
-            this.$Progress.start();
-            axios.get('api/worker?page=' + page).then(({ data }) => (this.items = data.data));
-            this.$Progress.finish();
+            this.$Progress.start()
+            this.loadingTable = true
+            axios.get('api/worker?page=' + page).then(({ data }) => {
+                this.items = data.data
+                this.loadingTable = false
+                this.$Progress.finish()
+            });
         },
 
         // #region Modals
@@ -225,8 +222,13 @@ export default {
 
         // #region CRUD Functions
         list(){
-            this.$Progress.start();
-            axios.get("api/veicolo").then(({ data }) => (this.items = data.data), this.$Progress.finish());
+            this.$Progress.start()
+            this.loadingTable = true
+            axios.get("api/veicolo").then(({ data }) => {
+                this.items = data.data
+                this.loadingTable = false
+                this.$Progress.finish()
+            });
         },
         createItem(){
             this.$Progress.start();

@@ -7,9 +7,10 @@
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Timbrate Recenti</h3>
+                            <h3 class="card-title">{{ loadingTable ? `caricamento...` : `Timbrate Recenti` }}</h3>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body p-0"
+                            >
                             <div class="table-responsive">
                                 <table class="table m-0">
                                     <thead>
@@ -87,6 +88,7 @@ export default {
     // #region Properties
     data () {
         return {
+            loadingTable: true,
             loadingCounters: true,
             presenze : {},
             totalWorkers: 0,
@@ -112,17 +114,27 @@ export default {
     // #region Methods
     methods: {
         getResultsPresenze(page = 1) {
-            this.$Progress.start();
+            this.$Progress.start()
+            this.loadingTable = true
             axios.get('api/attendance?page=' + page, {
                 params: {"context": "dashboard"}
-            }).then(({ data }) => (this.presenze = data.data));
+            }).then(({ data }) => {
+                this.presenze = data.data
+                this.$Progress.finish()
+                this.loadingTable = false
+            });
             this.$Progress.finish();
         },
         listLastTimbrate() {
-            this.$Progress.start();
+            this.$Progress.start()
+            this.loadingCounters = true
             axios.get('api/attendance', {
                 params: {"context": "dashboard"}
-            }).then(({ data }) => (this.presenze = data.data, this.$Progress.finish()));
+            }).then(({ data }) => {
+                this.presenze = data.data
+                this.$Progress.finish()
+                this.loadingTable = false
+            });
         },
         /**
          * Gets workers counters

@@ -98,7 +98,6 @@ Vue.filter('yesno', value => (value ? '<i class="fas fa-check green"></i>' : '<i
 
 // end Filter
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
 import VueMoment from 'vue-moment'
 Vue.use(VueMoment)
 

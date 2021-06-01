@@ -4,7 +4,7 @@
         <div class="row">
           <div class="col-12">
 
-            <h3>Dipendenti</h3>
+            <h3>{{ loadingTable ? `Dipendenti` : `Dipendenti` }}</h3>
 
             <div class="card">
                 <div class="card-header">
@@ -292,6 +292,7 @@ export default {
     // #region Properties
     data () {
         return {
+            loadingTable: true,
             editmode: false,
             items : {},
             form: new Form({
@@ -327,13 +328,17 @@ export default {
 
     methods: {
         getResults(page = 1) {
-            this.$Progress.start();
+            this.$Progress.start()
+            this.loadingTable = true
             let params = this.filters                           // appends filters and search
             params.query = this.$root.$route.query.search
             axios.get('api/worker?page=' + page, {
                 params: params
-            }).then(({ data }) => (this.items = data.data));
-            this.$Progress.finish();
+            }).then(({ data }) => {
+                this.items = data.data
+                this.$Progress.finish()
+                this.loadingTable = false
+            });
         },
 
         // #region Modals
@@ -352,12 +357,17 @@ export default {
 
         // #region CRUD Functions
         list() {
-            this.$Progress.start();
+            this.$Progress.start()
+            this.loadingTable = true
             let params = this.filters                           // appends filters and search
             params.query = this.$root.$route.query.search
             axios.get('api/worker', {
                 params: params
-            }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
+            }).then(({ data }) => {
+                this.items = data.data
+                this.$Progress.finish()
+                this.loadingTable = false
+            });
         },
         createItem(){
             this.$Progress.start();
