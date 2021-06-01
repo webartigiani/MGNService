@@ -1,0 +1,129 @@
+﻿Codice giustificativo;Descrizione giustificativo;Cod.voce generaz.diretta su cedolino;Codice giustificativo di riferimento;Incluso nella quadratura del giorno?
+A1;Assegno Ordinario (AOR);;A1;Si
+A2;Assegno solid./ord.CDS (ASR);;A2;Si
+A3;Cig in deroga;;A3;Si
+A4;Quarantena sorv.attiva COVID19;;MA;Si
+A5;Assenza aut. sanitarie COVID19;;MA;Si
+A6;CIGO pagamento diretto;;A3;Si
+A7;Cong.genit.figli disab.COVID19;;A7;Si
+A8;Congedo genitor.retrib.COVID19;;A8;Si
+A9;Congedo genit.non retr.COVID19;;A9;Si
+AH;Assenza assunti/dimessi;;AH;Si
+AI;Assenza ingiustificata;;AI;Si
+AL;Allattamento;;AL;Si
+AO;Assenza Operazione Societaria;;AI;Si
+AP;Aspettativa non retribuita;;AP;Si
+AR;Aspettativa Retribuita;;AR;Si
+AS;Assemblea sindacale;;AS;Si
+B1;BANCA ORE MATURATA;;;No
+BO;Permessi banca ore goduti;;BO;Si
+C1;Solidarieta' antic.DLgs.148/15;;C1;Si
+C2;Solidarieta' autor.DLgs.148/15;;C2;Si
+C3;Cig autorizz.post D.Lgs.148/15;;C3;Si
+C4;CIG EDILI/LAPID.x maltempo ant;;C4;Si
+C5;CIG EDILI/LAPID.x maltempo aut;;C5;Si
+C6;Solidarieta' anticipata;;C6;Si
+C7;Solidarieta' autorizzata;;C7;Si
+C8;CIG ant. per maltempo (edili);;C4;Si
+C9;CIG aut. per maltempo (edili);;C5;Si
+CA;CIG anticipata;;CA;Si
+CB;CIG autorizzata (si ctr.add.);;CB;Si
+CC;CIG autorizzata (no ctr.add.);;CC;Si
+CD;Congedi straordinari disabili;;CD;Si
+CF;Congedo facoltativo padre;;CF;Si
+CI;CIG non retribuita;;CI;Si
+CM;Congedo matrimoniale;;CM;Si
+CO;CIG IN DEROGA CARICO INPS;;CO;Si
+CP;Congedo obbligatorio del padre;;CP;Si
+CV;Perm. non retrib. Ctr virtuale;;CV;Si
+CY;Morbo Cooley;;MA;Si
+D1;Donazione Sangue Inidoneita';;D1;Si
+D2;Permessi disabili gg COVID19;;D2;Si
+D3;Per.disabili fruiti hh-COVID19;;D3;Si
+DM;Donazione midollo osseo;;DM;Si
+DS;Donazione sangue;;DS;Si
+E1;ORE EBER ANTICIP. 10%;;E1;Si
+E5;ORE EBER ANTICIP.50%;;E5;Si
+E6;ORE EBER ANTICIP. 60%;;E6;Si
+EM;Emodialisi;;MA;Si
+F1;Flessibilita' Tipo 1;;;No
+F2;Flessibilita' Tipo 2;;;No
+F3;Flessibilita' Tipo 3;;;No
+F4;Flessibilita' senza maggioraz.;;;No
+F6;Ferie solidarieta' anticipata;;F6;Si
+F7;Ferie solidarieta' autorizzata;;F7;Si
+FE;Ferie;;FE;Si
+FG;Flessibilita' godute;;FG;Si
+FO;Corso Formazione Apprendisti;;FO;Si
+FR;Matern.facolt.retribuita (MB2);;FR;Si
+FS;Lavoro Festivo;000452;;No
+GO;Giornata ad orario ridotto-GOR;;GO;Si
+IN;Infortunio;;IN;Si
+LA;Lav.Domenicale 40% Alim.Artig.;000199;;No
+LD;Lavoro Domenicale Pubblici;000277;;No
+LF;Lavoro straordinario festivo;000450;;No
+LN;Lavoro Notturno;000070;;No
+LS;Supplementare diurno;;;No
+LT;Lavoro Domenicale Terz.;ZP9986;;No
+LZ;Maggiorazione Fest.60%;000008;;No
+M1;Perm.retr. per MA bimbo < 3a;;M1;Si
+M3;Mal. bambino < 3 anni (MA3);;MB;Si
+M4;Prolung. MF fino 3a/Hand (MA4);;M4;Si
+M5;Maternita' facolt. a ore (MA0);;M5;Si
+M6;Mat. fac. a ore non retr.(MB0);;M6;Si
+MA;Malattia;;MA;Si
+MB;Mal. bambino > 3 anni (MB4);;MB;Si
+MC;Mancata certificaz. malattia;;MC;Si
+MF;Maternita' facoltativa (MA2);;MF;Si
+MI;Militare;;MI;Si
+MM;Malattia non conta per malus;;MA;Si
+MN;Mat. fac. non retribuita (MB2);;MN;Si
+MO;Malattia ospedaliera;;MA;Si
+MP;Malattia breve;;MP;Si
+MR;Mancata certific.ricaduta mal.;;MC;Si
+MT;Maternita' obbligatoria;;MT;Si
+MX;Malattia no trattam. speciale;;MA;Si
+NF;e;;;Si
+NO;Magg.notturna 25%;000279;;No
+P1;Permessi studio;;P1;Si
+P2;Permessi per esami;;P2;Si
+P3;Permessi corsi di formazione;;P3;Si
+P6;PF solidarieta' anticipata;;P6;Si
+P7;PF solidarieta' autorizzata;;P7;Si
+PC;Permessi L.104/92 COVID-19;;PC;Si
+PD;Permessi disabili edili;;PD;Si
+PE;Permesso elettorale;;PE;Si
+PF;Permessi ex festivita';;PF;Si
+PG;Permessi disabili a giorni;;PG;Si
+PH;Permessi disabili a ore;;PH;Si
+PL;Permessi lutto;;PL;Si
+PN;Permessi non retribuiti;;PN;Si
+PR;Permessi retribuiti;;PR;Si
+PS;Permesso sindacale;;PS;Si
+R6;ROL solidarieta' anticipata;;R6;Si
+R7;ROL solidarieta' autorizzata;;R7;Si
+RA;Riposo Compensativo;;RA;Si
+RC;Rid.orario di lavoro di cong.;;RC;Si
+RI;Ricaduta infortunio;;IN;Si
+RL;Riduzione orario di lavoro;;RL;Si
+RM;Ricaduta malattia;;MA;Si
+RO;Ricaduta malattia ospedale;;MA;Si
+S1;Straordinario 20%;Z40020;;No
+S2;Straord. porte aperte feriale;Z40050;;No
+S3;Straord. porte chiuse feriale;;;No
+S4;Straord. porte aperte festivo;Z40075;;No
+S5;Straord. porte chiuse festivo;Z40055;;No
+SC;Sciopero;;SC;Si
+SD;Sospensione disciplinare;;SD;Si
+SF;SemiFestivita';;SF;Si
+SN;Straordinario notturno;;;No
+SO;Sospensione;;SO;Si
+ST;Straordinario diurno;;;No
+SW;Smart working;;;Si
+TB;Malattia TBC;;MA;Si
+V1;Volontariato Protezione Civile;;V1;Si
+V6;Assegno ordinar. pagam.diretto;;A3;Si
+V9;Congedo quarant.figli DL111/20;;V9;Si
+VM;Permessi per visita medica;;VM;Si
+VO;Cong. vittime viol.a ore (DVO);;VO;Si
+VV;Cong. vittime violenza (DVV);;VV;Si

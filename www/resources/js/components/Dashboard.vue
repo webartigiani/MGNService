@@ -54,29 +54,26 @@
                 <div class="col-md-4">
                     <!-- dipendenti presenti -->
                     <div class="info-box mb-3 bg-success">
-                        <span class="info-box-icon"><i class="fas fa-tag"></i></span>
-
+                        <span class="info-box-icon" v-show="!loadingCounters"><i class="fas fa-tag"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Presenti</span>
-                            <span class="info-box-number">13/25</span>
+                            <span class="info-box-text">{{ loadingCounters ?  `caricamento...`: `Presenti` }}</span>
+                            <span class="info-box-number">{{ loadingCounters ?  `...`: workersAtWork + `/` + totalWorkers }}</span>
                         </div>
                     </div>
-
                     <!-- dipendenti assenti -->
                     <div class="info-box mb-3 bg-warning">
-                        <span class="info-box-icon"><i class="far fa-tired"></i></span>
+                        <span class="info-box-icon" v-show="!loadingCounters"><i class="far fa-tired"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Chi manca?</span>
-                            <span class="info-box-number">12</span>
+                            <span class="info-box-text">{{ loadingCounters ?  `caricamento...`: `Assenti` }}</span>
+                            <span class="info-box-number">{{ loadingCounters ?  `...`: workersNotAtWork }}</span>
                         </div>
                     </div>
-
                     <!-- veicoli in uso -->
                     <div class="info-box mb-3 bg-info">
-                        <span class="info-box-icon"><i class="fas fa-car"></i></span>
+                        <span class="info-box-icon" v-show="!loadingCounters"><i class="fas fa-car"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Veicoli in uso</span>
-                            <span class="info-box-number">2/2</span>
+                            <span class="info-box-text">{{ loadingCounters ?  `caricamento...`: `Veicoli in uso` }}</span>
+                            <span class="info-box-number">{{ loadingCounters ?  `...`: veichlesInUse + `/` + totaleVeichles}}</span>
                         </div>
                     </div>
                 </div>
@@ -90,7 +87,13 @@ export default {
     // #region Properties
     data () {
         return {
+            loadingCounters: true,
             presenze : {},
+            totalWorkers: 0,
+            workersAtWork: 0,
+            workersNotAtWork: 0,
+            veichlesInUse: 0,
+            totaleVeichles: 0,
             filters: {
                 show: false,
                 date_start: null,
@@ -115,13 +118,35 @@ export default {
             }).then(({ data }) => (this.presenze = data.data));
             this.$Progress.finish();
         },
-        listPresenze() {
+        listLastTimbrate() {
             this.$Progress.start();
             axios.get('api/attendance', {
                 params: {"context": "dashboard"}
-            }).then(({ data }) => (this.presenze = data.data, console.log('listPresenze', data.data), this.$Progress.finish()));
+            }).then(({ data }) => (this.presenze = data.data, this.$Progress.finish()));
         },
+        /**
+         * Gets workers counters
+         */
+        getCounters() {
+            this.$Progress.start();
+            this.loadingCounters = true
+            axios.get('api/workers/counters', {
+                params: {}
+            }).then(({ data }) => {
+                this.workersAtWork = data.data[0].atwork
+                this.workersNotAtWork = data.data[0].notatwork
+                this.totalWorkers = data.data[0].total
 
+                axios.get('api/veichles/counters', {
+                    params: {}
+                }).then(({ data }) => {
+                    this.veichlesInUse = data.data[0].inuse
+                    this.totaleVeichles = data.data[0].total
+                    this.loadingCounters = false
+                    this.$Progress.finish();
+                });
+            });
+        },
         // #region Utils
         timbrataToString(v) {
             // returns timbrata description
@@ -151,7 +176,8 @@ export default {
     },
     created() {
         this.$Progress.start()
-        this.listPresenze()
+        this.listLastTimbrate()
+        this.getCounters()
         this.$Progress.finish()
     },
     beforeMount() {

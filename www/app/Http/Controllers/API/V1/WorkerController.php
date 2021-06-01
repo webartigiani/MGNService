@@ -170,11 +170,19 @@ public function export(Request $request) {
 
 // #region Public API methods
     /**
-     *
+     * Returns the list of workers
      */
     public function list() {
         $workers = DB::table('workers')->get();
         return $this->sendResponse($workers, 'Workers List');
+    }
+
+    /**
+     * Returns Workers counters
+     */
+    public function getCounters() {
+        $dbdata = DB::table('v_workers_counter')->get();
+        return $this->sendResponse($dbdata, 'Workers Counters');
     }
 // #endregion Public API methods
 

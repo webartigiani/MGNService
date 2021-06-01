@@ -436,7 +436,7 @@ export default {
             })
 
             // search query
-            let query = this.$root.$route.query.search.trim().toLowerCase();
+            let query = (this.$root.$route.query.search != undefined) ? this.$root.$route.query.search.trim().toLowerCase() : '';
 
             // choose filename
             let fileName = this.filters.notatwork ? 'assenze': 'presenze'

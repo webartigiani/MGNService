@@ -229,8 +229,10 @@ public function export(Request $request) {
     ) tbl";
 
     $header = 'Giorno;Dipendente;Nome;Cognome;Codice Fiscale;Matricola;Entrata;IP Entrata;Uscita;IP Uscita;Ore Lavorate;Controllo';
+    $dbdata = DB::select(DB::raw($sql));
     return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
+
 public function exportXML(Request $request) {
     /**
      * Exports presenze as XML (Zucchetti, TRRIPW.XML)
@@ -248,40 +250,43 @@ public function exportXML(Request $request) {
     // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
     $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'worker_id, ref_date');
     $sql = "select
-        matricola , ref_date, duration_h_int hours, chk
+        worker_id, ref_date, duration_h_int hours, chk
     from (
         {$sql}
     ) tbl";
     $dbdata = DB::select(DB::raw($sql));
 
     $output = '';
-    $lastMatricola = '';
-    $matricola = '';
+    $lastWorkerID = '';
+    $workerID = '';
 
     // creates data
     foreach ($dbdata as $row) {
 
-        $codiceazienda = env("CODICE_AZIENDA");
         $giustificativo = "01";                     // giustificativo ufficiale
-        $matricola = $row->matricola;               // dipendente corrente
+        $codiceazienda = trim(env("CODICE_AZIENDA"));
+        $workerID = $row->worker_id;                // ID dipendente corrente
         $refdate = $row->ref_date;                  // data riferimento YYYY-MM-DD
         $hours = $row->hours;                       // ore lavorate
         $giornodiriposo = 'N';
         if ($row->chk <= 0) $giornodiriposo = 'S';  // giorno di riposo se assente o incompleto
 
+        $codiceazienda = str_pad($codiceazienda, 6, "0", STR_PAD_LEFT);     // codice azienda con zero-padding-left 6 cifre
+        $workerID = str_pad($workerID, 7, "0", STR_PAD_LEFT);               // id dipendente con zero-padding-left 7 cifre
+
         // se cambia il dipendente...
-        if ($matricola != $lastMatricola) {
-            if ($lastMatricola != '') {
+        if ($workerID != $lastWorkerID) {
+            if ($lastWorkerID != '') {
                 // chiude ramo XML dipendente precedente
                 $output .= "\t\t</Movimenti>
 \t</Dipendente>\r\n";
             }
 
             // apre ramo XML dipendente corrente
-            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$matricola}\">
+            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$workerID}\">
 \t\t<Movimenti GenerazioneAutomaticaDaTeorico=\"N\">\r\n";
         }   // /se cambia il dipendente...
-        $lastMatricola = $matricola;            // memorizza dipendente corrente
+        $lastWorkerID = $workerID;              // memorizza dipendente corrente
 
         // esporta dati presenze (del dipendente corrente)
         $output .= "\t\t\t<Movimento>
