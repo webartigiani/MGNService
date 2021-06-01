@@ -308,6 +308,7 @@ export default {
     },
     // #endregion Properties
 
+    // #region Methods
     methods: {
         getResults(page = 1) {
             this.$Progress.start();
@@ -345,7 +346,7 @@ export default {
             params.query = this.$root.$route.query.search
             axios.get('api/attendance', {
                 params: params
-            }).then(({ data }) => (this.items = data.data, console.log(data.data), this.$Progress.finish()));
+            }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
         },
         createItem(){
             this.$Progress.start();
@@ -571,6 +572,7 @@ export default {
         }
         // #endregion utils
     },
+    // #region Methods
 
     // #region Component Life Cycle
     beforeCreate() {

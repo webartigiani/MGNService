@@ -11,54 +11,42 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                            <table class="table m-0">
-                                <thead>
-                                    <tr>
-                                        <th>Dipendente</th>
-                                        <th>Data/Ora</th>
-                                        <th>Timbrata</th>
-                                        <th>Veicolo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                                        <td>07/05/2021 08:01:59</td>
-                                        <td><span class="badge badge-success">Entrata</span></td>
-                                        <td>senza</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>07/05/2021 07:57:03</td>
-                                        <td><span class="badge badge-success">Entrata</span></td>
-                                        <td>41.1369472,16.8132608</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>07/05/2021 07:55:43</td>
-                                        <td><span class="badge badge-success">Entrata</span></td>
-                                        <td>41.1369472,16.8132608</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                                        <td>07/05/2021 07:30:12</td>
-                                        <td><span class="badge badge-success">Entrata</span></td>
-                                        <td>non rilevata</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                                        <td>06/05/2021 19:02:31</td>
-                                        <td><span class="badge badge-warning">Uscita</span></td>
-                                        <td>41.1369472,16.8132608</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>06/05/2021 18:59:03</td>
-                                        <td><span class="badge badge-warning">Uscita</span></td>
-                                        <td>41.1369472,16.8132608</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                <table class="table m-0">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Dipendente</th>
+                                            <th>Timbrata</th>
+                                            <th>Data</th>
+                                            <th>Ora</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in presenze.data" :key="item.id">
+                                            <td style="width:20px;">
+                                                <i class="fa fa-dot-circle"
+                                                    :title="(item.worker_status==1 ? 'attualmente presente' : 'attualmente assente')"
+                                                    :class="(item.worker_status==1 ? 'green' : 'orange')"></i>
+                                            </td>
+                                            <td>{{ item.nome }} {{ item.cognome }}</td>
+                                            <td>
+                                                <span class="badge"
+                                                :class="timbrataToClass(item.chk)"
+                                                >{{ timbrataToString(item.chk) }}</span>
+                                            </td>
+                                            <td>{{ item.day_date }}</td>
+                                            <td v-if="item.chk < 1">{{ attendanceTime(item.day_date, item.entrance_date) }}</td>
+                                            <td v-if="item.chk == 1">{{ attendanceTime(item.day_date, item.exit_date) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="card-footer">
+                                    <!-- see pagination componenet https://www.npmjs.com/package/laravel-vue-pagination -->
+                                    <pagination
+                                        :data="presenze" @pagination-change-page="getResultsPresenze"
+                                        :limit=10
+                                    ></pagination>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -78,7 +66,7 @@
                     <div class="info-box mb-3 bg-warning">
                         <span class="info-box-icon"><i class="far fa-tired"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Assenti</span>
+                            <span class="info-box-text">Chi manca?</span>
                             <span class="info-box-number">12</span>
                         </div>
                     </div>
@@ -98,15 +86,82 @@
 </template>
 
 <script>
-
-
 export default {
-  name: "Example",
-  data() {
-    return {
+    // #region Properties
+    data () {
+        return {
+            presenze : {},
+            filters: {
+                show: false,
+                date_start: null,
+                date_end: null,
+                notatwork: false,
+                per_page: 10
+            },
+        }
+    },
+    filters: {
+    },
+    computed: {
+    },
+    // #endregion Properties
+
+    // #region Methods
+    methods: {
+        getResultsPresenze(page = 1) {
+            this.$Progress.start();
+            axios.get('api/attendance?page=' + page, {
+                params: {"context": "dashboard"}
+            }).then(({ data }) => (this.presenze = data.data));
+            this.$Progress.finish();
+        },
+        listPresenze() {
+            this.$Progress.start();
+            axios.get('api/attendance', {
+                params: {"context": "dashboard"}
+            }).then(({ data }) => (this.presenze = data.data, console.log('listPresenze', data.data), this.$Progress.finish()));
+        },
+
+        // #region Utils
+        timbrataToString(v) {
+            // returns timbrata description
+            switch (v) {
+                case 0: return 'entrata';
+                case 1: return 'uscita';
+            }
+        },
+        timbrataToClass(v) {
+            // returns timbrata class
+            switch (v) {
+                case 0: return 'badge-success';
+                case 1: return 'badge-warning';
+            }
+        },
+        attendanceTime(dayDate, t) {
+            if (t == null) return ''
+            if (dayDate == '') return ''
+            return t.replace(dayDate, '').trim()
+        }
+        // #endregion utils
+    },
+    // #region Methods
+
+    // #region Component Life Cycle
+    beforeCreate() {
+    },
+    created() {
+        this.$Progress.start()
+        this.listPresenze()
+        this.$Progress.finish()
+    },
+    beforeMount() {
+    },
+    mounted() {
+    },
+    beforeDestroy() {
+    },
+    destroyed() {
     }
-  },
-  methods: {
-  }
+    // #endregion Component Life Cycle
 }
 </script>

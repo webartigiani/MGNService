@@ -357,7 +357,7 @@ export default {
             params.query = this.$root.$route.query.search
             axios.get('api/worker', {
                 params: params
-            }).then(({ data }) => (this.items = data.data, console.log(data.data), this.$Progress.finish()));
+            }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
         },
         createItem(){
             this.$Progress.start();

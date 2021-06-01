@@ -47,22 +47,52 @@ class AttendanceController extends BaseController
         * GET       api/attendance
         * params    {"show":true,"date_start":"2021-05-01","date_end":"2021-05-31","query":"filippo"}
         */
-        $params = $request->all();
-        $s = new DateTime($params['date_start']);                       // start date
-        $e = new DateTime($params['date_end']);                         // end date
+        $startDate = null;
+        $endDate = null;
         $search = '';
-        if (isset($params['query'])) $search = trim(strtolower($params['query']));           // search string
-        $notatwork = ($params['notatwork'] == 'true');                  // notatwork (as bool)
+        $notatwork = false;
+        $context = '';
+        $orderBy = '';
+        $limit = 0;
+
+        $params = $request->all();
+        if (isset($params['context'])) $context = trim(strtolower($params['context'])); // context (es. dashboard)
+
+        switch ($context) {
+            case '':
+                // no context: we have all filters and no limit
+                $startDate = new DateTime($params['date_start']);
+                $endDate = new DateTime($params['date_end']);
+                if (isset($params['query'])) $search = trim(strtolower($params['query']));          // search query
+                if (isset($params['notatwork'])) $notatwork = ($params['notatwork'] == 'true');     // notatwork (as bool)
+                $limit = 0;
+                $orderBy = 'ref_date, nome, cognome';
+                break;
+
+            case 'dashboard':
+                // dashboard: we show 7days attendances
+                // we have no filter, no search query, but we limit to 20 results
+                $startDate = new DateTime(date("Y-m-d"));
+                $endDate = new DateTime(date("Y-m-d"));
+                $startDate = date_add($startDate, date_interval_create_from_date_string(" -7 days"));
+                $search = '';
+                $notatwork = false;
+                $limit = 30;                               // limit > 0 (no filters)
+                $orderBy = 'id desc';
+                break;
+        }
 
         // pagination
-        $perPage = $request->input("per_page", 10);         // records per page
+        $perPage = $request->input("per_page", 10);        // records per page
         $page = $request->input("page", 1);                 // page number
         if($page < 1) { $page = 1; }
         $skip = ($page - 1) * $perPage;                     // records to skip
         if($skip < 0) { $skip = 0; }
 
         // generates SQL query for pagination
-        $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, nome, cognome');
+        $sql = $this->listAttendancesQuery($startDate, $endDate, $search, $notatwork, $orderBy);
+        if ($limit > 0) $sql .= " limit {$limit}";
+
         $dbdata = DB::select(DB::raw($sql));
 
         /** To paginate RAW Data for LaravelPaginator
