@@ -295,7 +295,7 @@ export default {
                 date_end: null,
                 description: 'di oggi',
                 notatwork: false,
-                per_page: 10
+                per_page: 50
             },
         }
     },

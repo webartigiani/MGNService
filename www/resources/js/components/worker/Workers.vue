@@ -102,76 +102,79 @@
                 </div>
                 </transition>
 
-              <!-- body -->
-              <div class="card-body table-responsive p-0">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th>ID</th>
-                      <th>Nome</th>
-                      <th>Cognome</th>
-                      <th>Matricola</th>
-                      <th>Codice Fiscale</th>
-                      <th>Modo Timbrata</th>
-                      <th>Codice Timbrata</th>
-                      <th>Data Assunzione</th>
-                      <th>Data Cessazione</th>
-                      <th>Azioni</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                     <tr v-for="item in items.data" :key="item.id">
-                      <td style="width:20px;">
-                          <i class="fa fa-dot-circle"
-                            :title="(item.stato==1 ? 'attualmente presente' : 'attualmente assente')"
-                            :class="(item.stato==1 ? 'green' : 'orange')"></i>
-                      </td>
-                      <td>{{ item.id }}</td>
-                      <td>{{ item.nome}}</td>
-                      <td>{{ item.cognome}}</td>
-                      <td>{{ item.matricola}}</td>
-                      <td>{{ item.codice_fiscale}}</td>
-                      <td>
-                          <span class="badge"
-                          :class="modoTimbraturaToClass(item.modo_timbratura)"
-                          >{{ modoTimbraturaToString(item.modo_timbratura) }}</span>
-                      </td>
-                      <td>{{ item.password_timbratura}}</td>
-                      <td>{{ $root.utils.datetime.formatDate(item.data_assunzione) }}</td>
-                      <td>{{ $root.utils.datetime.formatDate(item.data_cessazione) }}</td>
-                      <td>
-                        <a href="#"
-                            class="action"
-                            title="Visualizza Timbrate"
-                            @click="$root.utils.generic.functionNotAvailable()"
-                            >
-                            <i class="fa fa-tag blue"></i>
-                        </a>
-                        <a href="#"
-                            class="action"
-                            title="Modifica"
-                            @click="editModal(item)">
-                            <i class="fa fa-pen blue"></i>
-                        </a>
-                        <a href="#"
-                            class="action"
-                            title="Elimina"
-                            @click="deleteItem(item)">
-                            <i class="fa fa-trash blue"></i>
-                        </a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
-                  <pagination
-                    :data="items" @pagination-change-page="getResults"
-                    :limit=10
-                  ></pagination>
-              </div>
+                <!-- body -->
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width:20px;"></th>
+                            <th style="width:20px;">ID</th>
+                            <th>Nome</th>
+                            <th>Cognome</th>
+                            <th>Matricola</th>
+                            <th>Codice Fiscale</th>
+                            <th>Uso Veicolo</th>
+                            <th>Codice Timbrata</th>
+                            <th style="width:100px;">Ore Sett.</th>
+                            <th>Data Assunzione</th>
+                            <th>Data Cessazione</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in items.data" :key="item.id">
+                        <td>
+                            <i class="fa fa-dot-circle"
+                                :title="(item.stato==1 ? 'attualmente presente' : 'attualmente assente')"
+                                :class="(item.stato==1 ? 'green' : 'orange')"></i>
+                        </td>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.nome}}</td>
+                        <td>{{ item.cognome}}</td>
+                        <td>{{ item.matricola}}</td>
+                        <td>{{ item.codice_fiscale}}</td>
+                        <td>
+                            <span class="badge"
+                            :class="modoTimbraturaToClass(item.modo_timbratura)"
+                            >{{ modoTimbraturaToString(item.modo_timbratura) }}</span>
+                        </td>
+                        <td>{{ item.password_timbratura }}</td>
+                        <td>{{ item.ore_settimanali }}</td>
+                        <td>{{ $root.utils.datetime.formatDate(item.data_assunzione) }}</td>
+                        <td>{{ $root.utils.datetime.formatDate(item.data_cessazione) }}</td>
+                        <td>
+                            <a href="#"
+                                class="action"
+                                title="Visualizza Timbrate"
+                                @click="$root.utils.generic.functionNotAvailable()"
+                                >
+                                <i class="fa fa-tag blue"></i>
+                            </a>
+                            <a href="#"
+                                class="action"
+                                title="Modifica"
+                                @click="editModal(item)">
+                                <i class="fa fa-pen blue"></i>
+                            </a>
+                            <a href="#"
+                                class="action"
+                                title="Elimina"
+                                @click="deleteItem(item)">
+                                <i class="fa fa-trash blue"></i>
+                            </a>
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+
+                <!-- footer -->
+                <div class="card-footer">
+                    <pagination
+                        :data="items" @pagination-change-page="getResults"
+                        :limit=10
+                    ></pagination>
+                </div>
             </div>
             <!-- /.card -->
           </div>
@@ -216,24 +219,53 @@
                             <has-error :form="form" field="codice_fiscale"></has-error>
                         </div>
                         <div class="form-group">
+                            <label>Indirizzo Email</label>
+                            <input v-model="form.email" type="email" name="email"
+                                class="form-control lower" :class="{ 'is-invalid': form.errors.has('email') }"
+                                :maxlength="64"
+                                >
+                            <has-error :form="form" field="email"></has-error>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefono</label>
+                            <input v-model="form.telefono" type="tel" name="telefono"
+                                class="form-control lower" :class="{ 'is-invalid': form.errors.has('telefono') }"
+                                :maxlength="64"
+                                >
+                            <has-error :form="form" field="telefono"></has-error>
+                        </div>
+
+                        <div class="form-group">
                             <label>Matricola</label>
                             <input v-model="form.matricola" type="text" name="matricola"
-                                class="form-control upper" :class="{ 'is-invalid': form.errors.has('matricola') }"
+                                class="form-control upper"
+                                :class="{ 'is-invalid': form.errors.has('matricola') }"
                                 :maxlength="16" :readonly="editmode"
                                 >
                             <has-error :form="form" field="matricola"></has-error>
                         </div>
                         <div class="form-group">
-                            <label>Modalità Timbrata</label>
+                            <label>Uso Veicolo</label>
                             <select name="modo_timbratura"
                                 v-model="form.modo_timbratura"
                                 class="form-control"
                                 >
-                                <option value="0">Tutte</option>
+                                <option value="0">entrambi</option>
                                 <option value="1">Veicolo Aziendale</option>
                                 <option value="2">Veicolo Proprio</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label>Ore Settimanali</label>
+                            <input type="number" name="ore_settimanali" id="ore_settimanali"
+                                class="form-control"
+                                :class="{ 'is-invalid': form.errors.has('ore_settimanali') }"
+                                min="1" max="60"
+                                required
+                                v-model="form.ore_settimanali">
+                            <has-error :form="form" field="ore_settimanali"></has-error>
+                        </div>
+
                         <div class="form-group">
                             <!--
                                 data_assunzione
@@ -300,8 +332,11 @@ export default {
                 nome: '',
                 cognome: '',
                 codice_fiscale: '',
+                email: '',
+                telefono: '',
                 matricola: '',
                 modo_timbratura: 0,
+                ore_settimanali: 1,
                 data_assunzione: '',
                 data_cessazione: ''
             }),
@@ -475,7 +510,7 @@ export default {
         modoTimbraturaToString(modo) {
             // returns modo-timbtratura description
             switch (modo) {
-                case 0: return 'tutte';
+                case 0: return 'entrambi';
                 case 1: return 'veicolo aziendale';
                 case 2: return 'veicolo proprio';
             }

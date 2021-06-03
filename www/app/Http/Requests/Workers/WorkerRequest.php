@@ -41,7 +41,8 @@ class WorkerRequest extends FormRequest
             'cognome' => 'required|string|max:64',
             'codice_fiscale' => 'required|string|max:16',
             'matricola' => 'required|string|max:30|unique:workers',
-            'data_assunzione' => 'required|date'
+            'data_assunzione' => 'required|date',
+            'ore_settimanali' => 'required|Integer'
         ];
     }
 
@@ -57,7 +58,8 @@ class WorkerRequest extends FormRequest
             'cognome' => 'required|string|max:64',
             'codice_fiscale' => 'required|string|max:16',
             'matricola' => 'required|string|max:30',
-            'data_assunzione' => 'required|date'
+            'data_assunzione' => 'required|date',
+            'ore_settimanali' => 'required|Integer'
         ];
     }
 

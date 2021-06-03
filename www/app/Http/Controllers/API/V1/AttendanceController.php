@@ -377,12 +377,13 @@ public function exportXML(Request $request) {
             // NOTE: period DOES NOT CONSIDER last day in interval
             foreach ($p as $dt) {
                 $dow = $this->utils->getWeekday($dt);       // gets the day-of-week (sunday:0)
-                if (($dow > 0) && ($dow < 6)) {
+                if ($dow > 0) {
+                    // from monday(1) to saturday(6)
                     if ($innerSQL != '') $innerSQL .= "union\n";
                     $innerSQL .= "select '" . $dt->format("d/m/Y") . "' as day_date, ";
                     $innerSQL .= "'" . $dt->format("Y-m-d") . "' as ref_date\n";
                 } else {
-                    // Saturday or Sunday...
+                    // Sunday...
                 }
             }
         } else {

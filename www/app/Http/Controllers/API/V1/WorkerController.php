@@ -107,6 +107,9 @@ class WorkerController extends BaseController
             'cognome' => $data['cognome'],
             'codice_fiscale' => $data['codice_fiscale'],
             'matricola' => $data['matricola'],
+            'email' => $data['email'],
+            'telefono' => $data['telefono'],
+            'ore_settimanali' => $data['ore_settimanali'],
             'modo_timbratura' => $data['modo_timbratura'],
             'data_assunzione' => $data['data_assunzione'],
             'data_cessazione' => $data['data_cessazione']
@@ -373,6 +376,8 @@ public function export(Request $request) {
         $data['cognome'] =  strtoupper(trim($data['cognome']));
         $data['codice_fiscale'] =  strtoupper(trim($data['codice_fiscale']));
         $data['matricola'] =  strtoupper(trim($data['matricola']));
+        $data['email'] =  strtolower(trim($data['email']));
+        $data['telefono'] =  strtoupper(trim($data['telefono']));
         return $data;
     }
 // #endregion Private Methods
