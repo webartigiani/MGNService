@@ -3,6 +3,7 @@ _mount.command
 _open_source_www.command
 _open_source_APP.command
 _rsynch.command
+_migrate.command
 _backup/
 
 APP/platforms/

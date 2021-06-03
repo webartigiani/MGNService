@@ -15,20 +15,27 @@ class CreateVReportPresenzeView extends Migration
     {
         DB::statement("CREATE VIEW report_v_presenze AS
             select
-                att.id, att.worker worker_id,
-                w.nome, w.cognome, w.codice_fiscale, w.matricola,
-                DATE(att.created_at) day_date,
-                att.entrance_date, att.entrance_ip,
-                att.exit_date, att.exit_ip,
-                att.check chk,
-
-                TIMESTAMPDIFF(MINUTE, att.entrance_date, att.exit_date) duration_m,
-                (TIMESTAMPDIFF(MINUTE, att.entrance_date, att.exit_date) / 60) duration_h,
-                round(TIMESTAMPDIFF(MINUTE, att.entrance_date, att.exit_date) / 60) duration_h_int
-            from attendances att
-            inner join workers w
-                on att.worker = w.id
-            order by day_date, att.worker
+                att.id AS id,
+                att.worker AS worker_id,
+                w.nome AS nome,
+                w.cognome AS cognome,
+                w.codice_fiscale AS codice_fiscale,
+                w.matricola AS matricola,
+                cast(att.created_at AS date) AS day_date,
+                att.entrance_date AS entrance_date,
+                att.entrance_ip AS entrance_ip,
+                att.exit_date AS exit_date,
+                att.exit_ip AS exit_ip,
+                att.check AS chk,
+                timestampdiff(MINUTE, att.entrance_date, att.exit_date) AS duration_m,
+                (timestampdiff(MINUTE, att.entrance_date, att.exit_date) / 60) AS duration_h,
+                (timestampdiff(MINUTE, att.entrance_date, att.exit_date) DIV 60) AS duration_h_int,
+                (timestampdiff(MINUTE, att.entrance_date, att.exit_date)) - ((timestampdiff(MINUTE, att.entrance_date, att.exit_date) DIV 60) * 60) as resitual_m
+            from (mgn_service.attendances att
+                join mgn_service.workers w on ((att.worker = w.id)))
+            order by
+                cast(att.created_at AS date),
+                att.worker
         ");
     }
 

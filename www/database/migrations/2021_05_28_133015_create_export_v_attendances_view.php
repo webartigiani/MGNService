@@ -30,7 +30,8 @@ class CreateExportVAttendancesView extends Migration
                 att.exit_ip,
                 timestampdiff(MINUTE, att.entrance_date, att.exit_date) duration_m,
                 round((timestampdiff(MINUTE, att.entrance_date, att.exit_date) / 60), 2) duration_h,
-                round((timestampdiff(MINUTE, att.entrance_date, att.exit_date) / 60), 0) duration_h_int,
+                (timestampdiff(MINUTE, att.entrance_date, att.exit_date) DIV 60) AS duration_h_int,
+	            (timestampdiff(MINUTE, att.entrance_date, att.exit_date)) - ((timestampdiff(MINUTE, att.entrance_date, att.exit_date) DIV 60) * 60) as residual_m,
                 att.check chk
             FROM
                 attendances att

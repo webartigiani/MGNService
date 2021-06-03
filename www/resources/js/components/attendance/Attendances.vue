@@ -138,6 +138,7 @@
                       <th>Entrata</th>
                       <th>Uscita</th>
                       <th>Ore Lavorate</th>
+                      <th>Ore in busta</th>
                       <th>Azioni</th>
                     </tr>
                   </thead>
@@ -159,7 +160,8 @@
                       </td>
                       <td>{{ attendanceTime(item.day_date, item.entrance_date) }}</td>
                       <td>{{ attendanceTime(item.day_date, item.exit_date) }}</td>
-                        <td>{{ (item.chk >= 0) ? item.duration_h: '' }}</td>
+                        <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) : '' }}</td>
+                        <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) : '' }}</td>
                       <td>
                         <a href="#"
                             class="action"

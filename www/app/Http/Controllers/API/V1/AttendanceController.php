@@ -396,6 +396,9 @@ public function exportXML(Request $request) {
         $innerSQL .= "'" . $endDate->format("Y-m-d") . "' as ref_date\n";
 
         // Creates the main SQL query
+        // NOTE:    this calcualtes frational worked minutes
+        //          based on env('minute_round')
+        //          So, worked hours per day is duration_h_int:residual_m_int
         $sql = "select *
                 from (
                     select
@@ -407,6 +410,8 @@ public function exportXML(Request $request) {
                         IFNULL(att.duration_m, 0) duration_m,
                         IFNULL(att.duration_h, 0) duration_h,
                         IFNULL(att.duration_h_int, 0) duration_h_int,
+                        IFNULL(att.residual_m, 0) residual_m,
+                        IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
                         IFNULL(att.chk, -1) chk
                     from
                     (

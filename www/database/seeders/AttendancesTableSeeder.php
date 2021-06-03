@@ -35,12 +35,12 @@ class AttendancesTableSeeder extends Seeder
     {
         /**
          * Inserts random attendances for all workers
-         * from 2020-01-01 to 2021-05-31
+         * from 2020-01-01 to 2021-05-30
          */
         DB::table('attendances')->truncate();           // truncates previous attendances
 
         $s = new DateTime('2020-01-01');                // start date
-        $e = new DateTime('2021-05-29');                // end date
+        $e = new DateTime('2021-06-30');                // end date
         $p = $this->utils->getPeriodDays($s, $e);       // get period
 
         echo "\n\n=======================================================================================\n";
@@ -49,20 +49,20 @@ class AttendancesTableSeeder extends Seeder
         // loops through days in period
         foreach ($p as $dt) {
             $dow = $this->utils->getWeekday($dt);       // gets the day-of-week (sunday:0)
-            if (($dow > 0) && ($dow < 6)) {
-
-                // from monday to friday...
+            if ($dow > 0) {
+                // from monday(1) to saturday(6)...
                 echo $dt->format("Y-m-d\n");
 
                 for ($i = 1; $i <= 25; $i++) {
-
-                    // Generate a random entrance time for the current date/worker
+                    // Generate a random entrance time for the current date/worker (fromn 08:00 AM)
                     $entrance = new DateTime($dt->format("Y-m-d") . ' 07:50:00');
                     $r = rand (1, 20);
                     $entrance = $entrance->add(new DateInterval('PT' . $r . 'M'));
 
-                    // Generates a random exit time for the current date/worker
-                    $exit = new DateTime($dt->format("Y-m-d") . ' 17:50:00');
+                    // Generates a random exit time for the current date/worker (to 13:00)
+                    // NOTE: on saturday, we assing 6 hours (to 14:00)
+                    $exit = new DateTime($dt->format("Y-m-d") . ' 12:50:00');
+                    if ($dow == 6) $exit = new DateTime($dt->format("Y-m-d") . ' 13:50:00');
                     $r = rand (1, 20);
                     $eixt = $exit->add(new DateInterval('PT' . $r . 'M'));
 
@@ -85,6 +85,5 @@ class AttendancesTableSeeder extends Seeder
         }
 
         echo "\nfinito!\n\n";
-
     }
 }
