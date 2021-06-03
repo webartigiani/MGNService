@@ -83,7 +83,7 @@ class AttendanceController extends BaseController
         }
 
         // pagination
-        $perPage = $request->input("per_page", 10);        // records per page
+        $perPage = $request->input("per_page", 50);         // 50 records per page
         $page = $request->input("page", 1);                 // page number
         if($page < 1) { $page = 1; }
         $skip = ($page - 1) * $perPage;                     // records to skip
@@ -93,6 +93,17 @@ class AttendanceController extends BaseController
         $sql = $this->listAttendancesQuery($startDate, $endDate, $search, $notatwork, $orderBy);
         if ($limit > 0) $sql .= " limit {$limit}";
 
+        //echo $sql;
+        //return;
+
+        // checks if we have working days in selected period...
+        if ($sql == '') {
+            // no working day selected
+            $result_p = new LengthAwarePaginator([], 0, $perPage, 0);
+            return $this->sendResponse($result_p, 'Empty Attendances List');
+        }
+
+        // if we have days to export
         $dbdata = DB::select(DB::raw($sql));
 
         /** To paginate RAW Data for LaravelPaginator
@@ -335,6 +346,11 @@ public function exportXML(Request $request) {
         return $data[0];
     }
 
+    public function listGiustificativi() {
+        $tableName = 'giustificativi';
+        $data = DB::table($tableName)->where('inclusion', 'Si') ->orderby('description')->get();
+        return $data;
+    }
 // #endregion Public Methods
 
 // #region Private Methods
@@ -390,42 +406,61 @@ public function exportXML(Request $request) {
             // just one day interval
         }
 
-        // Add or Use last day
-        if ($innerSQL != '') $innerSQL .= "union\n";
-        $innerSQL .= "select '" . $endDate->format("d/m/Y") . "' as day_date, ";
-        $innerSQL .= "'" . $endDate->format("Y-m-d") . "' as ref_date\n";
+        // Add or Use last day (if itsn't sunday)
+        $dow = $this->utils->getWeekday($endDate);
+        if ($dow > 0) {
+            // from monday(1) to saturday(6)
+            if ($innerSQL != '') $innerSQL .= "union\n";
+            $innerSQL .= "select '" . $endDate->format("d/m/Y") . "' as day_date, ";
+            $innerSQL .= "'" . $endDate->format("Y-m-d") . "' as ref_date\n";
+        } else {
+            // Sunday...
+        }
+
+        // checks if we have working days in selected period...
+        if ($innerSQL == '') {
+            // no day to export
+            return '';
+        }
 
         // Creates the main SQL query
         // NOTE:    this calcualtes frational worked minutes
         //          based on env('minute_round')
         //          So, worked hours per day is duration_h_int:residual_m_int
-        $sql = "select *
-                from (
-                    select
-                        IFNULL(att.id, 0) id, calendar.ref_date,
-                        w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status,
-                        calendar.day_date,
-                        att.entrance_date, att.entrance_ip,
-                        att.exit_date, att.exit_ip,
-                        IFNULL(att.duration_m, 0) duration_m,
-                        IFNULL(att.duration_h, 0) duration_h,
-                        IFNULL(att.duration_h_int, 0) duration_h_int,
-                        IFNULL(att.residual_m, 0) residual_m,
-                        IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
-                        IFNULL(att.chk, -1) chk
-                    from
+        $sql = "select presenze.*,
+                    IFNULL(assenze.abscence_minutes, 0) abscence_m,
+                    IFNULL(assenze.abscence_minutes DIV 60, 0) abscence_h_int,
+                    IFNULL((assenze.abscence_minutes DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) - (60 * IFNULL(assenze.abscence_minutes DIV 60, 0)) abscence_minutes_int,
+                    IFNULL(assenze.abscence_justification, '') abscence_justification,
+                    IFNULL(giustificativi.description, '') abscence_justification_desc
+                from
                     (
-                        {$innerSQL}
-                    ) calendar
-                    cross join workers w
-                    left outer join export_v_attendances att
-                        on att.day_date = calendar.day_date
-                        and att.worker_id = w.id
-                ) presenze
-            where
-                1=1
-                ";
-
+                    select *
+                        from (
+                            select
+                                IFNULL(att.id, 0) id, calendar.ref_date,
+                                w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status,
+                                calendar.day_date,
+                                att.entrance_date, att.entrance_ip,
+                                att.exit_date, att.exit_ip,
+                                IFNULL(att.duration_m, 0) duration_m,
+                                IFNULL(att.duration_h, 0) duration_h,
+                                IFNULL(att.duration_h_int, 0) duration_h_int,
+                                IFNULL(att.residual_m, 0) residual_m,
+                                IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
+                                IFNULL(att.chk, -1) chk
+                            from
+                            (
+                                {$innerSQL}
+                            ) calendar
+                            cross join workers w
+                            left outer join export_v_attendances att
+                                on att.day_date = calendar.day_date
+                                and att.worker_id = w.id
+                        ) presenze
+                    where
+                        1=1
+                        ";
         if ($notAtWork) $sql .= " and chk <= 0";        // show only not at work?
         if ($searchQuery != '') {
             $sql .= " and (
@@ -434,6 +469,13 @@ public function exportXML(Request $request) {
                 or codice_fiscale like '%" . $searchQuery . "%'
             )";
         }
+
+        $sql .= " ) presenze
+                    left outer join absences assenze
+                        on presenze.worker_id = assenze.worker_id
+                        and presenze.ref_date = assenze.ref_date
+                    left outer join giustificativi
+                        on assenze.abscence_justification = giustificativi.code";
         if ($orderBy != '') $sql .= " order by " . $orderBy;
         return $sql;
     }

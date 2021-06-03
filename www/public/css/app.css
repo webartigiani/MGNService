@@ -70549,8 +70549,10 @@ div.filters select.form-control {
   color: #f7f7f7;
 }
 
-.btn-green {
-  background-color: #38c172;
+.btn-green,
+.btn-green:focus,
+.btn-green:active {
+  background-color: #38c172 !important;
   border-color: #38c172 !important;
 }
 

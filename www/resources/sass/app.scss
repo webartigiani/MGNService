@@ -40,8 +40,8 @@
 .light_gray {color: $light_gray;}
 .facebook_gray {color: $facebook_gray;}
 
-.btn-green {
-    background-color: $green;
+.btn-green, .btn-green:focus, .btn-green:active {
+    background-color: $green!important;
     border-color: #38c172!important;
 }
 .btn-green:hover {

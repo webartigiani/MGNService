@@ -24,6 +24,7 @@
                         <button type="button"
                             class="btn btn-sm btn-primary btn-green"
                             title="Esporta Presenze in formato Excel/CSV"
+                            :disabled="items.data.length == 0"
                             @click="exportData()">
                             <i class="fa fa-file-excel"></i>
                             Esporta CSV
@@ -31,6 +32,7 @@
                         <button type="button"
                             class="btn btn-sm btn-primary btn-green"
                             title="Esporta Presenze in formato XML per Zucchetti"
+                            :disabled="items.data.length == 0"
                             @click="exportDataXML()">
                             <i class="fa fa-file-alt"></i>
                             Esporta XML
@@ -78,35 +80,49 @@
 
                                 <button type="button"
                                     class="btn btn-sm btn-primary"
-                                    title="Resetta Filtri"
+                                    title="Anno in corso"
                                     @click="setCurrentYear()">
                                     <i class="far fa-calendar"></i>
-                                    Anno Corrente
+                                    365
                                 </button>
                                 <button type="button"
                                     class="btn btn-sm btn-primary"
-                                    title="Resetta Filtri"
+                                    title="Mese Scorso"
                                     @click="setLastMonth()">
                                     <i class="fas fa-history"></i>
-                                    Mese Scorso
+                                    30
                                 </button>
                                 <button type="button"
                                     class="btn btn-sm btn-primary btn-green"
-                                    title="Resetta Filtri"
+                                    title="Mese in corso"
                                     @click="setCurrentMonth()">
-                                    <i class="far fa-calendar-check"></i>
-                                    Mese Corrente
+                                    <i class="far fa-calendar"></i>
+                                    30
+                                </button>
+                                <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    title="Settimana scorsa"
+                                    @click="setLastWeek()">
+                                    <i class="fas fa-history"></i>
+                                    7
                                 </button>
                                 <button type="button"
                                     class="btn btn-sm btn-primary btn-green"
-                                    title="Resetta Filtri"
+                                    title="Settimana in corso"
+                                    @click="setCurrentWeek()">
+                                    <i class="far fa-calendar"></i>
+                                    7
+                                </button>
+                                <button type="button"
+                                    class="btn btn-sm btn-primary btn-green"
+                                    title="Ieri"
                                     @click="setYesterday()">
                                     <i class="fas fa-history"></i>
                                     Ieri
                                 </button>
                                 <button type="button"
                                     class="btn btn-sm btn-primary btn-green"
-                                    title="Resetta Filtri"
+                                    title="Oggi"
                                     @click="setToday()">
                                     <i class="far fa-clock"></i>
                                     Oggi
@@ -127,22 +143,27 @@
               <!-- body -->
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
-                  <thead>
+                  <thead
+                    v-show="items.data.length > 0"
+                    >
                     <tr>
                       <th></th>
                       <!-- <th>ID</th> -->
                       <th>Data</th>
                       <th>Nome</th>
                       <th>Cognome</th>
-                      <th>Presenza</th>
+                      <th><!-- Presenza --></th>
                       <th>Entrata</th>
                       <th>Uscita</th>
                       <th>Ore Lavorate</th>
-                      <th>Ore in busta</th>
+                      <th>Ore Retribuite</th>
+                      <th>Ore Assenza</th>
                       <th>Azioni</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody
+                    v-show="items.data.length > 0"
+                    >
                      <tr v-for="item in items.data" :key="item.id">
                       <td style="width:20px;">
                           <i class="fa fa-dot-circle"
@@ -162,6 +183,7 @@
                       <td>{{ attendanceTime(item.day_date, item.exit_date) }}</td>
                         <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) : '' }}</td>
                         <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) : '' }}</td>
+                        <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) : '' }}</td>
                       <td>
                         <a href="#"
                             class="action"
@@ -179,13 +201,23 @@
                             >
                             <i class="fa fa-trash blue"></i>
                         </a>
+                        <a href="#"
+                            class="action"
+                            title="Gestisci Assenze"
+                            @click="addEditAbscence(item)"
+                            >
+                            <i class="fa fa-balance-scale blue"></i>
+                        </a>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
+
+              <!-- footer -->
+              <div class="card-footer"
+                v-show="items.data.length > 0"
+                >
                   <!-- see pagination componenet https://www.npmjs.com/package/laravel-vue-pagination -->
                   <pagination
                     :data="items" @pagination-change-page="getResults"
@@ -194,10 +226,16 @@
               </div>
             </div>
             <!-- /.card -->
+
+            <!-- no data -->
+            <h3 class="text-center"
+            v-show="items.data.length == 0"
+            >
+                Non ci sono dati nel periodo selezionato</h3>
           </div>
         </div>
 
-    <!-- Modal/Form -->
+    <!-- Editor Modal/Form -->
         <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="addNew" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -220,8 +258,8 @@
 
 
                         <div class="form-group">
-                            <label>Entrata</label>
-                            <input type="time" name="entrance_time"
+                            <label for="hours">Numero Ore</label>
+                            <input type="time" name="hours"
                                 class="form-control"
                                 :class="{ 'is-invalid': form.errors.has('entrance_time') }"
                                 step="1"
@@ -249,6 +287,62 @@
                 </div>
             </div>
         </div>
+
+    <!-- Abscence Editor -->
+        <div class="modal fade" id="modalAbscences" tabindex="-1" role="dialog" aria-labelledby="modalAbscences" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Giustifica Assenza</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form @submit.prevent="editmode ? createAbscence() : createAbscence()">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <b>
+                            {{ form.nome }} {{ form.cognome }}<br>
+                            {{ form.day_date }}
+                            </b>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="abscence_minutes">Ore di Assenza</label>
+                            <input type="time" name="abscence_minutes"
+                                class="form-control"
+                                :class="{ 'is-invalid': form.errors.has('abscence_minutes') }"
+                                step="900"
+                                v-model="form.abscence_minutes"
+                                required
+                                >
+                            <has-error :form="form" field="abscence_minutes"></has-error>
+                        </div>
+                        <div class="form-group">
+                            <label for="abscence_justification">Motivazione</label>
+                            <select name="abscence_justification" id="abscence_justification"
+                                class="form-control"
+                                required
+                                v-model="form.abscence_justification"
+                                >
+                                <option value="">-seleziona-</option>
+                                <option :value="item.code"
+                                    v-for="item in giustificativi" :key="item.code"
+                                >{{ item.description }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">Salva</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Salva</button>
+                    </div>
+                  </form>
+                </div>
+            </div>
+        </div>
+
     </div>
   </section>
 </template>
@@ -256,6 +350,11 @@
 <style scoped>
 a.action {
     margin-right:5px!important;
+}
+.btn-green, .btn-green:focus, .btn-green:active {
+    /* overwrite some styles */
+    background-color: #38c172!important;
+    border-color: #38c172!important;
 }
 </style>
 
@@ -273,6 +372,7 @@ export default {
         return {
             editmode: false,
             items : {},
+            giustificativi: [],
             form: new Form({
                 id : '',
                 nome: '',
@@ -288,7 +388,9 @@ export default {
                 ref_date: '',
                 worker_id: '',
                 worker_status: '',
-                day_date: ''
+                day_date: '',
+                abscence_minutes: '',
+                abscence_justification: ''
             }),
             // filters
             filters: {
@@ -337,6 +439,13 @@ export default {
             // sets entrance/exit time
             this.form.entrance_time = this.attendanceTime(item.day_date, item.entrance_date)
             this.form.exit_time = this.attendanceTime(item.day_date, item.exit_date)
+        },
+        addEditAbscence(item) {
+            // Adds/Edits Abscence
+            this.editmode = false;
+            this.form.reset();
+            $('#modalAbscences').modal('show');
+            this.form.fill(item);
         },
         // #endregion Modals
 
@@ -425,7 +534,40 @@ export default {
                     }
                 })
         },
+
+        createAbscence(){
+            this.$Progress.start();
+
+            this.form.post('api/abscence')
+                .then((data)=>{
+                    if(data.data.success){
+                        $('#modalAbscences').modal('hide');
+                        this.$Progress.finish();
+                        this.list();
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Si è verificato un errore! Prego, riprova'
+                        });
+                        this.$Progress.failed();
+                    }
+                })
+                .catch(()=>{
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Si è verificato un errore! Prego, riprova'
+                    });
+                })
+        },
         // #endregion CRUD Functions
+
+        // #region Other Data Functions
+        listGiustificativi() {
+            axios.get('api/attendances/giustificativi', {}).then(({ data }) => {
+                this.giustificativi = data
+            });
+        },
+        // #endregion other Data Functions
 
         // #region Export Functions
         exportData: async function() {
@@ -485,27 +627,15 @@ export default {
             // checks dates
             if (this.filters.date_start > this.filters.date_end) this.filters.date_end = this.filters.date_start
         },
-        setCurrentYear() {
-            // sets period to current year
+        setToday() {
             const now = new Date();
             const d = this.$root.utils.generic.padZero(now.getDate());
             const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
             const y = now.getFullYear()
 
-            this.filters.date_start = y + '-01-01';
+            this.filters.date_start = y + '-' + m + '-' + d;
             this.filters.date_end = y + '-' + m + '-' + d;
-            this.filters.description = 'da inizio anno';
-            this.list();
-        },
-        setCurrentMonth() {
-            const now = new Date();
-            const d = this.$root.utils.generic.padZero(now.getDate());
-            const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
-            const y = now.getFullYear()
-
-            this.filters.date_start = y + '-' + m + '-01';
-            this.filters.date_end = y + '-' + m + '-' + d;
-            this.filters.description = 'del mese corrente';
+            this.filters.description = 'di oggi';
             this.list();
         },
         setYesterday() {
@@ -522,20 +652,68 @@ export default {
             this.filters.description = 'di ieri';
             this.list();
         },
-        setToday() {
+        setCurrentWeek() {
+            let now = new Date();
+            let cw = new Date();
+
+            var day = cw.getDay()                   // current week
+            const diff = cw.getDate() - day + (day == 0 ? -6:1);     // adjust when day is monday
+            cw =  new Date(cw.setDate(diff));
+
+            const d1 = this.$root.utils.generic.padZero(cw.getDate());
+            const m1 = this.$root.utils.generic.padZero(cw.getMonth() + 1);
+            const y1 = cw.getFullYear()
+
+            const d = this.$root.utils.generic.padZero(now.getDate());
+            const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
+            const y = now.getFullYear()
+
+            this.filters.date_start = y1 + '-' + m1+ '-' + d1;
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'della settimana corrente';
+            this.list();
+        },
+        setLastWeek() {
+            let lw = new Date();
+            lw.setDate(lw.getDate() - 7)            // last week
+            var day = lw.getDay()
+            const diff = lw.getDate() - day + (day == 0 ? -6:1);        // adjust when day is monday
+            lw =  new Date(lw.setDate(diff));
+
+            const d1 = this.$root.utils.generic.padZero(lw.getDate());
+            const m1 = this.$root.utils.generic.padZero(lw.getMonth() + 1);
+            const y1 = lw.getFullYear()
+
+            let cw = new Date();
+
+            var day2 = cw.getDay()                   // current week
+            const diff2 = cw.getDate() - day2 + (day2 == 0 ? -6:1);     // adjust when day is monday
+            cw =  new Date(cw.setDate(diff2 - 1));                      //n points to previous sunday
+
+            const d = this.$root.utils.generic.padZero(cw.getDate());
+            const m = this.$root.utils.generic.padZero(cw.getMonth() + 1);
+            const y = cw.getFullYear()
+
+            this.filters.date_start = y1 + '-' + m1+ '-' + d1;
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'della settimana scorsa';
+            this.list();
+        },
+        setCurrentMonth() {
             const now = new Date();
             const d = this.$root.utils.generic.padZero(now.getDate());
             const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
             const y = now.getFullYear()
 
-            this.filters.date_start = y + '-' + m + '-' + d;
+            this.filters.date_start = y + '-' + m + '-01';
             this.filters.date_end = y + '-' + m + '-' + d;
-            this.filters.description = 'di oggi';
+            this.filters.description = 'del mese corrente';
             this.list();
         },
         setLastMonth() {
             let now = new Date()
             now.setDate(0)                            // last day of the previous month
+
             const d = this.$root.utils.generic.padZero(now.getDate());
             const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
             const y = now.getFullYear()
@@ -543,6 +721,18 @@ export default {
             this.filters.date_start = y + '-' + m + '-01';
             this.filters.date_end = y + '-' + m + '-' + d;
             this.filters.description = 'del mese scorso';
+            this.list();
+        },
+        setCurrentYear() {
+            // sets period to current year
+            const now = new Date();
+            const d = this.$root.utils.generic.padZero(now.getDate());
+            const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
+            const y = now.getFullYear()
+
+            this.filters.date_start = y + '-01-01';
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'da inizio anno';
             this.list();
         },
         setPeriod() {
@@ -591,7 +781,8 @@ export default {
         this.filters.date_start = y + '-' + m + '-' + d;
         this.filters.date_end = y + '-' + m + '-' + d;
 
-        this.list();          // invoked by setCurrentMonth
+        this.list();                    // lists presenze
+        this.listGiustificativi();       // lists giustificativi
         this.$Progress.finish();
     },
     beforeMount() {

@@ -177,7 +177,7 @@ return array(
     'Database\\Seeders\\AttendancesTableSeeder' => $baseDir . '/database/seeders/AttendancesTableSeeder.php',
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
     'Database\\Seeders\\DevicesTableSeeder' => $baseDir . '/database/seeders/DevicesTableSeeder.php',
-    'Database\\Seeders\\TimbrateTableSeeder' => $baseDir . '/database/seeders/TimbrateTableSeeder.php',
+    'Database\\Seeders\\GiustificativiTableSeeder' => $baseDir . '/database/seeders/GiustificativiTableSeeder.php',
     'Database\\Seeders\\TrackingTablesSeeder' => $baseDir . '/database/seeders/TrackingTablesSeeder.php',
     'Database\\Seeders\\UsersTableSeeder' => $baseDir . '/database/seeders/UsersTableSeeder.php',
     'Database\\Seeders\\VeichlesTableSeeder' => $baseDir . '/database/seeders/VeichlesTableSeeder.php',

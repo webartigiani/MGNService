@@ -746,7 +746,7 @@ class ComposerStaticInit3e7e9e2f230c1643a7368a0702f7e091
         'Database\\Seeders\\AttendancesTableSeeder' => __DIR__ . '/../..' . '/database/seeders/AttendancesTableSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\DevicesTableSeeder' => __DIR__ . '/../..' . '/database/seeders/DevicesTableSeeder.php',
-        'Database\\Seeders\\TimbrateTableSeeder' => __DIR__ . '/../..' . '/database/seeders/TimbrateTableSeeder.php',
+        'Database\\Seeders\\GiustificativiTableSeeder' => __DIR__ . '/../..' . '/database/seeders/GiustificativiTableSeeder.php',
         'Database\\Seeders\\TrackingTablesSeeder' => __DIR__ . '/../..' . '/database/seeders/TrackingTablesSeeder.php',
         'Database\\Seeders\\UsersTableSeeder' => __DIR__ . '/../..' . '/database/seeders/UsersTableSeeder.php',
         'Database\\Seeders\\VeichlesTableSeeder' => __DIR__ . '/../..' . '/database/seeders/VeichlesTableSeeder.php',

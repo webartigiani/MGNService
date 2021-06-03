@@ -40,7 +40,7 @@ class AttendancesTableSeeder extends Seeder
         DB::table('attendances')->truncate();           // truncates previous attendances
 
         $s = new DateTime('2020-01-01');                // start date
-        $e = new DateTime('2021-06-30');                // end date
+        $e = new DateTime('2021-06-03');                // end date
         $p = $this->utils->getPeriodDays($s, $e);       // get period
 
         echo "\n\n=======================================================================================\n";

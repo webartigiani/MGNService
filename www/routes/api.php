@@ -35,11 +35,14 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
         'timbrata' => 'TimbrataController',
         'veicolo' => 'VeicoloController',
         'device' => 'DeviceController',
-        'attendance' => 'AttendanceController'
+        'attendance' => 'AttendanceController',
+        'abscence' => 'AbsenceController'
     ]);
     Route::get('workers/export', 'WorkerController@export');                    // export worker as CSV
     Route::get('workers/counters', 'WorkerController@getCounters');             // contatori dipendenti
     Route::get('veichles/counters', 'VeicoloController@getCounters');             // contatori dipendenti
+
+    Route::get('attendances/giustificativi', 'AttendanceController@listGiustificativi');    // lists giustificativi
 
     Route::get('attendances/export', 'AttendanceController@export');            // export attendances as CSV
     Route::get('attendances/export-xml', 'AttendanceController@exportXML');     // export attendances as XML
