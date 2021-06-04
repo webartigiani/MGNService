@@ -150,7 +150,8 @@
                       <th></th>
                       <!-- <th>ID</th> -->
                       <th>Data</th>
-                      <th>Dipendente</th>
+                      <th>Nome</th>
+                      <th>Cognome</th>
                       <th><!-- Presenza --></th>
                       <th>Entrata</th>
                       <th>Uscita</th>
@@ -172,7 +173,8 @@
                       </td>
                       <!-- <td>{{ item.id }}</td> -->
                       <td>{{ item.day_date }}</td>
-                      <td>{{ item.nome }} {{ item.cognome }}</td>
+                      <td>{{ item.nome }}</td>
+                      <td>{{ item.cognome }}</td>
                       <td>
                           <span class="badge"
                           :class="presenzaToClass(item.chk)"

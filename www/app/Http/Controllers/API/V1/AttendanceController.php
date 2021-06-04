@@ -233,14 +233,23 @@ public function export(Request $request) {
     $notatwork = ($params['notatwork'] == 'true');                  // notatwork (as bool)
 
     // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
-    $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, worker_id');
+    $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, nome, cognome');
     $sql = "select
-        day_date, worker_id, nome, cognome, codice_fiscale, matricola, entrance_date, entrance_ip, exit_date, exit_ip,  duration_h, chk
-    from (
-        {$sql}
-    ) tbl";
+                day_date, worker_id, nome, cognome, codice_fiscale, matricola, entrance_date, entrance_ip, exit_date, exit_ip,
+                case
+                    when chk < 0 then 'Assente'
+                    when chk = 0 then 'Incompleta'
+                    else 'Presente'
+                end as presence,
+                concat(LPAD(CONVERT(duration_h_int, char), 2, '0'),':',LPAD(CONVERT(residual_m_int, char), 2, '0')) as working_time,
+                concat(LPAD(CONVERT(abscence_h_int, char), 2, '0'),':',LPAD(CONVERT(abscence_minutes_int, char), 2, '0')) as abscence_time,
+                abscence_justification, abscence_justification_desc,
+                concat(LPAD(CONVERT(total_h_int, char), 2, '0'),':',LPAD(CONVERT(total_minutes_int, char), 2, '0')) as total_time
+            from (
+                {$sql}
+            ) tbl";
 
-    $header = 'Giorno;Dipendente;Nome;Cognome;Codice Fiscale;Matricola;Entrata;IP Entrata;Uscita;IP Uscita;Ore Lavorate;Controllo';
+    $header = "Giorno;Dipendente;Nome;Cognome;Codice Fiscale;Matricola;Entrata;IP Entrata;Uscita;IP Uscita;Presenza;Ore Lavorate;Ore Assenza;Cod. Giustificativo Assenza;Giustificativo Assenza;Ore Totali";
     $dbdata = DB::select(DB::raw($sql));
     return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
