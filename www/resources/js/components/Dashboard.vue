@@ -117,19 +117,21 @@ export default {
             this.$Progress.start()
             this.loadingTable = true
             axios.get('api/attendance?page=' + page, {
-                params: {"context": "dashboard"}
+                params: {"context": "dashboard", "per_page": 10}
             }).then(({ data }) => {
                 this.presenze = data.data
                 this.$Progress.finish()
                 this.loadingTable = false
             });
-            this.$Progress.finish();
         },
         listLastTimbrate() {
+            /*
+            Lists timbrate, 10-per-page
+             */
             this.$Progress.start()
             this.loadingCounters = true
             axios.get('api/attendance', {
-                params: {"context": "dashboard"}
+                params: {"context": "dashboard", "per_page": 10}
             }).then(({ data }) => {
                 this.presenze = data.data
                 this.$Progress.finish()
@@ -137,7 +139,7 @@ export default {
             });
         },
         /**
-         * Gets workers counters
+         * Gets workers and veichels counters
          */
         getCounters() {
             this.$Progress.start();

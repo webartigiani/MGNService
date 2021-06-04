@@ -93,6 +93,7 @@ class AttendanceController extends BaseController
         $sql = $this->listAttendancesQuery($startDate, $endDate, $search, $notatwork, $orderBy);
         if ($limit > 0) $sql .= " limit {$limit}";
 
+        // TEMP: to export full SQL query
         //echo $sql;
         //return;
 
@@ -370,12 +371,33 @@ public function exportXML(Request $request) {
      */
     private function listAttendancesQuery($startDate, $endDate, $searchQuery, $notAtWork, $orderBy) {
         /*  Returns an SQL Query to select attendances
-            Creates an inner SQL query to select all days in calendar between start/end date
-            es:
-                select '28/05/2021' as day_date, '2021-05-28' as ref_date
-                union
-                select '27/05/2021' as day_date, '2021-05-27' as ref_date
-                ...
+            1	id	decimal	NO
+            2	ref_date	varchar	NO
+            3	worker_id	bigint	NO
+            4	nome	varchar	NO
+            5	cognome	varchar	NO
+            6	codice_fiscale	varchar	NO
+            7	matricola	varchar	NO
+            8	worker_status	int	NO
+            9	day_date	varchar	NO
+            10	entrance_date	varchar	YES
+            11	entrance_ip	varchar	YES
+            12	exit_date	varchar	YES
+            13	exit_ip	varchar	YES
+            14	duration_m	bigint	NO
+            15	duration_h	decimal	NO
+            16	duration_h_int	bigint	NO
+            17	residual_m	bigint	NO
+            18	residual_m_int	bigint	NO
+            19	chk	bigint	NO
+            20	abscence_m	bigint	NO
+            21	abscence_h_int	bigint	NO
+            22	abscence_minutes_int	bigint	NO
+            23	abscence_justification	varchar	NO
+            24	abscence_justification_desc	varchar	NO
+            25	total_m	bigint	NO
+            26	total_h_int	bigint	YES
+            27	total_minutes_int	bigint	YES
         */
 
         $innerSQL = '';
@@ -384,9 +406,19 @@ public function exportXML(Request $request) {
         // normalizes arguments
         $searchQuery = trim(strtolower($searchQuery));
         $orderBy = trim(strtolower($orderBy));
+        $p = $this->utils->getPeriodDays($startDate, $endDate);     // gets the dates period
 
-        $p = $this->utils->getPeriodDays($startDate, $endDate);     // gets the period
 
+// #region Calendar
+        /*
+        1st of all:
+        creates an inner SQL query to select all days in calendar between start/end date
+        this will result in something like this
+            select '28/05/2021' as day_date, '2021-05-28' as ref_date
+            union
+            select '27/05/2021' as day_date, '2021-05-27' as ref_date
+            ...
+        */
         // selected a period higher than just one day?
         if ($startDate != $endDate) {
             // loops through days in period
@@ -416,54 +448,91 @@ public function exportXML(Request $request) {
         } else {
             // Sunday...
         }
+// #endregion Calendar
 
+// #region Check Calendar
         // checks if we have working days in selected period...
         if ($innerSQL == '') {
             // no day to export
             return '';
         }
+// #endregion Check Calendar
 
-        // Creates the main SQL query
-        // NOTE:    this calcualtes frational worked minutes
-        //          based on env('minute_round')
-        //          So, worked hours per day is duration_h_int:residual_m_int
-        $sql = "select presenze.*,
-                    IFNULL(assenze.abscence_minutes, 0) abscence_m,
-                    IFNULL(assenze.abscence_minutes DIV 60, 0) abscence_h_int,
-                    IFNULL((assenze.abscence_minutes DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) - (60 * IFNULL(assenze.abscence_minutes DIV 60, 0)) abscence_minutes_int,
-                    IFNULL(assenze.abscence_justification, '') abscence_justification,
-                    IFNULL(giustificativi.description, '') abscence_justification_desc
-                from
-                    (
-                    select *
-                        from (
-                            select
-                                IFNULL(att.id, 0) id, calendar.ref_date,
-                                w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status,
-                                calendar.day_date,
-                                att.entrance_date, att.entrance_ip,
-                                att.exit_date, att.exit_ip,
-                                IFNULL(att.duration_m, 0) duration_m,
-                                IFNULL(att.duration_h, 0) duration_h,
-                                IFNULL(att.duration_h_int, 0) duration_h_int,
-                                IFNULL(att.residual_m, 0) residual_m,
-                                IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
-                                IFNULL(att.chk, -1) chk
+// #region Main SQL Query
+        /* Creates the main SQL query, than
+            > starts from calendar to get all days in the selected period
+            > joins attendances table and abscences table to get attendances and abscences by day and worker
+            > where there's no attencance and no abscence, it consider worker abscente
+            > calculates worked minutes, abscence minutes and total
+            > rounds worked minutes and abscence minutes by env('MINUTE_ROUND')
+        */
+                $sql = "
+                    select results.*,
+                        /*
+                            calculates minutes total, and total hours and minutes (ready for format HH:mm)
+                        */
+                        results.duration_m + results.abscence_m as total_m,
+                        ((results.duration_m + results.abscence_m) DIV 60) total_h_int,
+                        ((results.duration_m + results.abscence_m) DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . ") - (60 * ((results.duration_m + results.abscence_m) DIV 60)) total_minutes_int
+                    from
+                        (
+                            select presenze.*,
+                                /*
+                                    gets user abscence for the day
+                                    and calculates abscence minutes and abscence hours and minutes (ready for format HH:mm)
+                                    joins giustificativi to get justification description
+                                */
+                                IFNULL(assenze.abscence_minutes, 0) abscence_m,
+                                IFNULL(assenze.abscence_minutes DIV 60, 0) abscence_h_int,
+                                IFNULL((assenze.abscence_minutes DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) - (60 * IFNULL(assenze.abscence_minutes DIV 60, 0)) abscence_minutes_int,
+                                IFNULL(assenze.abscence_justification, '') abscence_justification,
+                                IFNULL(giustificativi.description, '') abscence_justification_desc
                             from
-                            (
-                                {$innerSQL}
-                            ) calendar
-                            cross join workers w
-                            left outer join export_v_attendances att
-                                on att.day_date = calendar.day_date
-                                and att.worker_id = w.id
-                        ) presenze
-                    where
-                        1=1
-                        ";
+                                (
+                                select *
+                                    from (
+                                        select
+                                            /*
+                                                selects workers data, attendance data,
+                                                and calculates worked minutes by day and also worked hours and minutes (ready for format HH:mm)
+                                            */
+                                            IFNULL(att.id, 0) id, calendar.ref_date,
+                                            w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status,
+                                            calendar.day_date,
+                                            att.entrance_date, att.entrance_ip,
+                                            att.exit_date, att.exit_ip,
+                                            IFNULL(att.duration_m, 0) duration_m,
+                                            IFNULL(att.duration_h, 0) duration_h,
+                                            IFNULL(att.duration_h_int, 0) duration_h_int,
+                                            IFNULL(att.residual_m, 0) residual_m,
+                                            IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
+                                            IFNULL(att.chk, -1) chk
+                                        from
+                                        (   /*
+                                                select days of period from calendar
+                                            */
+                                            {$innerSQL}
+                                        ) calendar
+                                        /*
+                                            cross join workers to multiply results on all workers
+                                        */
+                                        cross join workers w
+                                        /*
+                                            left join attendances to get attendances, or empty records in case of abscence
+                                        */
+                                        left outer join export_v_attendances att
+                                            on att.day_date = calendar.day_date
+                                            and att.worker_id = w.id
+                                    ) presenze
+                                where
+                                    1=1
+                                    ";
         if ($notAtWork) $sql .= " and chk <= 0";        // show only not at work?
         if ($searchQuery != '') {
             $sql .= " and (
+                /*
+                    do search...
+                */
                 nome like '%" . $searchQuery . "%'
                 or cognome like '%" . $searchQuery . "%'
                 or codice_fiscale like '%" . $searchQuery . "%'
@@ -475,8 +544,14 @@ public function exportXML(Request $request) {
                         on presenze.worker_id = assenze.worker_id
                         and presenze.ref_date = assenze.ref_date
                     left outer join giustificativi
-                        on assenze.abscence_justification = giustificativi.code";
+                        on assenze.abscence_justification = giustificativi.code
+            ) results
+        ";
+
+        // order by
         if ($orderBy != '') $sql .= " order by " . $orderBy;
+// #endregion Main SQL Query
+
         return $sql;
     }
 // #endregion Private Methods

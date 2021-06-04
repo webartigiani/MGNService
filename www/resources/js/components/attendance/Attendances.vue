@@ -150,14 +150,14 @@
                       <th></th>
                       <!-- <th>ID</th> -->
                       <th>Data</th>
-                      <th>Nome</th>
-                      <th>Cognome</th>
+                      <th>Dipendente</th>
                       <th><!-- Presenza --></th>
                       <th>Entrata</th>
                       <th>Uscita</th>
+                      <th>Ore Presenza</th>
                       <th>Ore Lavorate</th>
-                      <th>Ore Retribuite</th>
                       <th>Ore Assenza</th>
+                      <th>Ore Totali</th>
                       <th>Azioni</th>
                     </tr>
                   </thead>
@@ -172,8 +172,7 @@
                       </td>
                       <!-- <td>{{ item.id }}</td> -->
                       <td>{{ item.day_date }}</td>
-                      <td>{{ item.nome }}</td>
-                      <td>{{ item.cognome }}</td>
+                      <td>{{ item.nome }} {{ item.cognome }}</td>
                       <td>
                           <span class="badge"
                           :class="presenzaToClass(item.chk)"
@@ -184,6 +183,7 @@
                         <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) : '' }}</td>
                         <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) : '' }}</td>
                         <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) : '' }}</td>
+                        <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) : '' }}</td>
                       <td>
                         <a href="#"
                             class="action"
