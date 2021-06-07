@@ -187,6 +187,26 @@ public function export(Request $request) {
         $dbdata = DB::table('v_workers_counter')->get();
         return $this->sendResponse($dbdata, 'Workers Counters');
     }
+    /**
+     * Lists workers at work
+     */
+    public function listAtWork() {
+        $sql = "select id, concat(nome, ' ', cognome) item FROM
+                v_workers where stato = 1
+                order by item";
+        $dbdata = DB::select(DB::raw($sql));
+        return $this->sendResponse($dbdata, 'Workers at work');
+    }
+    /**
+     * Lists workers not at work
+     */
+    public function listNotAtWork() {
+        $sql = "select id, concat(nome, ' ', cognome) item FROM
+                v_workers where stato = 0
+                order by item";
+        $dbdata = DB::select(DB::raw($sql));
+        return $this->sendResponse($dbdata, 'Workers not at work');
+    }
 // #endregion Public API methods
 
 // #region Public Methods

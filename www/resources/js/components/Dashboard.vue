@@ -7,7 +7,7 @@
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">{{ loadingTable ? `caricamento...` : `Timbrate Recenti` }}</h3>
+                            <h3 class="card-title">{{ loadingTable ? `caricamento...` : `Entrate / Uscite Recenti` }}</h3>
                         </div>
                         <div class="card-body p-0"
                             >
@@ -55,33 +55,89 @@
                 <div class="col-md-4">
                     <!-- dipendenti presenti -->
                     <div class="info-box mb-3 bg-success">
-                        <span class="info-box-icon" v-show="!loadingCounters"><i class="fas fa-tag"></i></span>
+                        <span class="info-box-icon top" v-show="!loadingCounters"><i class="fas fa-tag"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">{{ loadingCounters ?  `caricamento...`: `Presenti` }}</span>
                             <span class="info-box-number">{{ loadingCounters ?  `...`: workersAtWork + `/` + totalWorkers }}</span>
+                            <br>
+                            <a href="#" class="mini-link"
+                                @click.prevent="showWorkersAtWork()"
+                                v-show="(!loadingCounters) && (workersAtWork>0)"
+                            >visualizza</a>
                         </div>
                     </div>
                     <!-- dipendenti assenti -->
                     <div class="info-box mb-3 bg-warning">
-                        <span class="info-box-icon" v-show="!loadingCounters"><i class="far fa-tired"></i></span>
+                        <span class="info-box-icon top" v-show="!loadingCounters"><i class="far fa-tired"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">{{ loadingCounters ?  `caricamento...`: `Assenti` }}</span>
                             <span class="info-box-number">{{ loadingCounters ?  `...`: workersNotAtWork }}</span>
+                            <br>
+                            <a href="#" class="mini-link"
+                                @click.prevent="showWorkersNotAtWork()"
+                                v-show="(!loadingCounters) && (workersNotAtWork>0)"
+                            >visualizza</a>
                         </div>
                     </div>
                     <!-- veicoli in uso -->
                     <div class="info-box mb-3 bg-info">
-                        <span class="info-box-icon" v-show="!loadingCounters"><i class="fas fa-car"></i></span>
+                        <span class="info-box-icon top" v-show="!loadingCounters"><i class="fas fa-car"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">{{ loadingCounters ?  `caricamento...`: `Veicoli in uso` }}</span>
                             <span class="info-box-number">{{ loadingCounters ?  `...`: veichlesInUse + `/` + totaleVeichles}}</span>
+                            <br>
+                            <a href="#" class="mini-link"
+                                @click.prevent="showViechlesInUse()"
+                                v-show="(!loadingCounters) && (veichlesInUse>0)"
+                            >visualizza</a>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Modal  -->
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ modal.title }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <ul>
+                            <li v-for="item in modal.list" :key="item.id">{{ item.item }}</li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </template>
+
+<style scoped>
+.info-box-icon.top {
+    display: block;
+}
+
+/* links */
+a.mini-link {
+    color:#fff;
+    text-transform: lowercase;
+}
+a.mini-link:hover {
+    text-decoration: none;
+}
+div.bg-warning a.mini-link {
+    color: #1f2d3d!important;
+}
+</style>
 
 <script>
 export default {
@@ -103,6 +159,10 @@ export default {
                 notatwork: false,
                 per_page: 10
             },
+            modal: {
+                title: '',
+                list: [],
+            }
         }
     },
     filters: {
@@ -161,6 +221,43 @@ export default {
                 });
             });
         },
+
+        // #region Modals Functions
+        showWorkersAtWork() {
+            this.$Progress.start();
+            axios.get('api/workers/atwork', {
+                params: {}
+            }).then(({ data }) => {
+                this.modal.title = 'Dipendenti Presenti'
+                this.modal.list = data.data
+                $('#modal').modal('show');
+                this.$Progress.finish();
+            });
+        },
+        showWorkersNotAtWork() {
+            this.$Progress.start();
+            axios.get('api/workers/notatwork', {
+                params: {}
+            }).then(({ data }) => {
+                this.modal.title = 'Dipendenti Assenti'
+                this.modal.list = data.data
+                $('#modal').modal('show');
+                this.$Progress.finish();
+            });
+        },
+        showViechlesInUse() {
+            this.$Progress.start();
+            axios.get('api/veichles/inuse', {
+                params: {}
+            }).then(({ data }) => {
+                this.modal.title = 'Veicoli in Uso'
+                this.modal.list = data.data
+                $('#modal').modal('show');
+                this.$Progress.finish();
+            });
+        },
+        // #endregion Modals Functions
+
         // #region Utils
         timbrataToString(v) {
             // returns timbrata description

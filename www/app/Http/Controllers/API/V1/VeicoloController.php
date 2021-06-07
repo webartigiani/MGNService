@@ -112,6 +112,16 @@ class VeicoloController extends BaseController
         $dbdata = DB::table('v_veichles_counter')->get();
         return $this->sendResponse($dbdata, 'Veichles Counters');
     }
+    /**
+     * Lists veichels in use
+     */
+    public function listInUse() {
+        $sql = "select id, concat(manufacter, ' ', model, ' (', licence_plate, ')') item FROM
+                v_veichles where status = 1
+                order by item";
+        $dbdata = DB::select(DB::raw($sql));
+        return $this->sendResponse($dbdata, 'Workers not at work');
+    }
 // #endregion Public API Methods
 
 // #region Private Methods
