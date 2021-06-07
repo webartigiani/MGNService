@@ -275,6 +275,11 @@ public function exportXML(Request $request) {
     from (
         {$sql}
     ) tbl";
+
+    // TEMP
+    //echo $sql;
+    //return;
+
     $dbdata = DB::select(DB::raw($sql));
 
     $output = '';

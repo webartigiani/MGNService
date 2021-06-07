@@ -114,7 +114,7 @@
                                     7
                                 </button>
                                 <button type="button"
-                                    class="btn btn-sm btn-primary btn-green"
+                                    class="btn btn-sm btn-primary"
                                     title="Ieri"
                                     @click="setYesterday()">
                                     <i class="fas fa-history"></i>
@@ -182,10 +182,10 @@
                       </td>
                       <td>{{ attendanceTime(item.day_date, item.entrance_date) }}</td>
                       <td>{{ attendanceTime(item.day_date, item.exit_date) }}</td>
-                        <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) : '' }}</td>
-                        <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) : '' }}</td>
-                        <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) : '' }}</td>
-                        <td>{{ (item.chk >= 0) ? $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) : '' }}</td>
+                        <td>{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) }}</td>
+                        <td>{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) }}</td>
+                        <td>{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}</td>
+                        <td>{{ $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) }}</td>
                       <td>
                         <a href="#"
                             class="action"
@@ -301,7 +301,7 @@
                     </button>
                 </div>
 
-                <form @submit.prevent="editmode ? createAbscence() : createAbscence()">
+                <form @submit.prevent="upsertAbscence()">
                     <div class="modal-body">
                         <div class="form-group">
                             <b>
@@ -311,15 +311,15 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="abscence_minutes">Ore di Assenza</label>
-                            <input type="time" name="abscence_minutes"
+                            <label for="abscence_time">Ore di Assenza</label>
+                            <input type="time" name="abscence_time"
                                 class="form-control"
-                                :class="{ 'is-invalid': form.errors.has('abscence_minutes') }"
+                                :class="{ 'is-invalid': form.errors.has('abscence_time') }"
                                 step="900"
-                                v-model="form.abscence_minutes"
+                                v-model="form.abscence_time"
                                 required
                                 >
-                            <has-error :form="form" field="abscence_minutes"></has-error>
+                            <has-error :form="form" field="abscence_time"></has-error>
                         </div>
                         <div class="form-group">
                             <label for="abscence_justification">Motivazione</label>
@@ -392,7 +392,8 @@ export default {
                 worker_status: '',
                 day_date: '',
                 abscence_minutes: '',
-                abscence_justification: ''
+                abscence_justification: '',
+                abscence_time: '00:00'
             }),
             // filters
             filters: {
@@ -448,6 +449,9 @@ export default {
             this.form.reset();
             $('#modalAbscences').modal('show');
             this.form.fill(item);
+
+            // calculates abscence_time
+            this.form.abscence_time = this.$root.utils.generic.padZero(item.abscence_h_int) + ':' + this.$root.utils.generic.padZero(item.abscence_minutes_int)
         },
         // #endregion Modals
 
@@ -536,16 +540,21 @@ export default {
                     }
                 })
         },
-
-        createAbscence(){
+        upsertAbscence() {
+            // inserts/updates abscence
             this.$Progress.start();
 
             this.form.post('api/abscence')
-                .then((data)=>{
-                    if(data.data.success){
+                .then((response)=>{
+                    console.log(response.data)
+                    if(response.data.success) {
                         $('#modalAbscences').modal('hide');
                         this.$Progress.finish();
-                        this.list();
+                        //this.list();
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.data.message
+                        });
                     } else {
                         Toast.fire({
                             icon: 'error',

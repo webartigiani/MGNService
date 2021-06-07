@@ -45,28 +45,41 @@ class AbsenceController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Inserts/Updates an abscence
      *
      * @param  App\Http\Requests\Abscence\AbscenceRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(AbscenceRequest $request)
     {
-        // inserts data
-        /*
-        $dbdata = $this->worker->create([
-            'codice_azienda' => env('CODICE_AZIENDA'),
-            'denominazione_azienda' => env('DENOMINAZIONE_AZIENDA'),
-            'nome' => $data['nome'],
-            'cognome' => $data['cognome'],
-            'codice_fiscale' => $data['codice_fiscale'],
-            'matricola' => $data['matricola'],
-            'modo_timbratura' => $data['modo_timbratura'],
-            'data_assunzione' => $data['data_assunzione'],
-            'data_cessazione' => $data['data_cessazione']
-        ]);
-        return $this->sendResponse($dbdata, 'Nuova Timbrata Creata');
-        */
+        $data = $this->normalizeData($request->all());
+
+        $workerID =                 $data['worker_id'];
+        $ref_date =                 $data['ref_date'];
+        $abscence_time =            $data['abscence_time'];
+        $abscence_justification =   $data['abscence_justification'];
+
+// #region Validations
+        if (!$this->workerController->exists($workerID)) {
+            // worker doesn't exists
+            $this->sendError('Dipendente non trovato', [], 404);
+        }
+        if (!$this->justificationExists($abscence_justification)) {
+            // jiustification code doesn't exists
+            $this->sendError('Giustificativo assenza non trovato', [], 404);
+        }
+// #endregion Validations
+
+        // $this->workerController->deleteAbscence($workerID, $ref_date);
+        $time = explode(':', $abscence_time);
+        $minutes = intval($time[1]) + (intval($time[0]) * 60);
+
+        if ($this->workerController->addAbscence($workerID, $ref_date, $minutes, $abscence_justification)) {
+            // justification added
+            return $this->sendResponse('OK', 'Assenza registrata correttamente');
+        } else {
+            return $this->sendError('Errore durante la registrazione dell\'assenza. Prego, riprova.', [], 404);
+        }
     }
 
     /**
@@ -77,8 +90,8 @@ class AbsenceController extends BaseController
      */
     public function show($id)
     {
-        $data = $this->attendance->findOrFail($id);
-        return $this->sendResponse($data, 'Dettagli Presenza');
+        $data = $this->abscence->findOrFail($id);
+        return $this->sendResponse($data, 'Dettagli Assenza');
     }
 
     /**
@@ -90,33 +103,7 @@ class AbsenceController extends BaseController
      */
     public function update(AbscenceRequest $request, $id)
     {
-        $attendance = $this->attendance->findOrFail($id);
-
-        // get form normalized data
-        $data = $this->normalizeData($request->all());
-        $data['check'] = 0;
-
-        // updaters entrance/exit time with input times and ref_date
-        if (isset($data['entrance_time'])) {
-            $data['entrance_date'] = $data['ref_date'] . ' ' . $data['entrance_time'];
-            $data['entrance_ip'] = '0.0.0.0';
-        } else {
-            $data['entrance_date'] = null;
-            $data['entrance_ip'] = '0.0.0.0';
-            $data['check']  = -1;
-        }
-        if (isset($data['exit_time'])) {
-            $data['exit_date'] = $data['ref_date'] . ' ' . $data['exit_time'];
-            $data['exit_ip'] = '0.0.0.0';
-            $data['check'] = 1;
-        } else {
-            $data['exit_date'] = null;
-            $data['exit_ip'] = '0.0.0.0';
-        }
-
-        // Updates data
-        $attendance->update($data);
-        return $this->sendResponse($attendance, 'Presenza aggiornata');
+        // there's no update: just store
     }
 
     /**
@@ -135,6 +122,15 @@ class AbsenceController extends BaseController
 
 
 // #region Public Methods
+    /**
+     * Returns true if the specified justification code
+     */
+    public function justificationExists($code) {
+        $tableName = 'giustificativi';
+        $data = DB::table($tableName)->where('code', $code)->take(1)->get();
+        if (isset($data)) return isset($data[0]);
+        return false;
+    }
 // #endregion Public Methods
 
 // #region Private Methods

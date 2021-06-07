@@ -365,6 +365,50 @@ public function export(Request $request) {
           }
         return $ret;
     }
+
+    /**
+     * Removes an abscence for the specified worker in the specified date
+     * Returns true if succeedes
+     */
+    public function deleteAbscence($id, $date) {
+        if (!$this->exists($id)) return false;          // worker not found!
+
+        DB::table('absences')
+            ->where('worker_id', $id)
+            ->where('ref_date', $date)
+            ->delete();
+        return true;
+    }
+    /**
+     * Register an abscence for the specified worker in the specified date
+     * Returns true if succeedes
+     */
+    public function addAbscence($id, $date, $minutes, $justification) {
+
+        // normalizes arguments
+        $justification = trim(strtoupper($justification));
+
+        // validates arguments
+        if (!$this->exists($id)) return false;          // worker not found!
+        if ($minutes < 0) return false;                 // minutes not valid
+        if ($justification == '') return false;         // justification code missing
+
+        $this->deleteAbscence($id, $date);              // deletes previous abscence for the specified worker in the specified date
+        if ($minutes == 0) return true;                 // nothing else to do: return true
+
+        // registers abscence
+        $thisID = DB::table('absences')->insertGetId(
+            array(
+                'worker_id' => $id,
+                'ref_date' => $date,
+                'abscence_minutes' => $minutes,
+                'abscence_justification' => $justification,
+                'created_at' =>  $this->utils->OraItaliana(),
+                'updated_at' => $this->utils->OraItaliana()
+            )
+        );
+        return ($thisID > 0);
+    }
 // #endregion Public Methods
 
 // #region Private Methods

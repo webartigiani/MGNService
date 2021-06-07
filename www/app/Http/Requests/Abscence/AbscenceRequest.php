@@ -39,7 +39,7 @@ class AbscenceRequest extends FormRequest
         return [
             'worker_id' => 'required|integer',
             'ref_date' => 'required|date',
-            'abscence_minutes' => 'required|float',
+            'abscence_time' => 'required|string|max:5',
             'abscence_justification' => 'required|string|max:2'
         ];
     }
@@ -54,7 +54,7 @@ class AbscenceRequest extends FormRequest
         return [
             'worker_id' => 'required|integer',
             'ref_date' => 'required|date',
-            'abscence_minutes' => 'required|float',
+            'abscence_time' => 'required|string|max:5',
             'abscence_justification' => 'required|string|max:2'
         ];
     }
