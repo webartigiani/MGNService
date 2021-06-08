@@ -25,6 +25,14 @@
           </p>
         </router-link>
       </li>
+      <li class="nav-item">
+        <router-link to="/routes" class="nav-link">
+          <i class="nav-icon fas fa-map-marker-alt white"></i>
+          <p>
+            Tragitti
+          </p>
+        </router-link>
+      </li>
 
       @can('isAdmin')
       <li class="nav-item has-treeview">

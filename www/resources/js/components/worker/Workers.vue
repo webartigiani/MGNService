@@ -145,13 +145,6 @@
                         <td>
                             <a href="#"
                                 class="action"
-                                title="Visualizza Timbrate"
-                                @click="$root.utils.generic.functionNotAvailable()"
-                                >
-                                <i class="fa fa-tag blue"></i>
-                            </a>
-                            <a href="#"
-                                class="action"
                                 title="Modifica"
                                 @click="editModal(item)">
                                 <i class="fa fa-pen blue"></i>

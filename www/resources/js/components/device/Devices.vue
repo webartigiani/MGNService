@@ -38,7 +38,6 @@
                       <th>Data Attivazione</th>
                       <th>Ultimo Accesso</th>
                       <th>Connessione</th>
-                      <th>Azioni</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -80,21 +79,7 @@
                             <i class="fas fa-ethernet"
                                 :title="item.connection_type"
                                 v-if="item.connection_type != 'wifi' && item.connection_type != 'cellular'"></i>
-                        <td>
-                        <a href="#"
-                            class="action"
-                            title="Elimina"
-                            @click="$root.utils.generic.functionNotAvailable(item.id)">
-                            <i class="fa fa-trash blue"></i>
-                        </a>
-                        <a :href="'tracking/?session_id=' + item.tracking_session_id"
-                            v-if="item.mode != 99"
-                            class="action"
-                            title="Visualizza Posizione"
-                            >
-                            <i class="fas fa-map-marker-alt red" />
-                        </a>
-                      </td>
+                        </td>
                     </tr>
                   </tbody>
                 </table>

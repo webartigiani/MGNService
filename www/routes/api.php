@@ -37,7 +37,8 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
         'device' => 'DeviceController',
         'attendance' => 'AttendanceController',
         'abscence' => 'AbsenceController',
-        'note' => 'NoteController'
+        'note' => 'NoteController',
+        'tracking' => 'TrackingController'
     ]);
     Route::get('workers/export', 'WorkerController@export');                    // export worker as CSV
     Route::get('workers/counters', 'WorkerController@getCounters');             // contatori dipendenti
