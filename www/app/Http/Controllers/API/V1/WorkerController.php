@@ -429,6 +429,48 @@ public function export(Request $request) {
         );
         return ($thisID > 0);
     }
+
+    /**
+     * Removes a note for the specified worker in the specified date
+     * Returns true if succeedes
+     */
+    public function deleteNotes($id, $date) {
+        if (!$this->exists($id)) return false;          // worker not found!
+
+        DB::table('workers_notes')
+            ->where('worker_id', $id)
+            ->where('ref_date', $date)
+            ->delete();
+        return true;
+    }
+
+    /**
+     * Register a note for the specified worker in the specified date
+     * Returns true if succeedes
+     */
+    public function addNotes($id, $date, $notes) {
+
+        // normalizes arguments
+        $notes = trim($notes);
+
+        // validates arguments
+        if (!$this->exists($id)) return false;          // worker not found!
+
+        $this->deleteNotes($id, $date);                 // deletes previous notes for the specified worker in the specified date
+        if ($notes == '') return true;                  // nothing else to do: return true
+
+        // registers abscence
+        $thisID = DB::table('workers_notes')->insertGetId(
+            array(
+                'worker_id' => $id,
+                'ref_date' => $date,
+                'notes' => $notes,
+                'created_at' =>  $this->utils->OraItaliana(),
+                'updated_at' => $this->utils->OraItaliana()
+            )
+        );
+        return ($thisID > 0);
+    }
 // #endregion Public Methods
 
 // #region Private Methods

@@ -23,9 +23,18 @@
                     <div class="card-tools col-3 text-right">
                         <button type="button"
                             class="btn btn-sm btn-primary btn-green"
+                            title="Esporta le note del periodo selezionato"
+                            :disabled="items.data.length == 0"
+                            @click="exportNotes()">
+                            <i class="fa fa-file-pdf"></i>
+                            Esporta Note
+                        </button>
+                        <button type="button"
+                            class="btn btn-sm btn-primary btn-green"
                             title="Esporta Presenze in formato Excel/CSV"
                             :disabled="items.data.length == 0"
-                            @click="exportData()">
+                            @click="exportData()"
+                            >
                             <i class="fa fa-file-excel"></i>
                             Esporta CSV
                         </button>
@@ -158,6 +167,7 @@
                       <th>Ore Presenza</th>
                       <th>Ore Lavorate</th>
                       <th>Ore Assenza</th>
+                      <th></th>
                       <th>Ore Totali</th>
                       <th>Azioni</th>
                     </tr>
@@ -185,32 +195,49 @@
                         <td>{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) }}</td>
                         <td>{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) }}</td>
                         <td>{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}</td>
+                        <td>
+                            <span class="badge"
+                            :class="assenzaToClass(item)"
+                            v-if="item.abscence_justification != '' && item.abscence_justification != '_R'"
+                            >{{ item.abscence_justification_desc }}</span>
+                        </td>
                         <td>{{ $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) }}</td>
-                      <td>
-                        <a href="#"
-                            class="action"
-                            title="Modifica"
-                            @click="editModal(item)"
-                            v-if="item.chk >= 0"
-                            >
-                            <i class="fa fa-pen blue"></i>
-                        </a>
-                        <a href="#"
-                            class="action"
-                            title="Elimina"
-                            @click="deleteItem(item)"
-                            v-if="item.chk >= 0"
-                            >
-                            <i class="fa fa-trash blue"></i>
-                        </a>
-                        <a href="#"
-                            class="action"
-                            title="Gestisci Assenze"
-                            @click="addEditAbscence(item)"
-                            >
-                            <i class="fa fa-balance-scale blue"></i>
-                        </a>
-                      </td>
+                        <td>
+                            <a href="#"
+                                class="action"
+                                title="Modifica"
+                                @click="editModal(item)"
+                                v-if="item.chk >= 0"
+                                >
+                                <i class="fa fa-pen blue"></i>
+                            </a>
+                            <a href="#"
+                                class="action"
+                                title="Elimina"
+                                @click="deleteItem(item)"
+                                v-if="item.chk >= 0"
+                                >
+                                <i class="fa fa-trash blue"></i>
+                            </a>
+                            <a href="#"
+                                class="action"
+                                title="Gestisci Assenze"
+                                @click="addEditAbscence(item)"
+                                >
+                                <i class="fa fa-balance-scale"
+                                    :class="(item.abscence_justification != '') ? `blue` : `gray`"
+                                ></i>
+                            </a>
+                            <a href="#"
+                                class="action"
+                                :title="`Gestisci Note`"
+                                @click="addEditNotes(item)"
+                                >
+                                <i class=""
+                                    :class="(item.notes != '') ? `blue fas fa-clipboard-check` : `gray far fa-clipboard`"
+                                ></i>
+                            </a>
+                        </td>
                     </tr>
                   </tbody>
                 </table>
@@ -345,6 +372,44 @@
             </div>
         </div>
 
+    <!-- Notes Editor -->
+        <div class="modal fade" id="modalNotes" tabindex="-1" role="dialog" aria-labelledby="modalNotes" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestisci Note</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form @submit.prevent="updsertNotes()">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <b>
+                            {{ form.nome }} {{ form.cognome }}<br>
+                            {{ form.day_date }}
+                            </b>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Note</label>
+                            <textarea name="notes" id="notes"
+                                class="form-control notes"
+                                maxlength="512"
+                                v-model="form.notes"
+                                >
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">Salva</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Salva</button>
+                    </div>
+                  </form>
+                </div>
+            </div>
+        </div>
     </div>
   </section>
 </template>
@@ -357,6 +422,9 @@ a.action {
     /* overwrite some styles */
     background-color: #38c172!important;
     border-color: #38c172!important;
+}
+textarea.notes {
+  resize: none;
 }
 </style>
 
@@ -393,7 +461,8 @@ export default {
                 day_date: '',
                 abscence_minutes: '',
                 abscence_justification: '',
-                abscence_time: '00:00'
+                abscence_time: '00:00',
+                notes: ''
             }),
             // filters
             filters: {
@@ -452,6 +521,13 @@ export default {
 
             // calculates abscence_time
             this.form.abscence_time = this.$root.utils.generic.padZero(item.abscence_h_int) + ':' + this.$root.utils.generic.padZero(item.abscence_minutes_int)
+        },
+        addEditNotes(item) {
+            // Adds/Edits Notes
+            this.editmode = false;
+            this.form.reset();
+            $('#modalNotes').modal('show');
+            this.form.fill(item);
         },
         // #endregion Modals
 
@@ -570,6 +646,36 @@ export default {
                     });
                 })
         },
+        updsertNotes() {
+            // inserts/updates abscence
+            this.$Progress.start();
+
+            this.form.post('api/note')
+                .then((response)=>{
+                    console.log(response.data)
+                    if(response.data.success) {
+                        $('#modalNotes').modal('hide');
+                        this.$Progress.finish();
+                        this.list();
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.data.message
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Si è verificato un errore! Prego, riprova'
+                        });
+                        this.$Progress.failed();
+                    }
+                })
+                .catch(()=>{
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Si è verificato un errore! Prego, riprova'
+                    });
+                })
+        },
         // #endregion CRUD Functions
 
         // #region Other Data Functions
@@ -614,6 +720,27 @@ export default {
             // choose filename
             const fileName = 'TRRIPW_' + this.filters.date_start + '_' + this.filters.date_end
             this.$root.download.saveFile(response, fileName + '.xml', 'text/xml')   // exports XML
+            this.$Progress.finish();
+        },
+        exportNotes: async function() {
+            // see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
+            this.$Progress.start();
+            const response = await axios({
+                method: 'get',
+                url: 'api/attendances/export-notes',
+                params: this.filters
+            })
+
+            // search query
+            let query = (this.$root.$route.query.search != undefined) ? this.$root.$route.query.search.trim().toLowerCase() : '';
+
+            // choose filename
+            let fileName = 'note'
+            fileName += '_' + this.filters.date_start + '_' + this.filters.date_end
+            fileName += (query != '') ? '_' + query : ''
+
+            // download
+            this.$root.download.saveFile(response, fileName + '.csv', 'text/csv')   // exports CSV
             this.$Progress.finish();
         },
         // #endregion Export Functions
@@ -754,12 +881,13 @@ export default {
         // #region Utils
         presenzaString(item) {
             // returns presenza description
+            console.log('presenzaString ' + item.worker_id, item)
             switch (item.chk) {
                 case -1:
                     // assenza con giustificativo o giornata di riposo
                     switch (item.abscence_justification) {
-                        case '': return 'assente';
                         case '_R': return 'riposo';
+                        default: return 'assente';
                     }
                 case 0: return 'incompleta';
                 case 1: return 'presente';
@@ -771,11 +899,24 @@ export default {
                 case -1:
                     // assenza con giustificativo o giornata di riposo
                     switch (item.abscence_justification) {
+                        case '_R': return 'badge-info';
+                        default: return 'badge-danger';
+                    }
+                case 0: return 'badge-warning';
+                case 1: return 'badge-success';
+            }
+        },
+        assenzaToClass(item) {
+            // returns presenza class
+            switch (item.chk) {
+                case -1:
+                    // assenza con giustificativo o giornata di riposo
+                    switch (item.abscence_justification) {
                         case '': return 'badge-danger';
                         case '_R': return 'badge-info';
                     }
                 case 0: return 'badge-warning';
-                case 1: return 'badge-success';
+                case 1: return 'badge-warning';
             }
         },
         attendanceTime(dayDate, t) {

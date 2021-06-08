@@ -218,6 +218,7 @@ class AttendanceController extends BaseController
 // #endregion API Methods
 
 // #region API Export Methods
+
 public function export(Request $request) {
     /**
      * Exports presenze as CSV
@@ -234,6 +235,11 @@ public function export(Request $request) {
 
     // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
     $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, nome, cognome');
+
+    // TEMP:
+    //echo $sql;
+    //return;
+
     $sql = "select
                 day_date, worker_id, nome, cognome, codice_fiscale, matricola, entrance_date, entrance_ip, exit_date, exit_ip,
                 case
@@ -362,6 +368,41 @@ public function exportXML(Request $request) {
 
     // export as plain text
     return $this->sendExportPlain($output, 'text/xml');
+}
+
+public function exportNotes(Request $request) {
+    /**
+     * Exports notes as CSV
+     * NOTES: uses all filters
+     */
+
+    // gets filters
+    $params = $request->all();
+    $s = new DateTime($params['date_start']);                       // start date
+    $e = new DateTime($params['date_end']);                         // end date
+    $search = '';
+    if (isset($params['query'])) $search = trim(strtolower($params['query']));           // search string
+    $notatwork = ($params['notatwork'] == 'true');                  // notatwork (as bool)
+
+    // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
+    $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, nome, cognome');
+
+    $sql = "select
+            day_date, worker_id, nome, cognome,
+            replace(replace(notes, '\n', ' '), ';', '') notes
+            from (
+                {$sql}
+            ) tbl
+            where IFNULL(notes, '') <> ''
+            ";
+
+    // TEMP:
+    //echo $sql;
+    //return;
+
+    $header = "Giorno;Dipendente;Nome;Cognome;Note";
+    $dbdata = DB::select(DB::raw($sql));
+    return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
 // #endregion API Export Methods
 
@@ -516,6 +557,8 @@ public function exportXML(Request $request) {
                     from
                         (
                             select presenze.*,
+                                /* also exports notes */
+                                IFNULL(wn.notes, '') notes,
                                 /*
                                     gets user abscence for the day
                                     and calculates abscence minutes and abscence hours and minutes (ready for format HH:mm)
@@ -579,11 +622,17 @@ public function exportXML(Request $request) {
         }
 
         $sql .= " ) presenze
+                    /* join absences to get abscence if present */
                     left outer join absences assenze
                         on presenze.worker_id = assenze.worker_id
                         and presenze.ref_date = assenze.ref_date
+                    /* join giustificativi to get its description if present */
                     left outer join giustificativi
                         on assenze.abscence_justification = giustificativi.code
+                    /* join worker_notes to get notes if present */
+                    left outer join workers_notes wn
+                        on  presenze.worker_id = wn.worker_id
+                        and presenze.ref_date = wn.ref_date
             ) results
         ";
 

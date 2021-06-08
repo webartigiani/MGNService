@@ -36,7 +36,8 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
         'veicolo' => 'VeicoloController',
         'device' => 'DeviceController',
         'attendance' => 'AttendanceController',
-        'abscence' => 'AbsenceController'
+        'abscence' => 'AbsenceController',
+        'note' => 'NoteController'
     ]);
     Route::get('workers/export', 'WorkerController@export');                    // export worker as CSV
     Route::get('workers/counters', 'WorkerController@getCounters');             // contatori dipendenti
@@ -47,4 +48,5 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
     Route::get('attendances/giustificativi', 'AttendanceController@listGiustificativi');    // lists giustificativi
     Route::get('attendances/export', 'AttendanceController@export');            // export attendances as CSV
     Route::get('attendances/export-xml', 'AttendanceController@exportXML');     // export attendances as XML
+    Route::get('attendances/export-notes', 'AttendanceController@exportNotes'); // export notes as CSV
 });
