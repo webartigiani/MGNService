@@ -349,24 +349,30 @@ export default {
             axios.get('api/tracking/' + item.id, {}).then(({ data }) => {
 
                 if (data.success) {
-
-                    console.clear()
-                    console.log('PRIMA', JSON.stringify(this.mapData))
-
                     this.mapData.status = data.data.start
                     this.mapData.endMarker = data.data.end
                     this.mapData.center = data.data.start
                     this.mapData.polyline.latlngs = data.data.latlngs
 
-                    console.log('DOPO', JSON.stringify(this.mapData))
-                    this.$Progress.finish();
                     $('#modalTracking').modal('show');
-
+                    setTimeout(function() {
+                        window.dispatchEvent(new Event('resize'))
+                        this.$Progress.finish()
+                    }, 250);
                 } else {
-                    // Error
-                    consoe.error('errore')
-                    this.$Progress.finish();
+                    Swal.fire({
+                        title: 'Ops!',
+                        icon:'warning',
+                        html: "Si è verificato un errore durante il caricamento dei dati del tragitto. Prego, riprova più tardi.<br><br>Se il problema persiste, contatta il supporto tecnico.",
+                    });
                 }
+            }).catch((data)=> {
+                // API Error
+                Swal.fire({
+                    title: 'Ops!',
+                    icon:'warning',
+                    html: "Si è verificato un errore durante il caricamento dei dati del tragitto. Prego, riprova più tardi.<br><br>Se il problema persiste, contatta il supporto tecnico.",
+                });
             });
         },
         // #endregion Modals
