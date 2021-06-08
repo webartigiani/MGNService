@@ -75,8 +75,11 @@ class AbsenceController extends BaseController
         $minutes = intval($time[1]) + (intval($time[0]) * 60);
 
         if ($this->workerController->addAbscence($workerID, $ref_date, $minutes, $abscence_justification)) {
-            // justification added
-            return $this->sendResponse('OK', 'Assenza registrata correttamente');
+            // justification added/updated/removed
+            if ($minutes > 0)
+                return $this->sendResponse('OK', 'Assenza registrata correttamente');
+            else
+                return $this->sendResponse('OK', 'Assenza cancellata correttamente');
         } else {
             return $this->sendError('Errore durante la registrazione dell\'assenza. Prego, riprova.', [], 404);
         }

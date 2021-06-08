@@ -177,8 +177,8 @@
                       <td>{{ item.cognome }}</td>
                       <td>
                           <span class="badge"
-                          :class="presenzaToClass(item.chk)"
-                          >{{ presenzaString(item.chk) }}</span>
+                          :class="presenzaToClass(item)"
+                          >{{ presenzaString(item) }}</span>
                       </td>
                       <td>{{ attendanceTime(item.day_date, item.entrance_date) }}</td>
                       <td>{{ attendanceTime(item.day_date, item.exit_date) }}</td>
@@ -550,7 +550,7 @@ export default {
                     if(response.data.success) {
                         $('#modalAbscences').modal('hide');
                         this.$Progress.finish();
-                        //this.list();
+                        this.list();
                         Toast.fire({
                             icon: 'success',
                             title: response.data.message
@@ -752,18 +752,26 @@ export default {
         // #endregion Filters Functions
 
         // #region Utils
-        presenzaString(v) {
+        presenzaString(item) {
             // returns presenza description
-            switch (v) {
-                case -1: return 'assente';
+            switch (item.chk) {
+                case -1:
+                    if (item.abscence_justification == '')
+                        return 'assente';
+                    else
+                        return 'assente';               // assenza con giustificativo
                 case 0: return 'incompleta';
                 case 1: return 'presente';
             }
         },
-        presenzaToClass(v) {
+        presenzaToClass(item) {
             // returns presenza class
-            switch (v) {
-                case -1: return 'badge-danger';
+            switch (item.chk) {
+                case -1:
+                    if (item.abscence_justification == '')
+                        return 'badge-danger';
+                    else
+                        return 'badge-warning';         // assenza con giustificativo
                 case 0: return 'badge-warning';
                 case 1: return 'badge-success';
             }
