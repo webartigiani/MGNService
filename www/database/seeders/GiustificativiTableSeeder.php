@@ -16,7 +16,16 @@ class GiustificativiTableSeeder extends Seeder
     {
         DB::table('giustificativi')->truncate();
 
+        // giustificativo custom per giornata di riposo settimanale
+        DB::table('giustificativi')->insert([
+            'code' => '_R',
+            'description' => '* Riposo settimanale',
+            'item' => '',
+            'ref_code' => '_R',
+            'inclusion' => 'Si'
+        ]);
 
+        // giustificativi standard Zucchetti
         DB::table('giustificativi')->insert([
             'code' => 'A1',
             'description' => 'Assegno Ordinario (AOR)',

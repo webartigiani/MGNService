@@ -756,10 +756,11 @@ export default {
             // returns presenza description
             switch (item.chk) {
                 case -1:
-                    if (item.abscence_justification == '')
-                        return 'assente';
-                    else
-                        return 'assente';               // assenza con giustificativo
+                    // assenza con giustificativo o giornata di riposo
+                    switch (item.abscence_justification) {
+                        case '': return 'assente';
+                        case '_R': return 'riposo';
+                    }
                 case 0: return 'incompleta';
                 case 1: return 'presente';
             }
@@ -768,10 +769,11 @@ export default {
             // returns presenza class
             switch (item.chk) {
                 case -1:
-                    if (item.abscence_justification == '')
-                        return 'badge-danger';
-                    else
-                        return 'badge-warning';         // assenza con giustificativo
+                    // assenza con giustificativo o giornata di riposo
+                    switch (item.abscence_justification) {
+                        case '': return 'badge-danger';
+                        case '_R': return 'badge-info';
+                    }
                 case 0: return 'badge-warning';
                 case 1: return 'badge-success';
             }

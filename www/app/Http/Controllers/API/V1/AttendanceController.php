@@ -303,7 +303,7 @@ public function exportXML(Request $request) {
         $abscence_minutes = $row->abscence_minutes; // minuti assenza aggiuntivi
         $abscence_justification = $row->abscence_justification; // giustificativo assenza
         $giornodiriposo = 'N';
-        if ($row->chk <= 0) $giornodiriposo = 'S';  // giorno di riposo se assente o incompleto
+        //NO!!! if ($row->chk <= 0) $giornodiriposo = 'S';  // giorno di riposo se assente o incompleto
 
         $codiceazienda = str_pad($codiceazienda, 6, "0", STR_PAD_LEFT);     // codice azienda con zero-padding-left 6 cifre
         $workerID = str_pad($workerID, 7, "0", STR_PAD_LEFT);               // id dipendente con zero-padding-left 7 cifre
@@ -330,14 +330,23 @@ public function exportXML(Request $request) {
         $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
         $output .= "\t\t\t</Movimento>\r\n";
 
-        // se c'è assenza, esportiamo un ulteriore movimento
+        // se c'è assenza o riposo, esportiamo un ulteriore movimento
         if ($abscence_justification != '') {
-            $output .= "\t\t\t<Movimento>";
-            $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$abscence_justification}</CodGiustificativoUfficiale>";
-            $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
-            if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$absence_hours}.{$abscence_minutes}</NumOre>\r\n";      // ore giustificate nel formato HH.mm
-            $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
-            $output .= "\t\t\t</Movimento>\r\n";
+            if ($abscence_justification == '_R') {
+                // giustificativo (custom) giornata di riposo
+                $output .= "\t\t\t<Movimento>";
+                $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
+                $output .= "\t\t\t\t<GiornoDiRiposo>S</GiornoDiRiposo>";
+                $output .= "\t\t\t</Movimento>\r\n";
+            } else {
+                // giustificativo assenza
+                $output .= "\t\t\t<Movimento>";
+                $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$abscence_justification}</CodGiustificativoUfficiale>";
+                $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
+                if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$absence_hours}.{$abscence_minutes}</NumOre>\r\n";      // ore giustificate nel formato HH.mm
+                $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
+                $output .= "\t\t\t</Movimento>\r\n";
+            }
         }
     }   // /foreach...
 
