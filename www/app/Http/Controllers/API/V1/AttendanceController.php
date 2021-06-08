@@ -271,7 +271,11 @@ public function exportXML(Request $request) {
     // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
     $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'worker_id, ref_date');
     $sql = "select
-        worker_id, ref_date, duration_h_int hours, chk
+        worker_id,
+        ref_date,
+        duration_h_int hours, residual_m_int minutes,
+        abscence_h_int absence_hours, abscence_minutes_int abscence_minutes, abscence_justification,
+        chk
     from (
         {$sql}
     ) tbl";
@@ -293,7 +297,11 @@ public function exportXML(Request $request) {
         $codiceazienda = trim(env("CODICE_AZIENDA"));
         $workerID = $row->worker_id;                // ID dipendente corrente
         $refdate = $row->ref_date;                  // data riferimento YYYY-MM-DD
-        $hours = $row->hours;                       // ore lavorate
+        $hours = $row->hours;                       // ore eff. lavorate
+        $minutes = $row->minutes;                   // minuti lavorati aggiuntivi, orario effettivo
+        $absence_hours = $row->absence_hours;       // ore assenza giustificate
+        $abscence_minutes = $row->abscence_minutes; // minuti assenza aggiuntivi
+        $abscence_justification = $row->abscence_justification; // giustificativo assenza
         $giornodiriposo = 'N';
         if ($row->chk <= 0) $giornodiriposo = 'S';  // giorno di riposo se assente o incompleto
 
@@ -304,30 +312,38 @@ public function exportXML(Request $request) {
         if ($workerID != $lastWorkerID) {
             if ($lastWorkerID != '') {
                 // chiude ramo XML dipendente precedente
-                $output .= "\t\t</Movimenti>
-\t</Dipendente>\r\n";
+                $output .= "\t\t</Movimenti>";
+                $output .= "\t</Dipendente>\r\n";
             }
 
             // apre ramo XML dipendente corrente
-            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$workerID}\">
-\t\t<Movimenti GenerazioneAutomaticaDaTeorico=\"N\">\r\n";
+            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$workerID}\">";
+            $output .= "\t\t<Movimenti GenerazioneAutomaticaDaTeorico=\"N\">\r\n";
         }   // /se cambia il dipendente...
         $lastWorkerID = $workerID;              // memorizza dipendente corrente
 
         // esporta dati presenze (del dipendente corrente)
-        $output .= "\t\t\t<Movimento>
-\t\t\t\t<CodGiustificativoUfficiale>{$giustificativo}</CodGiustificativoUfficiale>
-\t\t\t\t<Data>{$refdate}</Data>\r\n";
+        $output .= "\t\t\t<Movimento>";
+        $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$giustificativo}</CodGiustificativoUfficiale>";
+        $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
+        if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$hours}.{$minutes}</NumOre>\r\n";      // ore lavorate nel formato HH.mm
+        $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
+        $output .= "\t\t\t</Movimento>\r\n";
 
-        if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$hours}</NumOre>\r\n";   // giorno lavorativo
-        $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>
-\t\t\t</Movimento>\r\n";
+        // se c'è assenza, esportiamo un ulteriore movimento
+        if ($abscence_justification != '') {
+            $output .= "\t\t\t<Movimento>";
+            $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$abscence_justification}</CodGiustificativoUfficiale>";
+            $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
+            if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$absence_hours}.{$abscence_minutes}</NumOre>\r\n";      // ore giustificate nel formato HH.mm
+            $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
+            $output .= "\t\t\t</Movimento>\r\n";
+        }
     }   // /foreach...
 
-
     // chiude dati ultimo dipendente elaborato
-    $output .= "\t\t</Movimenti>
-\t</Dipendente>";
+    $output .= "\t\t</Movimenti>";
+    $output .= "\t</Dipendente>";
 
     // aggiunge header e footer
     $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
