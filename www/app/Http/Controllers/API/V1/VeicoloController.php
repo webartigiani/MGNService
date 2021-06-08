@@ -106,14 +106,14 @@ class VeicoloController extends BaseController
 
 // #region Public API Methods
     /**
-     * Returns Workers counters
+     * Returns Workers counters:
      */
     public function getCounters() {
         $dbdata = DB::table('v_veichles_counter')->get();
         return $this->sendResponse($dbdata, 'Veichles Counters');
     }
     /**
-     * Lists veichels in use
+     * Lists veichels in use:
      */
     public function listInUse() {
         $sql = "select id, concat(manufacter, ' ', model, ' (', licence_plate, ')') item FROM
