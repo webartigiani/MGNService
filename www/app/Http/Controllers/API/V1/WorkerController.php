@@ -252,6 +252,11 @@ public function export(Request $request) {
 
     /**
      * Esegue timbratura dipendente in data odierna
+     * Non esegue:
+     * - se il dipendente non esiste
+     * - se il dipendente non risulta assunto
+     * - se il giorno corrente è domenica
+     * - se il codice timbrata non è corretto
      * Esegue:
      * - timbratura in entrata se non sono presenti timbrature in data odierna
      * - timbratura in uscita se presente quella in entrata, ma manca quella in uscita
@@ -262,6 +267,9 @@ public function export(Request $request) {
 
         $codice_timbratura = trim($codice_timbratura);
         $errorMessage = '';
+        $dow = date('w');                   // giorno della settimana (Sunday=0)
+
+        $dow = 1;           // NOTE: we actually by-pass check of the day-of-week, cause time-zone
 
         // verifica se il dipendente esiste
         if ($this->exists($workerID)) {
@@ -270,48 +278,55 @@ public function export(Request $request) {
                 // checks worker's password
                 if ($this->verifyCodiceTimbrata($workerID, $codice_timbratura)) {
 
-                    $today = $this->utils->OraItaliana()->format('Y-m-d');          // today's date
-                    $ip = $this->utils->UserIpAddress();                            // user's ip
+                    if ($dow > 0) {
+                        // from Monday to Saturday
+                        $today = $this->utils->OraItaliana()->format('Y-m-d');          // today's date
+                        $ip = $this->utils->UserIpAddress();                            // user's ip
 
-                    $thisID = $this->hasTimbrataEntrata($workerID, $today);
-                    if ($thisID == 0) {
-                        // timbrata in entrata non ancora esistente
-                        // esegue timbrata in entrata e ottiene il suo ID
-                        $thisID = DB::table('attendances')->insertGetId(
-                            array(
-                                'worker' => $workerID,
-                                'entrance_date' => $this->utils->OraItaliana(),
-                                'entrance_ip' => $ip,
-                                'check' => 0,
-                                'created_at' =>  $this->utils->OraItaliana(),
-                                'updated_at' => $this->utils->OraItaliana()
-                            )
-                        );
-                        $this->setStatus($workerID, 1);             // sets worker's status to 1
-
-                    } else {
-                        // timbrata in entrata già esistente
-                        // verifica se manca timbrata in uscita
-                        if ($this->hasTimbrataUscita($workerID, $today) == 0) {
-                            // esegue timbrata in uscita
-                            DB::table('attendances')->where('id', $thisID)
-                            ->update(
+                        $thisID = $this->hasTimbrataEntrata($workerID, $today);
+                        if ($thisID == 0) {
+                            // timbrata in entrata non ancora esistente
+                            // esegue timbrata in entrata e ottiene il suo ID
+                            $thisID = DB::table('attendances')->insertGetId(
                                 array(
-                                    'exit_date' => $this->utils->OraItaliana(),
-                                    'exit_ip' => $ip,
-                                    'check' => 1,
+                                    'worker' => $workerID,
+                                    'entrance_date' => $this->utils->OraItaliana(),
+                                    'entrance_ip' => $ip,
+                                    'check' => 0,
+                                    'created_at' =>  $this->utils->OraItaliana(),
                                     'updated_at' => $this->utils->OraItaliana()
                                 )
                             );
-                            $this->setStatus($workerID, 0);         // sets worker's status to 0
+                            $this->setStatus($workerID, 1);             // sets worker's status to 1
+
                         } else {
-                            // timbrate E/U entrambi esistenti
-                            // non è richiesta timbratura
-                            $errorMessage = 'hai già eseguito tutte le timbrate della giornata';
-                            return 0;
+                            // timbrata in entrata già esistente
+                            // verifica se manca timbrata in uscita
+                            if ($this->hasTimbrataUscita($workerID, $today) == 0) {
+                                // esegue timbrata in uscita
+                                DB::table('attendances')->where('id', $thisID)
+                                ->update(
+                                    array(
+                                        'exit_date' => $this->utils->OraItaliana(),
+                                        'exit_ip' => $ip,
+                                        'check' => 1,
+                                        'updated_at' => $this->utils->OraItaliana()
+                                    )
+                                );
+                                $this->setStatus($workerID, 0);         // sets worker's status to 0
+                            } else {
+                                // timbrate E/U entrambi esistenti
+                                // non è richiesta timbratura
+                                $errorMessage = 'hai già eseguito tutte le timbrate della giornata';
+                                return 0;
+                            }
                         }
+                        return $thisID;
+                    } else {
+                        // today is sunday
+                        $errorMessage = 'giorno non lavorativo';
+                        return 0;
                     }
-                    return $thisID;
                 } else {
                     // password not valid
                     $errorMessage = 'hai digitato un codice timbrata non valido';

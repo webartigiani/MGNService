@@ -395,7 +395,6 @@ public function exportNotes(Request $request) {
             ) tbl
             where IFNULL(notes, '') <> ''
             ";
-
     // TEMP:
     //echo $sql;
     //return;

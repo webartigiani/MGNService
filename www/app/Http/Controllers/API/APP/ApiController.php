@@ -118,14 +118,23 @@ public function autoUpdate(Request $request) {
 
         // 4. checks worker:    must have
         //                      - modo_timbratura: 0|1
-        //                      - stato: 0
         //                      - data_cessazione: null
-        $worker = DB::table('workers')->where('id', $payload['worker']['id'])->where('modo_timbratura', '<=', 1)->where('stato', 0)->whereNull('data_cessazione')->whereNull('deleted_at')->take(1)->get();
+        $worker = DB::table('workers')->where('id', $payload['worker']['id'])->where('modo_timbratura', '<=', 1)->whereNull('data_cessazione')->whereNull('deleted_at')->take(1)->get();
         if (isset($worker)) {
             if ($worker->count() < 1) return $this->sendError('Operatore impegnato', ['L\'operatore selezionato risulta essere impegnato o non abilitato alla timbratura in mobilità'], 403);
             $worker = $worker[0];
         } else {
             return $this->sendError('Operatore impegnato', ['L\'operatore selezionato risulta essere impegnato o non abilitato alla timbratura in mobilità.'], 403);
+        }
+
+        // 5. re-checks worker: must have
+        //                      - stato: 1
+        $worker = DB::table('workers')->where('id', $payload['worker']['id'])->where('stato', 1)->take(1)->get();
+        if (isset($worker)) {
+            if ($worker->count() < 1) return $this->sendError('Timbrata mancante', ['Prima di avviare il veicolo devi timbrare l\'entrata.'], 403);
+            $worker = $worker[0];
+        } else {
+            return $this->sendError('Timbrata mancante', ['Prima di avviare il veicolo devi timbrare l\'entrata.'], 403);
         }
 // #endregion Validations
 
