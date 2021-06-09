@@ -105,8 +105,8 @@
                      <tr v-for="item in items.data" :key="item.id">
                         <td style="width:20px;">
                             <i class="fa fa-dot-circle"
-                                :title="(item.anomaly==1 ? 'in corso' : 'conclusa')"
-                                :class="(item.anomaly==1 ? 'green' : 'orange')"></i>
+                                :title="(item.session_status==1 ? 'in corso' : 'conclusa')"
+                                :class="(item.session_status==1 ? 'green' : 'orange')"></i>
                         </td>
                         <!-- <td>{{ item.id }}</td> -->
                         <td>{{ $root.utils.datetime.formatDateTime(item.start_date_time) }}</td>
