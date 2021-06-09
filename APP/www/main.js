@@ -360,7 +360,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
-    APP_VERSION: '0.0.1',
+    APP_VERSION: '1.0.1',
     WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
     WEB_SITE: 'https://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',

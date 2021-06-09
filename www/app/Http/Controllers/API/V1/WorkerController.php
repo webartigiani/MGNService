@@ -85,6 +85,7 @@ class WorkerController extends BaseController
             }
         }
         $query->whereNull('deleted_at');                 // not deleted
+        $query->orderBy('id');
         $workers = $query->latest()->paginate(10);
         return $this->sendResponse($workers, 'Workers List');
     }

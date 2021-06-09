@@ -44,7 +44,7 @@
                      <tr v-for="item in items.data" :key="item.id">
                       <td style="width:20px;">
                           <i class="fa fa-dot-circle"
-                            :title="(item.status==1 ? 'in circolazione' : 'in rimessa')"
+                            :title="(item.status==1 ? 'in circolazione' : 'in sosta')"
                             :class="(item.status==1 ? 'green' : 'orange')"></i>
                       </td>
                       <td>{{ item.id }}</td>

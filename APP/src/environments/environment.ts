@@ -6,7 +6,7 @@ export const environment = {
   production: false,
 
   APP_TITLE: 'MGN Service',                                 // APP Data
-  APP_VERSION: '0.0.1',
+  APP_VERSION: '1.0.1',
 
   WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',                 // localhost website
   WEB_SITE: 'https://gestionale.mgnservice.it/',             // public website url
@@ -19,7 +19,7 @@ export const environment = {
 
   LOCATION_TIMEOUT: 10,                                     // GPS location: request timout (in seconds)
   LOCATION_INERVAL: 15,                                     // interval (in seconds)
-  MAX_PAUSE_TIMEOUT: .5,                                    // tempo massimo di pausa in minuti
+  MAX_PAUSE_TIMEOUT: 15,                                    // tempo massimo di pausa in minuti
 
   DEBUG_GPS: false,                                         // true to debug GPS data
   SOS_PHONE_NUMBER: '112',                                  // SOS Phone Number

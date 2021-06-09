@@ -38,7 +38,7 @@ class TrackingSessionController extends Controller
         $errorMessage = '';
 
         // Checks worker: id, status, modo_timbratura (0|1), password, cessazione, deleted
-        $sql = "select count(*) value from workers where id = {$worker->id} and password_timbratura = '{$worker_password}' and stato = 0 and modo_timbratura <= 1 and data_cessazione is null and deleted_at is null";
+        $sql = "select count(*) value from workers where id = {$worker->id} and password_timbratura = '{$worker_password}' and stato = 1 and modo_timbratura <= 1 and data_cessazione is null and deleted_at is null";
         $data = DB::select($sql);
         $result = $data[0]->value;
         if ($result <> 1) {
@@ -80,6 +80,7 @@ class TrackingSessionController extends Controller
                 'device' => $deviceID,
                 'worker' => $worker->id,
                 'veichle' => $veichle->id,
+                'start_date_time' => $this->utils->OraItaliana(),
                 'created_at' =>  $this->utils->OraItaliana(),
                 'updated_at' => $this->utils->OraItaliana()
             )
@@ -90,7 +91,6 @@ class TrackingSessionController extends Controller
                 ->where('id', $worker->id)
                 ->update([
                     'tracking_session' => $sessionID,
-                    'stato' => 1,
                     'data_stato' => $this->utils->OraItaliana(),
                     'latitude' => $gpsData->latitude,
                     'longitude' => $gpsData->longitude,
@@ -127,7 +127,6 @@ class TrackingSessionController extends Controller
 
             // Creates the 1st tracking-data
             $this->track($sessionID, $gpsData, 'running');
-
             return $sessionID;
 
         } else {
@@ -253,7 +252,6 @@ class TrackingSessionController extends Controller
 
                 // updates worker geo-location and last_position
                 $sql = "update workers set
-                    stato = 0,
                     data_stato = '" . $this->utils->OraItaliana()->format('Y-m-d H:i:s') . "',
                     tracking_session = null,
                     latitude = null,

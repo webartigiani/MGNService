@@ -86,7 +86,6 @@ public function autoUpdate(Request $request) {
         if (!$this->routeAPP($request)) return $this->redicretHome();
         $payload = $request->json()->all();         // gets payload
 
-
         //#region Validations
         // 1. checks veichle:   must have
         //                      - enabled=true
@@ -143,8 +142,14 @@ public function autoUpdate(Request $request) {
 
         // updates worker status
         $err = '';
+
         $sessionID = $this->TSC->startNew($worker, $payload['password'], $veichle, $device, $gpsData, $err);
-        return $this->sendResponse('OK', $sessionID);
+        if ($sessionID != '') {
+            return $this->sendResponse('OK', $sessionID);
+        } else {
+            // errore durante l'avvio della sessione di tracking
+            return $this->sendError('Errore interno', ['Si è verificato un errore durante l\'avvio della sessione.'], 403);
+        }
     }
 
     public function continueTracking(Request $request) {
