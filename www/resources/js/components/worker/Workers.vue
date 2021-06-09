@@ -336,7 +336,7 @@ export default {
             // filters
             filters: {
                 show: false,
-                hiring_status: -1,
+                hiring_status: 1,
                 status: -1,
                 hiring_date_start: null,
                 hiring_date_end: null

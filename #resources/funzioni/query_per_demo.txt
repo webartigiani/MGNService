@@ -1,0 +1,32 @@
+/* elimina timbrate dipendenti licenziati */
+delete from attendances
+	where
+	worker in 
+	(select id from workers where data_cessazione is not null)
+	 
+/* aggiorna timbrate odierne rimuovendo uscita */
+update attendances SET
+	exit_date = null,
+	exit_ip = null,
+	`check` = 0
+where entrance_date BETWEEN '2021-06-09 00:00:00' and '2021-06-09 23:59:59'
+
+
+/* aggiorna stato dipendenti oggi */
+update workers set
+	stato = 1,
+	data_stato = '2021-06-09 00:00:00',
+	updated_at = '2021-06-09 00:00:00'
+where data_cessazione is null
+
+/* abilita tutti i veicoli */
+update veichles SET
+	status = 0,
+	enabled = 1,
+	deleted_at = null
+	
+/* abilita tutti i device */
+update devices set 
+	is_online = 0,
+	enabled = 1,
+	deleted_at = null

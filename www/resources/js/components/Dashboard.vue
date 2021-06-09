@@ -75,7 +75,7 @@
                             <br>
                             <a href="#" class="mini-link"
                                 @click.prevent="showWorkersNotAtWork()"
-                                v-show="(!loadingCounters) && (workersNotAtWork>0)"
+                                v-show="(!loadingCounters) && (workersNotAtWork > 0)"
                             >visualizza</a>
                         </div>
                     </div>
