@@ -436,7 +436,17 @@ export default {
             // checks dates
             if (this.filters.date_start > this.filters.date_end) this.filters.date_end = this.filters.date_start
         },
+        setCurrentMonth() {
+            const now = new Date();
+            const d = this.$root.utils.generic.padZero(now.getDate());
+            const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
+            const y = now.getFullYear()
 
+            this.filters.date_start = y + '-' + m + '-01';
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'del mese corrente';
+            this.list();
+        },
         // #endregion Filters Functions
 
         // #region Utils
@@ -494,16 +504,7 @@ export default {
     },
     created() {
         this.$Progress.start();
-
-        // set today
-        const now = new Date();
-        const d = this.$root.utils.generic.padZero(now.getDate());
-        const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
-        const y = now.getFullYear()
-
-        this.filters.date_start = y + '-' + m + '-' + d;
-        this.filters.date_end = y + '-' + m + '-' + d;
-
+        this.setCurrentMonth()
         this.list();                    // lists presenze
         this.$Progress.finish();
     },
