@@ -6,10 +6,12 @@ use App\Http\Requests\Veicoli\VeicoloRequest;
 use App\Models\Veichle;
 use Illuminate\Http\Request;
 use DB;
+use App\Http\Controllers\UtilsController;
 
 class VeicoloController extends BaseController
 {
     protected $veicolo = '';
+    private $utils;
 
 // #region Constructor
     /**
@@ -17,10 +19,11 @@ class VeicoloController extends BaseController
      *
      * @return void
      */
-    public function __construct(Veichle $veicolo)
+    public function __construct(Veichle $veicolo, UtilsController $utils)
     {
         $this->middleware('auth:api');
         $this->veicolo = $veicolo;
+        $this->utils = $utils;
     }
 // #endregion Constructor
 
@@ -53,8 +56,9 @@ class VeicoloController extends BaseController
             'model' => $data['model'],
             'licence_plate' => $data['licence_plate'],
             'status' => 0,
-            'status_date' => \Carbon\Carbon::now(),
-            'enabled' => $data['enabled']
+            'enabled' => $data['enabled'],
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
         ]);
         return $this->sendResponse($veicolo, 'Nuovo Veicolo Creato');
     }
@@ -98,9 +102,15 @@ class VeicoloController extends BaseController
     public function destroy($id)
     {
         $this->authorize('isAdmin');
-        $veicolo = $this->veicolo->findOrFail($id);
-        $veicolo->delete();
-        return $this->sendResponse($veicolo, 'Il veicolo è stato eliminato');
+        $ret = DB::table('veichles')
+            ->where('id', $id)
+            ->update(
+                array(
+                    'enabled' => 0,
+                    'updated_at' => $this->utils->OraItaliana()
+                )
+            );
+        return $this->sendResponse('OK', 'Il veicolo è stato disabilitato');
     }
 // #endregion API Methods
 

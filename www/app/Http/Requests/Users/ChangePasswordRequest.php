@@ -30,4 +30,17 @@ class ChangePasswordRequest extends FormRequest
             'confirm_password' => 'required|same:new_password',
         ];
     }
+
+    /**
+     * validation messages
+     */
+    public function messages()
+    {
+        return [
+            'required' => 'Il campo è obbligatorio',
+            'unique' => 'Numero di targa già in uso',
+            'min' => 'Richiesti min. 6 caratteri',
+            'max' => 'Lunghezza eccessiva'
+        ];
+    }
 }

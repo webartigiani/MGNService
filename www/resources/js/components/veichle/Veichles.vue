@@ -75,8 +75,10 @@
                         </a>
                         <a href="#"
                             class="action"
-                            title="Elimina"
-                            @click="deleteItem(item.id)">
+                            title="Disabilita"
+                            @click="deleteItem(item)"
+                            v-if="item.enabled == 1"
+                            >
                             <i class="fa fa-trash blue"></i>
                         </a>
                       </td>
@@ -278,27 +280,29 @@ export default {
             });
 
         },
-        deleteItem(id) {
+        deleteItem(item) {
+            let msg = "Il veicolo verrà disabilitato ma non eliminato, per consentire l'accesso ai dati di tracciamento già acquisiti. I veicoli disabilitati non sono utilizzabili tramite APP. Potrai abilitare nuovamente il veicolo, tramite pulsante modifica su questa pagina.<br><br>";
+            msg += "Disabilitare il veicolo<br>" + item.manufacter + ' ' + item.model + "<br>con targa " + item.licence_plate + ' ?';
             Swal.fire({
                 title: 'Conferma',
                 icon:'question',
-                html: "Il veicolo verrà disabilitato, ma non eliminato, per consentire l'accesso ai dati di tracciamento acquisiti. Prego, conferma la disattivazione del veicolo.",
+                html: msg,
                 showCancelButton: true,
                 confirmButtonText: 'Si, procedi',
                 cancelButtonText: 'Annulla'
                 }).then((result) => {
                     // Send request to the server
                     if (result.value) {
-                        this.form.delete('api/veicolo/' + id).then(()=>{
+                        this.form.delete('api/veicolo/' + item.id).then(()=>{
                             Swal.fire(
-                                'Eliminato!',
-                                'Dipendente correttamente eliminato.',
+                                'Disabilitato!',
+                                'Veicolo correttamente disabilitato.',
                                 'success'
                             );
                             // Fire.$emit('AfterCreate');
                             this.list();
                         }).catch((data)=> {
-                            Swal.fire("Failed!", data.message, "warning");
+                            Swal.fire("Errore!", data.message, "warning");
                         });
                     }
                 })

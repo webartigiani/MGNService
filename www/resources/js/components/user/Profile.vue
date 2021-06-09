@@ -61,7 +61,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="new_password" class="col-sm-2 control-label">Nuova Password</label>
+                                        <label for="new_password" class="col-sm-2 control-label">Nuova Password (min.6 caratteri)</label>
 
                                         <div class="col-sm-12">
                                             <input type="password"
@@ -92,7 +92,7 @@
 
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-12">
-                                        <button @click.prevent="updatePassword" type="submit" class="btn btn-success">Aggiorna Password</button>
+                                        <button @click.prevent="updatePassword" type="submit" class="btn btn-success">Modifica Password</button>
                                         </div>
                                     </div>
                                     </form>
