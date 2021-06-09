@@ -241,7 +241,7 @@ let LoginVeichlePage = class LoginVeichlePage {
         /**
          * starts a calling to the SOS number
          */
-        this.components.showConfirm('SOS', 'Avvia chiamata SOS', 'Avviare una chiamata al numero di SOS ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER + '?').then((result) => {
+        this.components.showConfirm('SOS', 'Avvia chiamata SOS', 'Avviare una chiamata al numero di SOS ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER + '?', ['Annulla', 'OK']).then((result) => {
             if (result)
                 this.phone.call(src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER);
         });

@@ -389,7 +389,7 @@ public function autoUpdate(Request $request) {
                 array(
                     'platform' => $payload['platform'],
                     'version' => $payload['version'],
-                    'manufacter' => $payload['manufacter'],
+                    'manufacter' => ucwords($payload['manufacter']),
                     'model' => $payload['model'],
                     'is_virtual' => $payload['is_virtual'],
                     'serial' => $payload['serial'],

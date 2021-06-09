@@ -28,45 +28,46 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th></th>
-                      <th>ID</th>
-                      <th>Marca e Modello</th>
-                      <th>Sistema Operativo</th>
-                      <th>Abilitato</th>
-                      <th>UUID</th>
-                      <th>Numero Seriale</th>
-                      <th>Data Attivazione</th>
-                      <th>Ultimo Accesso</th>
-                      <th>Connessione</th>
+                        <th></th>
+                        <th>ID</th>
+                        <th>Marca e Modello</th>
+                        <th>Sistema Operativo</th>
+                        <th>Versione APP</th>
+                        <th>Abilitato</th>
+                        <th>UUID</th>
+                        <th>Data Attivazione</th>
+                        <th>Ultimo Accesso</th>
+                        <th>Connessione</th>
                     </tr>
                   </thead>
                   <tbody>
                      <tr v-for="item in items.data" :key="item.id">
-                      <td style="width:20px;">
-                          <i class="fa fa-dot-circle"
-                            :title="(item.is_online==1 ? 'online' : 'offline')"
-                            :class="(item.is_online==1 ? 'green' : 'orange')"></i>
-                      </td>
-                      <td>{{ item.id }}</td>
-                      <td>{{ item.manufacter }} {{ item.model }}</td>
-                      <td>
-                          <i class="fab fa-apple gray"
-                            v-if="item.platform.toLowerCase() == 'apple'"
-                          ></i>
-                          <i class="fab fa-android gray"
-                            v-if="item.platform.toLowerCase() == 'android'"
-                          ></i>
-                          {{ item.platform }} {{ item.version }}</td>
-                      <td>
-                          <i class="fa fa-check green"
-                            v-if="item.enabled==1"
-                            :title="`Abilitato`"></i>
-                          <i class="fa fa-minus-circle red"
-                            v-if="item.enabled==0"
-                            :title="`Non abilitato`"></i>
-                      </td>
+                        <td style="width:20px;">
+                            <i class="fa fa-dot-circle"
+                                :title="(item.is_online==1 ? 'online' : 'offline')"
+                                :class="(item.is_online==1 ? 'green' : 'orange')"></i>
+                        </td>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.manufacter }} {{ item.model }}</td>
+                        <td>
+                            <i class="fab fa-apple gray"
+                                v-if="item.platform.toLowerCase() == 'apple'"
+                            ></i>
+                            <i class="fab fa-android gray"
+                                v-if="item.platform.toLowerCase() == 'android'"
+                            ></i>
+                            {{ item.platform }} {{ item.version }}
+                        </td>
+                        <td>{{ item.app_version }}</td>
+                        <td>
+                            <i class="fa fa-check green"
+                                v-if="item.enabled==1"
+                                :title="`Abilitato`"></i>
+                            <i class="fa fa-minus-circle red"
+                                v-if="item.enabled==0"
+                                :title="`Non abilitato`"></i>
+                        </td>
                         <td>{{ item.uuid }}</td>
-                        <td>{{ (item.serial == 'unknown') ? '-': item.serial }}</td>
                         <td>{{ $root.utils.datetime.formatDateTime(item.created_at) }}</td>
                         <td>{{ $root.utils.datetime.formatDateTime(item.updated_at) }}</td>
                         <td>

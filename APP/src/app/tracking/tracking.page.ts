@@ -129,7 +129,7 @@ export class TrackingPage {
     /**
      * starts a calling to the SOS number
      */
-    this.components.showConfirm('SOS','Avvia chiamata SOS','Avviare una chiamata al numero di SOS ' + environment.SOS_PHONE_NUMBER + '?').then((result) => {
+     this.components.showConfirm('SOS','Avvia chiamata SOS','Avviare una chiamata al numero di SOS ' + environment.SOS_PHONE_NUMBER + '?', ['Annulla', 'OK']).then((result) => {
       if (result) this.phone.call(environment.SOS_PHONE_NUMBER)
     })
   }
