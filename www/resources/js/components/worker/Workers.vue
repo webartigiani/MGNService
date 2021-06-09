@@ -428,7 +428,7 @@ export default {
         },
         updateItem(){
             this.$Progress.start();
-            this.form.put('api/worker/'+this.form.id)
+            this.form.put('api/worker/' + this.form.id)
             .then((response) => {
                 // success
                 $('#addNew').modal('hide');

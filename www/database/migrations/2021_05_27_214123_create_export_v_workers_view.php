@@ -19,6 +19,7 @@ class CreateExportVWorkersView extends Migration
                     DATE_FORMAT(data_assunzione, "%d/%m/%Y") data_assunzione ,
                     DATE_FORMAT(data_cessazione, "%d/%m/%Y") data_cessazione
                 from workers
+                where deleted_at is null
                 order by id
         ');
     }
