@@ -287,8 +287,8 @@
 
 
                         <div class="form-group">
-                            <label for="hours">Numero Ore</label>
-                            <input type="time" name="hours"
+                            <label for="entrance_time">Orario Entrata</label>
+                            <input type="time" name="entrance_time"
                                 class="form-control"
                                 :class="{ 'is-invalid': form.errors.has('entrance_time') }"
                                 step="1"
@@ -297,7 +297,7 @@
                             <has-error :form="form" field="entrance_time"></has-error>
                         </div>
                         <div class="form-group">
-                            <label>Uscita</label>
+                            <label>Orario Uscita</label>
                             <input type="time" name="exit_date"
                                 class="form-control"
                                 :class="{ 'is-invalid': form.errors.has('exit_date') }"
