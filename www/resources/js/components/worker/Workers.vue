@@ -446,10 +446,12 @@ export default {
 
         },
         deleteItem(item) {
+            let msg = 'Il dipendente verrà eliminato e non potrà più effettuare timbrate, nè utilizzare l\'APP MGN.<br><br>';
+            msg += 'Eliminare il dipendente<br>' + item.nome + ' ' + item.cognome + '?';
             Swal.fire({
-                title: 'Attenzione',
+                title: 'Conferma',
                 icon:'question',
-                html: "Confermi la cancellazione del dipendente?",
+                html: msg,
                 showCancelButton: true,
                 confirmButtonText: 'Si, procedi',
                 cancelButtonText: 'Annulla'
