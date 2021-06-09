@@ -19,6 +19,13 @@
                         </button>
                         <button type="button"
                             class="btn btn-sm btn-primary btn-green"
+                            title="Esporta i codici timbrata dei dipendenti"
+                            @click="exportCodes()">
+                            <i class="fa fa-file-excel"></i>
+                            Esporta Codici
+                        </button>
+                        <button type="button"
+                            class="btn btn-sm btn-primary btn-green"
                             title="Esporta Anagrafica Dipendenti"
                             @click="exportData()">
                             <i class="fa fa-file-excel"></i>
@@ -484,6 +491,18 @@ export default {
             })
             // choose filename
             const fileName = 'ELEDIP'
+            this.$root.download.saveFile(response, fileName + '.csv', 'text/csv')   // exports CSV
+            this.$Progress.finish();
+        },
+        exportCodes: async function() {
+            // see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
+            this.$Progress.start();
+            const response = await axios({
+                method: 'get',
+                url: 'api/workers/export-codes',
+            })
+            // choose filename
+            const fileName = 'CODICI_TIMBRATA'
             this.$root.download.saveFile(response, fileName + '.csv', 'text/csv')   // exports CSV
             this.$Progress.finish();
         },

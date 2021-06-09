@@ -171,6 +171,22 @@ public function export(Request $request) {
     $dbdata = DB::table('export_v_workers')->get();
     return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
+public function exportCodes(Request $request) {
+    // based on the view 'export_v_workers_view'
+    $header = 'Dipendente;Codice Timbrata';
+
+    $sql = "select
+        concat(nome, ' ' , cognome) nome_cognome, password_timbratura
+        from
+            workers
+        where
+            data_cessazione is null
+        and deleted_at is null
+        order by nome, cognome";
+    $dbdata = DB::select(DB::raw($sql));
+    return $this->sendExport($header, $dbdata, ';', 'text/csv');
+}
+
 // #endregion API Export Methods
 
 // #region Public API methods

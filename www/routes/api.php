@@ -41,6 +41,7 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
         'tracking' => 'TrackingController'
     ]);
     Route::get('workers/export', 'WorkerController@export');                    // export worker as CSV
+    Route::get('workers/export-codes', 'WorkerController@exportCodes');         // export worker codes as CSV
     Route::get('workers/counters', 'WorkerController@getCounters');             // contatori dipendenti
     Route::get('workers/atwork', 'WorkerController@listAtWork');                // dipendenti presenti
     Route::get('workers/notatwork', 'WorkerController@listNotAtWork');          // dipendenti non presenti
