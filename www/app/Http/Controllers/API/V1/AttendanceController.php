@@ -94,8 +94,8 @@ class AttendanceController extends BaseController
         if ($limit > 0) $sql .= " limit {$limit}";
 
         // TEMP: to export full SQL query
-        //echo $sql;
-        //return;
+        #echo $sql;
+        #return;
 
         // checks if we have working days in selected period...
         if ($sql == '') {
