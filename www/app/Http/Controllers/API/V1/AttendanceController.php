@@ -135,22 +135,6 @@ class AttendanceController extends BaseController
      */
     public function store(AttendanceRequest $request)
     {
-
-        // inserts data
-        /*
-        $dbdata = $this->worker->create([
-            'codice_azienda' => env('CODICE_AZIENDA'),
-            'denominazione_azienda' => env('DENOMINAZIONE_AZIENDA'),
-            'nome' => $data['nome'],
-            'cognome' => $data['cognome'],
-            'codice_fiscale' => $data['codice_fiscale'],
-            'matricola' => $data['matricola'],
-            'modo_timbratura' => $data['modo_timbratura'],
-            'data_assunzione' => $data['data_assunzione'],
-            'data_cessazione' => $data['data_cessazione']
-        ]);
-        return $this->sendResponse($dbdata, 'Nuova Timbrata Creata');
-        */
     }
 
     /**
@@ -212,8 +196,11 @@ class AttendanceController extends BaseController
     {
         //$this->authorize('isAdmin');              // NOTE: it doesn't work!!!!
         $attendance = $this->attendance->findOrFail($id);
-        $attendance->delete();
-        return $this->sendResponse($attendance, 'Presenza eliminata');
+
+        DB::table('attendances')
+            ->where('id', $id)
+            ->delete();
+        return $this->sendResponse('OK', 'Presenza eliminata');
     }
 // #endregion API Methods
 
