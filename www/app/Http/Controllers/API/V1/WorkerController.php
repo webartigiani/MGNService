@@ -101,6 +101,9 @@ class WorkerController extends BaseController
         // get form normalized data
         $data = $this->normalizeData($request->all());
 
+        // creates a new password
+        $password_timbrata = $this->generateRandomString(5);
+
         // inserts data
         $worker = $this->worker->create([
             'codice_azienda' => env('CODICE_AZIENDA'),
@@ -108,14 +111,24 @@ class WorkerController extends BaseController
             'nome' => $data['nome'],
             'cognome' => $data['cognome'],
             'codice_fiscale' => $data['codice_fiscale'],
-            'matricola' => $data['matricola'],
+            'matricola' => 0,
             'email' => $data['email'],
             'telefono' => $data['telefono'],
             'ore_settimanali' => $data['ore_settimanali'],
             'modo_timbratura' => $data['modo_timbratura'],
             'data_assunzione' => $data['data_assunzione'],
-            'data_cessazione' => $data['data_cessazione']
+            'data_cessazione' => $data['data_cessazione'],
+            'password_timbratura' => $password_timbrata
         ]);
+
+        // sets matricola as ID
+        DB::table('workers')
+        ->where('id', $worker->id)
+        ->update(
+            array(
+                'matricola' => $worker->id,
+            )
+        );
         return $this->sendResponse($worker, 'Nuovo dipendente Creato');
     }
 
@@ -514,10 +527,18 @@ public function exportCodes(Request $request) {
         $data['nome'] =  strtoupper(trim($data['nome']));
         $data['cognome'] =  strtoupper(trim($data['cognome']));
         $data['codice_fiscale'] =  strtoupper(trim($data['codice_fiscale']));
-        $data['matricola'] =  strtoupper(trim($data['matricola']));
         $data['email'] =  strtolower(trim($data['email']));
         $data['telefono'] =  strtoupper(trim($data['telefono']));
         return $data;
+    }
+    private function generateRandomString($length = 10) {
+        $characters = '0123456';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 // #endregion Private Methods
 }

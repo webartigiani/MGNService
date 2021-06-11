@@ -234,16 +234,6 @@
                                 >
                             <has-error :form="form" field="telefono"></has-error>
                         </div>
-
-                        <div class="form-group">
-                            <label>Matricola</label>
-                            <input v-model="form.matricola" type="text" name="matricola"
-                                class="form-control upper"
-                                :class="{ 'is-invalid': form.errors.has('matricola') }"
-                                :maxlength="16" :readonly="editmode"
-                                >
-                            <has-error :form="form" field="matricola"></has-error>
-                        </div>
                         <div class="form-group">
                             <label>Uso Veicolo</label>
                             <select name="modo_timbratura"
@@ -334,7 +324,6 @@ export default {
                 codice_fiscale: '',
                 email: '',
                 telefono: '',
-                matricola: '',
                 modo_timbratura: 0,
                 ore_settimanali: 1,
                 data_assunzione: '',

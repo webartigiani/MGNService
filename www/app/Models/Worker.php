@@ -16,6 +16,6 @@ class Worker extends Model
      * @var array
      */
     protected $fillable = [
-        'codice_azienda', 'denominazione_azienda', 'cognome', 'nome', 'codice_fiscale', 'data_assunzione', 'data_cessazione', 'modo_timbratura', 'ore_settimanali', 'matricola', 'email', 'telefono'
+        'codice_azienda', 'denominazione_azienda', 'cognome', 'nome', 'codice_fiscale', 'data_assunzione', 'data_cessazione', 'modo_timbratura', 'ore_settimanali', 'matricola', 'email', 'telefono', 'password_timbratura'
     ];
 }
