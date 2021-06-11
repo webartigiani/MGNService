@@ -147,6 +147,7 @@
                                 >
                                 <i class="fas fa-eye blue"></i>
                             </a>
+                            <!--
                             <a href="#"
                                 class="action"
                                 title="Elimina questo tracciamento"
@@ -154,6 +155,7 @@
                                 >
                                 <i class="fa fa-trash blue"></i>
                             </a>
+                            -->
                         </td>
                     </tr>
                   </tbody>
