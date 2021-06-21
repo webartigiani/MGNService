@@ -360,7 +360,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
-    APP_VERSION: '1.0.3',
+    APP_VERSION: '1.0.6',
     WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
     WEB_SITE: 'https://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
@@ -467,6 +467,7 @@ __webpack_require__.r(__webpack_exports__);
 //          npm install @ionic-native/autostart
 
 let AppService = class AppService {
+    // #region Variables
     // #endregion Variables
     // #region Constructors
     constructor(
@@ -478,7 +479,6 @@ let AppService = class AppService {
         this.appUpdate = appUpdate;
         this.autostart = autostart;
         // constructor...
-        this.isUpdating = false;
     }
     // #endregion Constructors
     // #region Public Methods
@@ -490,27 +490,6 @@ let AppService = class AppService {
     }
     debugGPS() {
         return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].DEBUG_GPS;
-    }
-    checkUpdates() {
-        // we do not update in debug (browser)
-        if (this.utils.isDebug()) {
-            console.warn('checkUpdates disabled on browser');
-            return;
-        }
-        const updateUrl = this.updateUrl();
-        this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
-            /**
-             * Returns
-             *
-              {"code": 202, "msg": "success, up to date."}          // when APP is updated
-              {code: 201, msg: "success, need date."}               // when Update is needed
-             */
-            if (result.code === 201)
-                this.isUpdating = true; // flags APP is updating
-            console.log('checkUpdates', result);
-        }).catch((error) => {
-            console.error('checkUpdates errore', error);
-        });
     }
     setAutostart(enable) {
         /**
@@ -527,24 +506,6 @@ let AppService = class AppService {
         else {
             this.autostart.disable();
         }
-    }
-    // #endregion Public Methods
-    // #region Private Methods
-    updateUrl() {
-        // returns the App Update Url
-        let ret = '';
-        if (this.platform.is('cordova')) {
-            // running on device
-            ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].WEB_SITE;
-        }
-        else {
-            // running on localhost or public domain, depending on API_USE_LOCAL
-            if (src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].WEB_SITE)
-                ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].WEB_SITE_LOCAL;
-            else
-                ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].WEB_SITE;
-        }
-        return ret += 'app/update/';
     }
 };
 AppService.ctorParameters = () => [

@@ -17,6 +17,38 @@ import { Component } from '@angular/core';
 import { environment } from "src/environments/environment";
 
 import { NavController } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+
+// App Update
+// does self-update for android
+// The plugin will compare the app version and update it automatically if the API has a newer version to install.
+// see      https://ionicframework.com/docs/v3/native/app-update/
+// see      https://www.npmjs.com/package/cordova-plugin-app-update
+// sample   https://www.freakyjolly.com/ionic-4-in-app-version-check-and-updater-dialog-using-app-update-native-plugin/#Host_XML_file_to_a_server
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-app-update
+//                      npm install --save @ionic-native/app-update@latest
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+//
+/*          requires
+            a web url that returns an XML by
+            # APP_NAME              same name as config.xml
+            # APP_VERSION           version number without dots (eg. 5.2.1 => 50201)
+            # APP_URI               the APK filename located into public/downloads (its url will be website/downloads/<APP_URI>)
+
+            <update>
+              <version>50201</version>      <!-- version 5.2.1  -->
+              <name>MyApp</name>
+              <url>http://gestionale.mgnservice.it/downloads/app.apk</url>
+            </update>
+
+            where APP Config.xml is
+            <widget id="..." version="5.2.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+              <name>MyApp</name>
+            ...
+*/
+import { AppUpdate } from '@ionic-native/app-update/ngx';
 
 // WebArtigiani Classes
 import { AppService } from '../Classes/App';
@@ -48,12 +80,15 @@ export class StartPage {
       private api: ApiService,
       private utils: UtilsService,
       private components: ComponentsService,
+
+      private platform: Platform,
       private geolocation: GeoLocationService,
       private localData: LocalDataService,
       private phone: PhoneServices,
 
       // Angular
       public navCtrl: NavController,
+      private appUpdate: AppUpdate,
   ) {
     // Constructor code...
   }
@@ -66,7 +101,7 @@ export class StartPage {
     after Angular first displays the data-bound properties and sets the directive or component's input properties.
     Called once
     */
-    this.app.checkUpdates()         // checks for APP updates
+    console.log('ngOnInit')
     this.app.setAutostart(true)     // sets APP for auto-start
   }
   ngAfterViewInit() {
@@ -76,21 +111,43 @@ export class StartPage {
     this.utils.allowScreenFallAsleep()
     //this.utils.keepForeground()
 
-    // checks if is updating
-    if (this.app.isUpdating) {
-      this.statusDesc = 'Aggiornamento APP in corso...';
-      return;
+    // checks for App Updates
+    if (!this.utils.isDebug()) {
+      // running on Device
+      const updateUrl = this.updateUrl()
+      this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
+        /**
+         * Returns
+         *
+          {"code": 202, "msg": "success, up to date."}          // when APP is updated
+          {code: 201, msg: "success, need date."}               // when Update is needed
+         */
+        if (result.code === 201) {
+          this.statusDesc = 'Aggiornamento APP in corso...';    // Update needed
+          return
+        } else {
+          // other codes....
+          this.startApp()
+        }
+      }).catch((error) => {
+        // error getting update info
+        console.error('checkUpdates errore', error);
+        this.startApp()
+      })
+    } else {
+      // DEBUG mode (browser)
+      this.startApp()
     }
-
-    // starts steps...
-    setTimeout(() => {
-      this.checkConnection()
-    }, this.execDelay * 1000 * 2);
-
   }
   // #endregion Component LifeCycls
 
   // #region Public Methods
+  startApp() {
+    // starts steps...
+    setTimeout(() => {
+      this.checkConnection()
+    }, this.execDelay * 1000 * 2);
+  }
   checkConnection() {
     /**
      * step 1: checks internet connection
@@ -194,4 +251,23 @@ export class StartPage {
     });
   }
   // #endregion Public Methods
+
+  // #region Private Methods
+  private updateUrl() {
+    // returns the App Update Url
+
+    let ret = ''
+    if (this.platform.is('cordova')) {
+        // running on device
+        ret = environment.WEB_SITE
+    } else {
+        // running on localhost or public domain, depending on API_USE_LOCAL
+        if (environment.WEB_SITE)
+          ret = environment.WEB_SITE_LOCAL
+        else
+          ret = environment.WEB_SITE
+    }
+    return ret += 'app/update/'
+  }
+  // #endregion Private Mehods
 }

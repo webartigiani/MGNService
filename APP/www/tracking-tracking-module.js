@@ -106,6 +106,7 @@ let TrackingPage = class TrackingPage {
         this.gpsData = {};
         this.isPaued = false;
         this.alreadyPaused = false;
+        this.iTimer = null; // setInterval
         // gets current session_id from storage
         this.sessionID = this.localData.readValue('session_id');
     }
@@ -117,7 +118,7 @@ let TrackingPage = class TrackingPage {
         this.utils.keepForeground();
         // 1st geo-location, then geo-locate by interval
         this.geoLocate();
-        setInterval(() => {
+        this.iTimer = setInterval(() => {
             this.geoLocate();
         }, src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_INERVAL * 1000);
     }
@@ -154,11 +155,8 @@ let TrackingPage = class TrackingPage {
                     loading.present();
                     this.api.stopTracking(this.sessionID).then((result) => {
                         // stopTracking OK
-                        this.localData.delete('session_id');
-                        this.localData.delete('current_worker');
-                        this.localData.delete('current_veichle');
                         loading.dismiss();
-                        this.navCtrl.navigateRoot('login-veichle');
+                        this.stopTracker();
                     }).catch((error) => {
                         // API Error
                         console.error(error);
@@ -170,6 +168,17 @@ let TrackingPage = class TrackingPage {
                 // Do not stop!
             }
         });
+    }
+    stopTracker() {
+        /**
+         * Stops the tracker
+         */
+        clearInterval(this.iTimer); // stops interval
+        this.iTimer = null;
+        this.localData.delete('session_id');
+        this.localData.delete('current_worker');
+        this.localData.delete('current_veichle');
+        this.navCtrl.navigateRoot('login-veichle');
     }
     SOS() {
         /**
@@ -204,10 +213,7 @@ let TrackingPage = class TrackingPage {
                     // ERORR 404 returned by server
                     // tracking session stopped by admin
                     this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
-                        this.localData.delete('session_id');
-                        this.localData.delete('current_worker');
-                        this.localData.delete('current_veichle');
-                        this.navCtrl.navigateRoot('login-veichle');
+                        this.stopTracker();
                     });
                     return;
                 }

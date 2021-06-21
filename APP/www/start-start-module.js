@@ -14,14 +14,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _raw_loader_start_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./start.page.html */ "1CUN");
 /* harmony import */ var _start_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./start.page.scss */ "X/qK");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
-/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Classes/Phone */ "JgwU");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/environments/environment */ "AytR");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../Classes/Phone */ "JgwU");
 
 
 
@@ -42,6 +44,38 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
+
+
+// App Update
+// does self-update for android
+// The plugin will compare the app version and update it automatically if the API has a newer version to install.
+// see      https://ionicframework.com/docs/v3/native/app-update/
+// see      https://www.npmjs.com/package/cordova-plugin-app-update
+// sample   https://www.freakyjolly.com/ionic-4-in-app-version-check-and-updater-dialog-using-app-update-native-plugin/#Host_XML_file_to_a_server
+// NOTES:   requires    ionic cordova plugin add cordova-plugin-app-update
+//                      npm install --save @ionic-native/app-update@latest
+//          requires
+//          platforms/android/app/src/main/AndroidManifest.xml
+//          <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+//
+/*          requires
+            a web url that returns an XML by
+            # APP_NAME              same name as config.xml
+            # APP_VERSION           version number without dots (eg. 5.2.1 => 50201)
+            # APP_URI               the APK filename located into public/downloads (its url will be website/downloads/<APP_URI>)
+
+            <update>
+              <version>50201</version>      <!-- version 5.2.1  -->
+              <name>MyApp</name>
+              <url>http://gestionale.mgnservice.it/downloads/app.apk</url>
+            </update>
+
+            where APP Config.xml is
+            <widget id="..." version="5.2.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+              <name>MyApp</name>
+            ...
+*/
+
 // WebArtigiani Classes
 
 
@@ -55,17 +89,19 @@ let StartPage = class StartPage {
     // #region Constructor
     constructor(
     // WebArtigiani
-    app, api, utils, components, geolocation, localData, phone, 
+    app, api, utils, components, platform, geolocation, localData, phone, 
     // Angular
-    navCtrl) {
+    navCtrl, appUpdate) {
         this.app = app;
         this.api = api;
         this.utils = utils;
         this.components = components;
+        this.platform = platform;
         this.geolocation = geolocation;
         this.localData = localData;
         this.phone = phone;
         this.navCtrl = navCtrl;
+        this.appUpdate = appUpdate;
         // #region Variables
         this.statusDesc = 'caricamento...';
         this.statusError = false;
@@ -81,7 +117,7 @@ let StartPage = class StartPage {
         after Angular first displays the data-bound properties and sets the directive or component's input properties.
         Called once
         */
-        this.app.checkUpdates(); // checks for APP updates
+        console.log('ngOnInit');
         this.app.setAutostart(true); // sets APP for auto-start
     }
     ngAfterViewInit() {
@@ -89,18 +125,44 @@ let StartPage = class StartPage {
         // allows screen falling asleep (NOTE: here, we DO NOT keep APP in foreground)
         this.utils.allowScreenFallAsleep();
         //this.utils.keepForeground()
-        // checks if is updating
-        if (this.app.isUpdating) {
-            this.statusDesc = 'Aggiornamento APP in corso...';
-            return;
+        // checks for App Updates
+        if (!this.utils.isDebug()) {
+            // running on Device
+            const updateUrl = this.updateUrl();
+            this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
+                /**
+                 * Returns
+                 *
+                  {"code": 202, "msg": "success, up to date."}          // when APP is updated
+                  {code: 201, msg: "success, need date."}               // when Update is needed
+                 */
+                if (result.code === 201) {
+                    this.statusDesc = 'Aggiornamento APP in corso...'; // Update needed
+                    return;
+                }
+                else {
+                    // other codes....
+                    this.startApp();
+                }
+            }).catch((error) => {
+                // error getting update info
+                console.error('checkUpdates errore', error);
+                this.startApp();
+            });
         }
+        else {
+            // DEBUG mode (browser)
+            this.startApp();
+        }
+    }
+    // #endregion Component LifeCycls
+    // #region Public Methods
+    startApp() {
         // starts steps...
         setTimeout(() => {
             this.checkConnection();
         }, this.execDelay * 1000 * 2);
     }
-    // #endregion Component LifeCycls
-    // #region Public Methods
     checkConnection() {
         /**
          * step 1: checks internet connection
@@ -195,16 +257,36 @@ let StartPage = class StartPage {
             window.location.reload();
         });
     }
+    // #endregion Public Methods
+    // #region Private Methods
+    updateUrl() {
+        // returns the App Update Url
+        let ret = '';
+        if (this.platform.is('cordova')) {
+            // running on device
+            ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].WEB_SITE;
+        }
+        else {
+            // running on localhost or public domain, depending on API_USE_LOCAL
+            if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].WEB_SITE)
+                ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].WEB_SITE_LOCAL;
+            else
+                ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].WEB_SITE;
+        }
+        return ret += 'app/update/';
+    }
 };
 StartPage.ctorParameters = () => [
-    { type: _Classes_App__WEBPACK_IMPORTED_MODULE_5__["AppService"] },
-    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_6__["ApiService"] },
-    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_7__["UtilsService"] },
-    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_8__["ComponentsService"] },
-    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_9__["GeoLocationService"] },
-    { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_10__["LocalDataService"] },
-    { type: _Classes_Phone__WEBPACK_IMPORTED_MODULE_11__["PhoneServices"] },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["NavController"] }
+    { type: _Classes_App__WEBPACK_IMPORTED_MODULE_7__["AppService"] },
+    { type: _Classes_API__WEBPACK_IMPORTED_MODULE_8__["ApiService"] },
+    { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_9__["UtilsService"] },
+    { type: _Classes_Components__WEBPACK_IMPORTED_MODULE_10__["ComponentsService"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["Platform"] },
+    { type: _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_11__["GeoLocationService"] },
+    { type: _Classes_LocalData__WEBPACK_IMPORTED_MODULE_12__["LocalDataService"] },
+    { type: _Classes_Phone__WEBPACK_IMPORTED_MODULE_13__["PhoneServices"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["NavController"] },
+    { type: _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__["AppUpdate"] }
 ];
 StartPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({

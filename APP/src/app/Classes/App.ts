@@ -68,7 +68,6 @@ import { Autostart } from '@ionic-native/autostart/ngx';
 export class AppService {
 
   // #region Variables
-  public isUpdating:boolean;
   // #endregion Variables
 
 
@@ -83,7 +82,6 @@ export class AppService {
       private autostart: Autostart,
    ) {
       // constructor...
-      this.isUpdating = false;
    }
   // #endregion Constructors
 
@@ -96,29 +94,6 @@ export class AppService {
   }
   debugGPS() {
     return environment.DEBUG_GPS
-  }
-
-  checkUpdates() {
-    // we do not update in debug (browser)
-    if (this.utils.isDebug()) {
-      console.warn('checkUpdates disabled on browser');
-      return
-    }
-
-    const updateUrl = this.updateUrl()
-    this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
-      /**
-       * Returns
-       *
-        {"code": 202, "msg": "success, up to date."}          // when APP is updated
-        {code: 201, msg: "success, need date."}               // when Update is needed
-       */
-      if (result.code === 201) this.isUpdating = true;        // flags APP is updating
-      console.log('checkUpdates', result);
-
-    }).catch((error) => {
-      console.error('checkUpdates errore', error);
-    })
   }
 
   setAutostart(enable) {
@@ -141,21 +116,5 @@ export class AppService {
   // #endregion Public Methods
 
   // #region Private Methods
-  private updateUrl() {
-    // returns the App Update Url
-
-    let ret = ''
-    if (this.platform.is('cordova')) {
-        // running on device
-        ret = environment.WEB_SITE
-    } else {
-        // running on localhost or public domain, depending on API_USE_LOCAL
-        if (environment.WEB_SITE)
-          ret = environment.WEB_SITE_LOCAL
-        else
-          ret = environment.WEB_SITE
-    }
-    return ret += 'app/update/'
-  }
   // #endregion Private Methods
 }

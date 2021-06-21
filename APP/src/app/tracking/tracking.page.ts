@@ -108,14 +108,8 @@ export class TrackingPage {
 
             this.api.stopTracking(this.sessionID).then((result) => {
               // stopTracking OK
-              clearInterval(this.iTimer)                  // stops interval
-              this.iTimer = null
-              this.localData.delete('session_id')
-              this.localData.delete('current_worker')
-              this.localData.delete('current_veichle')
               loading.dismiss()
-              this.navCtrl.navigateRoot('login-veichle')
-
+              this.stopTracker()
             }).catch((error) => {
               // API Error
               console.error(error)
@@ -126,6 +120,17 @@ export class TrackingPage {
           // Do not stop!
         }
     })
+  }
+  stopTracker() {
+    /**
+     * Stops the tracker
+     */
+     clearInterval(this.iTimer)                  // stops interval
+     this.iTimer = null
+     this.localData.delete('session_id')
+     this.localData.delete('current_worker')
+     this.localData.delete('current_veichle')
+     this.navCtrl.navigateRoot('login-veichle')
   }
 
   SOS() {
@@ -164,12 +169,7 @@ export class TrackingPage {
           // ERORR 404 returned by server
           // tracking session stopped by admin
           this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
-            clearInterval(this.iTimer)                  // stops interval
-            this.iTimer = null
-            this.localData.delete('session_id')
-            this.localData.delete('current_worker')
-            this.localData.delete('current_veichle')
-            this.navCtrl.navigateRoot('login-veichle')
+            this.stopTracker()
           })
           return
         }
