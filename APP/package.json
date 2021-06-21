@@ -1,6 +1,6 @@
 {
   "name": "wa-mgn",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "WebArtigiani",
   "homepage": "http://gestionale.mgnservice.it/",
   "scripts": {
@@ -38,6 +38,7 @@
     "@ionic-native/uid": "^5.32.1",
     "@ionic-native/unique-device-id": "^5.32.1",
     "@ionic/angular": "^5.5.2",
+    "build": "0.1.4",
     "cordova-plugin-network-information": "^2.0.2",
     "cordova-plugin-screen-orientation": "^3.0.2",
     "cordova-plugin-uniquedeviceid": "^1.3.2",

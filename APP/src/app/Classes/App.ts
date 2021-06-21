@@ -68,7 +68,9 @@ import { Autostart } from '@ionic-native/autostart/ngx';
 export class AppService {
 
   // #region Variables
+  public isUpdating:boolean;
   // #endregion Variables
+
 
   // #region Constructors
    constructor(
@@ -81,6 +83,7 @@ export class AppService {
       private autostart: Autostart,
    ) {
       // constructor...
+      this.isUpdating = false;
    }
   // #endregion Constructors
 
@@ -110,9 +113,11 @@ export class AppService {
         {"code": 202, "msg": "success, up to date."}          // when APP is updated
         {code: 201, msg: "success, need date."}               // when Update is needed
        */
-      console.log('checkUpdates', result)
+      if (result.code === 201) this.isUpdating = true;        // flags APP is updating
+      console.log('checkUpdates', result);
+
     }).catch((error) => {
-      console.error('checkUpdates errore', error)
+      console.error('checkUpdates errore', error);
     })
   }
 

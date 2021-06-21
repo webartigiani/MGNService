@@ -37,8 +37,8 @@ export class StartPage {
   // #region Variables
   statusDesc: string = 'caricamento...'
   statusError: boolean = false
-  execDelay: number = 0.25                       // numero di secondi di attesa esecuzione
-  retryDelay: number = 3                        // numero di secondi per retrial
+  execDelay: number = 0.25                        // numero di secondi di attesa esecuzione
+  retryDelay: number = 3                          // numero di secondi per retrial
   // #endregion Variables
 
   // #region Constructor
@@ -75,6 +75,12 @@ export class StartPage {
     // allows screen falling asleep (NOTE: here, we DO NOT keep APP in foreground)
     this.utils.allowScreenFallAsleep()
     //this.utils.keepForeground()
+
+    // checks if is updating
+    if (this.app.isUpdating) {
+      this.statusDesc = 'Aggiornamento APP in corso...';
+      return;
+    }
 
     // starts steps...
     setTimeout(() => {

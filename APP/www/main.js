@@ -360,12 +360,12 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
-    APP_VERSION: '1.0.2',
+    APP_VERSION: '1.0.3',
     WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
     WEB_SITE: 'https://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
     API_LOGGER_ENABLED: false,
-    API_USE_LOCAL: true,
+    API_USE_LOCAL: false,
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'https://gestionale.mgnservice.it/api/app',
     LOCATION_TIMEOUT: 10,
@@ -467,7 +467,6 @@ __webpack_require__.r(__webpack_exports__);
 //          npm install @ionic-native/autostart
 
 let AppService = class AppService {
-    // #region Variables
     // #endregion Variables
     // #region Constructors
     constructor(
@@ -479,6 +478,7 @@ let AppService = class AppService {
         this.appUpdate = appUpdate;
         this.autostart = autostart;
         // constructor...
+        this.isUpdating = false;
     }
     // #endregion Constructors
     // #region Public Methods
@@ -505,6 +505,8 @@ let AppService = class AppService {
               {"code": 202, "msg": "success, up to date."}          // when APP is updated
               {code: 201, msg: "success, need date."}               // when Update is needed
              */
+            if (result.code === 201)
+                this.isUpdating = true; // flags APP is updating
             console.log('checkUpdates', result);
         }).catch((error) => {
             console.error('checkUpdates errore', error);

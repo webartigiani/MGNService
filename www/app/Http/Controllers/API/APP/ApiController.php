@@ -176,8 +176,8 @@ public function autoUpdate(Request $request) {
                     // TODO ?
                 }
             } else {
-                // tracking session is closed
-                return $this->sendError('Sessione terminata', ['La sessione di navigazione risulta già terminata'], 403);
+                // tracking session is closed: returns 404 error
+                return $this->sendError('Sessione terminata', ['La sessione di navigazione risulta già terminata'], 404);
             }
         } else {
             // tracking session doesn't exists

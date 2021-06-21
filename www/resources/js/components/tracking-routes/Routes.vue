@@ -147,15 +147,14 @@
                                 >
                                 <i class="fas fa-eye blue"></i>
                             </a>
-                            <!--
                             <a href="#"
+                                v-if="item.session_status==1"
                                 class="action"
-                                title="Elimina questo tracciamento"
+                                title="Interrompi questo tracciamento"
                                 @click="deleteItem(item)"
                                 >
-                                <i class="fa fa-trash blue"></i>
+                                <i class="far fa-stop-circle blue"></i>
                             </a>
-                            -->
                         </td>
                     </tr>
                   </tbody>
@@ -290,6 +289,7 @@ export default {
     // #region Properties
     data () {
         return {
+            mapProvider: process.env.MIX_MAP_PROVIDER.toLowerCase(),
             items : {},
             // filters
             filters: {
@@ -298,6 +298,9 @@ export default {
                 date_end: null,
                 status: -1,
                 per_page: 50
+            },
+            form: {
+                id: '',
             },
             // OpenStreet Map Data
             mapData: {
@@ -356,6 +359,7 @@ export default {
                     this.mapData.center = data.data.start
                     this.mapData.polyline.latlngs = data.data.latlngs
 
+                    console.log(data.data.latlngs)
                     $('#modalTracking').modal('show');
                     setTimeout(function() {
                         window.dispatchEvent(new Event('resize'))
@@ -390,22 +394,23 @@ export default {
             }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
         },
         deleteItem(item) {
-            const msg = "Eliminare le timbrate giornaliere del dipendente?<br><br>Il dipendente<br>" + item.nome + " " + item.cognome + "<br>risulterà assente in data " + item.day_date + "<br><br>Attenzione: questa operazione è irreversibile.";
-
+            const msg = "Interrompere il tragitto in corso di<br>" + item.nome + " " + item.cognome + "<br>con " + item.veichle_manufacter + " " + item.veichle_model + " (" + item.veichle_licence_plate + ")?";
             Swal.fire({
                 title: 'Conferma',
                 icon:'question',
                 html: msg,
                 showCancelButton: true,
-                confirmButtonText: 'Si, elimina',
+                confirmButtonText: 'Si, interrompi',
                 cancelButtonText: 'Annulla'
                 }).then((result) => {
                     // Send request to the server
                     if (result.value) {
-                        this.form.delete('api/attendance/' + item.id).then(()=>{
+
+                        console.log(item)
+                        axios.delete('api/tracking/' + item.session_id).then(()=>{
                             Swal.fire(
-                                'Timbrate Eliminate!',
-                                'Timbrate correttamente eliminate.',
+                                'Tragitto interrotto!',
+                                'Tragitto correttamente interrotto.',
                                 'success'
                             );
                             // Fire.$emit('AfterCreate');

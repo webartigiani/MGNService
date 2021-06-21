@@ -200,6 +200,18 @@ let TrackingPage = class TrackingPage {
                 // continueTracking OK
             }).catch((error) => {
                 // API Error
+                if (error.http_status.code === 404) {
+                    // ERORR 404 returned by server
+                    // tracking session stopped by admin
+                    this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
+                        this.localData.delete('session_id');
+                        this.localData.delete('current_worker');
+                        this.localData.delete('current_veichle');
+                        this.navCtrl.navigateRoot('login-veichle');
+                    });
+                    return;
+                }
+                // other API errors
                 console.error(error);
             });
         }).catch((error) => {

@@ -89,6 +89,11 @@ let StartPage = class StartPage {
         // allows screen falling asleep (NOTE: here, we DO NOT keep APP in foreground)
         this.utils.allowScreenFallAsleep();
         //this.utils.keepForeground()
+        // checks if is updating
+        if (this.app.isUpdating) {
+            this.statusDesc = 'Aggiornamento APP in corso...';
+            return;
+        }
         // starts steps...
         setTimeout(() => {
             this.checkConnection();

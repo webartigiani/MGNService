@@ -33,6 +33,7 @@ export class TrackingPage {
   gpsData: any = {}
   isPaued: boolean = false
   alreadyPaused: boolean = false
+  iTimer: any = null                        // setInterval
   // #endregion Variables
 
   // #region Constructor
@@ -66,7 +67,7 @@ export class TrackingPage {
 
     // 1st geo-location, then geo-locate by interval
     this.geoLocate()
-    setInterval(() => {
+    this.iTimer = setInterval(() => {
       this.geoLocate()
     }, environment.LOCATION_INERVAL * 1000);
   }
@@ -107,6 +108,8 @@ export class TrackingPage {
 
             this.api.stopTracking(this.sessionID).then((result) => {
               // stopTracking OK
+              clearInterval(this.iTimer)                  // stops interval
+              this.iTimer = null
               this.localData.delete('session_id')
               this.localData.delete('current_worker')
               this.localData.delete('current_veichle')
@@ -156,6 +159,22 @@ export class TrackingPage {
 
       }).catch((error) => {
         // API Error
+        if (error.http_status.code === 404) {
+
+          // ERORR 404 returned by server
+          // tracking session stopped by admin
+          this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
+            clearInterval(this.iTimer)                  // stops interval
+            this.iTimer = null
+            this.localData.delete('session_id')
+            this.localData.delete('current_worker')
+            this.localData.delete('current_veichle')
+            this.navCtrl.navigateRoot('login-veichle')
+          })
+          return
+        }
+
+        // other API errors
         console.error(error)
       });
     }).catch((error) => {

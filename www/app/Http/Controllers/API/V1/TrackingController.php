@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\API\V1\WorkerController;
 use App\Http\Controllers\UtilsController;
+use App\Http\Controllers\TrackingSessionController;
 use DB;
 use DateTime;
 use Illuminate\Pagination\Paginator;
@@ -17,16 +18,17 @@ use \Illuminate\Pagination\LengthAwarePaginator;
 class TrackingController extends BaseController
 {
     private $utils;
-
+    private $TSC;
 // #region Constructor
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(UtilsController $utilsController)
+    public function __construct(UtilsController $utilsController, TrackingSessionController $trackinSessionController)
     {
         $this->utils = $utilsController;
+        $this->TSC = $trackinSessionController;
     }
 // #endregion Constructor
 
@@ -127,6 +129,13 @@ class TrackingController extends BaseController
             }
         }
 
+        // Depending on Map Provider
+        $columns = 'latitude, longitude';
+        if (trim(strtolower(env("MIX_MAP_PROVIDER"))) == 'mapbox') {
+            // mapBox (mapbox.com) requires latitude and longitude inverted
+            $columns = 'longitude, latitude';
+        }
+
         if ($sessionID != '') {
             $sql = "select
                         /* replace to change a single JSON object into
@@ -135,8 +144,10 @@ class TrackingController extends BaseController
                     from
                         (
                             select
-                                /* selects as json object */
-                                JSON_ARRAYAGG(JSON_OBJECT(latitude, longitude)) as json_data
+                                /*
+                                    selects as json object
+                                */
+                                JSON_ARRAYAGG(JSON_OBJECT({$columns})) as json_data
                             from tracking_data
                             where
                                 session_id = '{$sessionID}'
@@ -191,7 +202,15 @@ class TrackingController extends BaseController
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {   // NOTE: there's no delete
+    {   // NOTE: there's no delete: we stop tracking session
+
+        $id = trim(strtolower($id));
+
+        if ($this->TSC->endSession($id)) {
+            return $this->sendResponse('OK', 'endSession ' . $id);
+        } else {
+            return $this->sendError('Si è verificato un errore durante il tentativo di interruzione del tragitto. Prego, riprovare.', [], 403);
+        }
     }
 // #endregion API Methods
 
