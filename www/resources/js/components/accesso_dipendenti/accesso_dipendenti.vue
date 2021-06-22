@@ -23,7 +23,9 @@
                     <has-error :form="form" field="worker"></has-error>
                 </div>
                 <div class="form-group">
-                <input v-model="form.codice_timbrata" type="text" name="codice_timbrata"
+                <input v-model="form.codice_timbrata" type="number" name="codice_timbrata"
+                    min="0"
+                    max="99999"
                     placeholder="- Codice Timbrata -"
                     autocomplete="off"
                     class="form-control upper"
@@ -50,6 +52,18 @@ button.button {
 }
 .spinner {
     margin-right: 10px;
+}
+
+/* Hides input[number] up-down arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* Chrome, Safari, Edge, Opera */
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  /* Firefox */
+  -moz-appearance: textfield;
 }
 </style>
 

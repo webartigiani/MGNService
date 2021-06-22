@@ -148,7 +148,7 @@ public function autoUpdate(Request $request) {
             return $this->sendResponse('OK', $sessionID);
         } else {
             // errore durante l'avvio della sessione di tracking
-            return $this->sendError('Errore interno', ['Si è verificato un errore durante l\'avvio della sessione.'], 403);
+            return $this->sendError('Errore interno', ['Si è verificato un errore durante l\'avvio della sessione. Errore: ' . $err], 403);
         }
     }
 
