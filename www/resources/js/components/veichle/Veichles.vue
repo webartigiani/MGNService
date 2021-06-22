@@ -60,6 +60,7 @@
                             :title="`Non abilitato`"></i>
                       </td>
                       <td>
+                        <!--
                         <a :href="'tracking/?session_id=' + item.tracking_session"
                             v-if="item.status == 1"
                             class="action"
@@ -67,6 +68,7 @@
                             >
                             <i class="fas fa-map-marker-alt red" />
                         </a>
+                        -->
                         <a href="#"
                             class="action"
                             title="Modifica"

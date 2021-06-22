@@ -75,6 +75,10 @@
         <ion-input
         [(ngModel)]="code"
         placeholder="Codice timbrata"
+        type="number"
+        maxlength="5"
+        min="0"
+        max="99999"
         #codeID
         ></ion-input>
       </ion-item>

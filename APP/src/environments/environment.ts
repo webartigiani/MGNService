@@ -6,7 +6,7 @@ export const environment = {
   production: false,
 
   APP_TITLE: 'MGN Service',                                 // APP Data
-  APP_VERSION: '1.0.6',
+  APP_VERSION: '1.0.8',
 
   WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',                 // localhost website
   WEB_SITE: 'https://gestionale.mgnservice.it/',             // public website url
