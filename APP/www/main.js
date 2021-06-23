@@ -264,23 +264,6 @@ let UtilsService = class UtilsService {
         else
             return this.network.type.toLocaleLowerCase();
     }
-    openMapByAPP(latitude, longitude) {
-        // open the Map APP (depending on the platform)
-        // pointing to the specified coords
-        // Android: geo:41.1954148,16.6165038
-        // iOS:     maps://maps.apple.com/?q=41.1954148,16.6165038
-        let url = '';
-        if (this.platform.is('android')) {
-            url = 'geo:' + latitude + ',' + longitude;
-        }
-        if (this.platform.is('ios')) {
-            // Note: this links also works on iOS Mobile
-            url = 'maps://maps.apple.com/?q=' + latitude + ',' + longitude;
-        }
-        if (url != '')
-            url = 'https://www.google.it/maps/@' + latitude + ',' + longitude + ',15z';
-        window.open(url);
-    }
     timestampToDateTime(ts) {
         return new Date(ts); //.toLocaleDateString("it-IT")
     }
@@ -360,7 +343,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
-    APP_VERSION: '1.0.8',
+    APP_VERSION: '1.0.9',
     WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
     WEB_SITE: 'https://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
@@ -369,7 +352,7 @@ const environment = {
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'https://gestionale.mgnservice.it/api/app',
     LOCATION_TIMEOUT: 10,
-    LOCATION_INERVAL: 15,
+    LOCATION_INERVAL: 5,
     MAX_PAUSE_TIMEOUT: 15,
     DEBUG_GPS: false,
     SOS_PHONE_NUMBER: '112',
@@ -1563,9 +1546,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GeoLocationService", function() { return GeoLocationService; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic-native/geolocation/ngx */ "Bfh1");
-/* harmony import */ var _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic-native/native-geocoder/ngx */ "h+qT");
-/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/environments/environment */ "AytR");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ionic-native/geolocation/ngx */ "Bfh1");
+/* harmony import */ var _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/native-geocoder/ngx */ "h+qT");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/environments/environment */ "AytR");
 /*
   GeoLocationService Class
   implements geo-location functions
@@ -1588,17 +1572,21 @@ __webpack_require__.r(__webpack_exports__);
 */
 
 
+
 // GeoLocation and GeoCoder
 
 
 
 let GeoLocationService = class GeoLocationService {
-    // #region Variables
     // #endregion Variables
     // #region Constructors
-    constructor(geolocation, nativeGeocoder) {
+    constructor(geolocation, nativeGeocoder, platform) {
         this.geolocation = geolocation;
         this.nativeGeocoder = nativeGeocoder;
+        this.platform = platform;
+        // #region Variables
+        this.lastLat = null; // last coordinates detected
+        this.lastLng = null;
         // constructor...
     }
     // #endregion Constructors
@@ -1612,7 +1600,7 @@ let GeoLocationService = class GeoLocationService {
                 this.geolocation.getCurrentPosition(this.getOptions())
                     .then((data) => {
                     // result
-                    resolve(this.envelopeData(data));
+                    resolve(this.envelopeData(data, 0));
                 }).catch((error) => {
                     /* error
                         possible errors
@@ -1637,7 +1625,15 @@ let GeoLocationService = class GeoLocationService {
                     // getCurrentPosition result
                     // es: 41.1954148 16.6165038
                     if (data.timestamp > 0) {
-                        resolve(this.envelopeData(data));
+                        // calculates distance from the latest point
+                        let distance = 0;
+                        if (this.lastLat !== null) {
+                            distance = this.getDistance(data.coords.latitude, data.coords.longitude, this.lastLat, this.lastLng, 'haversine');
+                            distance = Math.round(distance * 100) / 100; // rounds 2 decimals
+                        }
+                        this.lastLat = data.coords.latitude;
+                        this.lastLng = data.coords.longitude;
+                        resolve(this.envelopeData(data, distance));
                     }
                     else {
                         // location is empty
@@ -1648,18 +1644,63 @@ let GeoLocationService = class GeoLocationService {
             });
         });
     }
+    openMap(latitude, longitude) {
+        // open the Map APP (depending on the platform)
+        // pointing to the specified coords
+        // Android:       geo:44.6318615,11.1861538
+        // iOS:           maps://maps.apple.com/?q=44.6318615,11.1861538
+        // GoogleMaps:    https://www.google.it/maps/place/testo+ricerca/@44.6318615,11.1861538,17z
+        let url = '';
+        if (this.platform.is('android')) {
+            url = 'geo:' + latitude + ',' + longitude;
+        }
+        if (this.platform.is('ios')) {
+            // Note: this links also works on iOS Mobile
+            url = 'maps://maps.apple.com/?q=' + latitude + ',' + longitude;
+        }
+        if (url != '')
+            url = 'https://www.google.it/maps/@' + latitude + ',' + longitude + ',15z';
+        window.open(url);
+    }
+    getDistance(lat1, lon1, lat2, lon2, mode) {
+        let R = 6371; // Earth radius in km
+        switch (mode) {
+            case 'spherical':
+            default:
+                var dLon = this.degToRad(lon2 - lon1);
+                lat1 = this.degToRad(lat1);
+                lat2 = this.degToRad(lat2);
+                var d = Math.acos(Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(dLon)) * R;
+                break;
+            case 'haversine':
+                var dLat = this.degToRad(lat2 - lat1);
+                var dLon = this.degToRad(lon2 - lon1);
+                lat1 = this.degToRad(lat1);
+                lat2 = this.degToRad(lat2);
+                var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                var d = R * c;
+                break;
+            case 'rectangle':
+                var x = this.degToRad(lon2 - lon1) * Math.cos(this.degToRad(lat1 + lat2) / 2);
+                var y = this.degToRad(lat2 - lat1);
+                var d = Math.sqrt(x * x + y * y) * R;
+                break;
+        }
+        return d;
+    }
     // #endregion Public Methods
     // #region Private Methods
     getOptions() {
         // envelope geolocation options
         let ret = {
-            timeout: (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_TIMEOUT * 1000),
+            timeout: (src_environments_environment__WEBPACK_IMPORTED_MODULE_5__["environment"].LOCATION_TIMEOUT * 1000),
             enableHighAccuracy: true,
             maximumAge: 0 // no cached position
         };
         return ret;
     }
-    envelopeData(data) {
+    envelopeData(data, distance) {
         // evenlope getCurrentPosition result
         let ret;
         if (data.timestamp > 0) {
@@ -1667,6 +1708,7 @@ let GeoLocationService = class GeoLocationService {
                 "latitude": data.coords.latitude,
                 "longitude": data.coords.longitude,
                 "accuracy": data.coords.accuracy,
+                "distance": distance,
                 "timestamp": data.timestamp,
                 "valid": true
             };
@@ -1677,16 +1719,24 @@ let GeoLocationService = class GeoLocationService {
                 "latitude": 0,
                 "longitude": 0,
                 "accuracy": 0,
+                "distance": 0,
                 "timestamp": 0,
                 "valid": false
             };
         }
         return ret;
     }
+    degToRad(n) {
+        return n * Math.PI / 180;
+    }
+    radToDeg(n) {
+        return n * 180 / Math.PI;
+    }
 };
 GeoLocationService.ctorParameters = () => [
-    { type: _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_2__["Geolocation"] },
-    { type: _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_3__["NativeGeocoder"] }
+    { type: _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_3__["Geolocation"] },
+    { type: _ionic_native_native_geocoder_ngx__WEBPACK_IMPORTED_MODULE_4__["NativeGeocoder"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"] }
 ];
 GeoLocationService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()

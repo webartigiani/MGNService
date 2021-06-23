@@ -154,24 +154,7 @@ export class UtilsService {
     return this.network.type.toLocaleLowerCase()
   }
 
-  openMapByAPP(latitude: any, longitude: any) {
-    // open the Map APP (depending on the platform)
-    // pointing to the specified coords
 
-    // Android: geo:41.1954148,16.6165038
-    // iOS:     maps://maps.apple.com/?q=41.1954148,16.6165038
-    let url = '';
-
-    if (this.platform.is('android')) {
-      url = 'geo:' + latitude + ',' + longitude
-    }
-    if (this.platform.is('ios')) {
-      // Note: this links also works on iOS Mobile
-      url = 'maps://maps.apple.com/?q=' + latitude + ',' + longitude
-    }
-    if (url != '') url = 'https://www.google.it/maps/@' + latitude + ',' + longitude + ',15z'
-    window.open(url)
-  }
 
   timestampToDateTime(ts) {
     return new Date(ts) //.toLocaleDateString("it-IT")

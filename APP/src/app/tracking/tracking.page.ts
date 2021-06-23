@@ -156,7 +156,7 @@ export class TrackingPage {
         this.gpsData = data
         this.counter++
       }
-      console.log('isPaused', this.isPaued)
+
       const navigationStatus =  this.isPaued ? 'pause': 'running'     // status paused/running
       this.api.continueTracking(this.sessionID, data, navigationStatus)
       .then((result) => {

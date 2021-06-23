@@ -46,8 +46,8 @@ class TrackingSessionController extends Controller
             return '';
         }
 
-        // Checks veichle: id, status, enabled, deleted
-        $sql = "select count(*) value from veichles where id = {$veichle->id} and status = 0 and enabled = 1 and deleted_at is null";
+        // Checks veichle 1: id, status, enabled, deleted
+        $sql = "select count(*) value from veichles where id = {$veichle->id} and enabled = 1 and deleted_at is null";
         $data = DB::select($sql);
         $result = $data[0]->value;
         if ($result <> 1) {
@@ -55,12 +55,30 @@ class TrackingSessionController extends Controller
             return '';
         }
 
-        // Checks device: id, status, enabled, deleted
-        $sql = "select count(*) value from devices where uuid = '{$device->uuid}' and enabled = 1 and status = 0 and deleted_at is null";
+        // Checks veichle 2: status
+        $sql = "select count(*) value from veichles where id = {$veichle->id} and status = 0";
         $data = DB::select($sql);
         $result = $data[0]->value;
         if ($result <> 1) {
-            $errorMessage = 'Dispositivo inesistente, occupato o non disponibile';
+            $errorMessage = 'Veicolo occupato';
+            return '';
+        }
+
+        // Checks device 1: id, status, enabled, deleted
+        $sql = "select count(*) value from devices where uuid = '{$device->uuid}' and enabled = 1 and deleted_at is null";
+        $data = DB::select($sql);
+        $result = $data[0]->value;
+        if ($result <> 1) {
+            $errorMessage = 'Dispositivo non trovato o disabilitato';
+            return '';
+        }
+
+        // Checks device 2: status
+        $sql = "select count(*) value from devices where uuid = '{$device->uuid}' and status = 0";
+        $data = DB::select($sql);
+        $result = $data[0]->value;
+        if ($result <> 1) {
+            $errorMessage = 'Dispositivo occupato';
             return '';
         }
 
@@ -152,6 +170,7 @@ class TrackingSessionController extends Controller
                         'latitude' => $gpsData->latitude,
                         'longitude' => $gpsData->longitude,
                         'accuracy' => $gpsData->accuracy,
+                        'distance' => $gpsData->distance,
                         'is_valid' => $gpsData->valid,
                         'gps_timestamp' => $gpsData->timestamp,
                         'navigation_status' => $navigationStatus,
