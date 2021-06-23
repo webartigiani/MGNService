@@ -69,7 +69,7 @@ export class TrackingPage {
     this.geoLocate()
     this.iTimer = setInterval(() => {
       this.geoLocate()
-    }, environment.LOCATION_INERVAL * 1000);
+    }, environment.LOCATION_INTERVAL * 1000);
   }
   // #endregion Component LifeCycls
 
@@ -142,7 +142,7 @@ export class TrackingPage {
     })
   }
 
-  geoLocate() {
+  geoLocate(retry?: boolean) {
     /**
      * Geo-locate the device
      */
@@ -155,6 +155,22 @@ export class TrackingPage {
       if (data.valid) {
         this.gpsData = data
         this.counter++
+      }
+
+      // Do we have to check accuracy?
+      if ((retry === undefined) && (environment.LOCATION_ACCURACY_THRESHOLD > 0)) {
+        if (data.accuracy > environment.LOCATION_ACCURACY_THRESHOLD) {
+          console.error('out of accuracy treshold', 'detected: ' + data.accuracy, 'max-allowed: ' + environment.LOCATION_ACCURACY_THRESHOLD)
+          // out of accuracy treshold: retry
+          setTimeout(() => {
+            this.geoLocate(true)
+          }, 500);
+          return
+        }
+      } else {
+        if (retry) {
+          // retry done
+        }
       }
 
       const navigationStatus =  this.isPaued ? 'pause': 'running'     // status paused/running

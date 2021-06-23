@@ -120,7 +120,7 @@ let TrackingPage = class TrackingPage {
         this.geoLocate();
         this.iTimer = setInterval(() => {
             this.geoLocate();
-        }, src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_INERVAL * 1000);
+        }, src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_INTERVAL * 1000);
     }
     // #endregion Component LifeCycls
     // #region Public Methods
@@ -189,7 +189,7 @@ let TrackingPage = class TrackingPage {
                 this.phone.call(src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].SOS_PHONE_NUMBER);
         });
     }
-    geoLocate() {
+    geoLocate(retry) {
         /**
          * Geo-locate the device
          */
@@ -201,6 +201,22 @@ let TrackingPage = class TrackingPage {
             if (data.valid) {
                 this.gpsData = data;
                 this.counter++;
+            }
+            // Do we have to check accuracy?
+            if ((retry === undefined) && (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD > 0)) {
+                if (data.accuracy > src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD) {
+                    console.error('out of accuracy treshold', 'detected: ' + data.accuracy, 'max-allowed: ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD);
+                    // out of accuracy treshold: retry
+                    setTimeout(() => {
+                        this.geoLocate(true);
+                    }, 500);
+                    return;
+                }
+            }
+            else {
+                if (retry) {
+                    // retry done
+                }
             }
             const navigationStatus = this.isPaued ? 'pause' : 'running'; // status paused/running
             this.api.continueTracking(this.sessionID, data, navigationStatus)
