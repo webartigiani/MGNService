@@ -105,7 +105,7 @@ export class GeoLocationService {
       // pointing to the specified coords
 
       // Android:       geo:44.6318615,11.1861538
-      // iOS:           maps://maps.apple.com/?q=44.6318615,11.1861538
+      // iOS:           maps://maps.apple.com/?q=40.943616,16.9213952
       // GoogleMaps:    https://www.google.it/maps/place/testo+ricerca/@44.6318615,11.1861538,17z
       let url = '';
 
