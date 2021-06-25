@@ -881,7 +881,6 @@ export default {
         // #region Utils
         presenzaString(item) {
             // returns presenza description
-            console.log('presenzaString ' + item.worker_id, item)
             switch (item.chk) {
                 case -1:
                     // assenza con giustificativo o giornata di riposo

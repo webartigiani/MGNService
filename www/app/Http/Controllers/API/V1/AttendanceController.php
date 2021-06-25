@@ -310,17 +310,18 @@ public function exportXML(Request $request) {
             }
 
             // apre ramo XML dipendente corrente
-            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$workerID}\">";
+            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$workerID}\">\r\n";
             $output .= "\t\t<Movimenti GenerazioneAutomaticaDaTeorico=\"N\">\r\n";
         }   // /se cambia il dipendente...
         $lastWorkerID = $workerID;              // memorizza dipendente corrente
 
         // esporta dati presenze (del dipendente corrente)
-        $output .= "\t\t\t<Movimento>";
-        $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$giustificativo}</CodGiustificativoUfficiale>";
+        $output .= "\t\t\t<Movimento>\r\n";
+        $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$giustificativo}</CodGiustificativoUfficiale>\r\n";
         $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
-        if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$hours}.{$minutes}</NumOre>\r\n";      // ore lavorate nel formato HH.mm
-        $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
+        if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$hours}</NumOre>\r\n";             // ore e minuti lavorati
+        if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumMinuti>{$minutes}</NumMinuti>\r\n";
+        $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>\r\n";
         $output .= "\t\t\t</Movimento>\r\n";
 
         // se c'è assenza o riposo, esportiamo un ulteriore movimento
@@ -336,7 +337,8 @@ public function exportXML(Request $request) {
                 $output .= "\t\t\t<Movimento>";
                 $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$abscence_justification}</CodGiustificativoUfficiale>";
                 $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
-                if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$absence_hours}.{$abscence_minutes}</NumOre>\r\n";      // ore giustificate nel formato HH.mm
+                if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$absence_hours}</NumOre>\r\n";             // ore e minuti giustificati
+                if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumMinuti>{$abscence_minutes}</NumMinuti>\r\n";
                 $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
                 $output .= "\t\t\t</Movimento>\r\n";
             }
@@ -344,8 +346,8 @@ public function exportXML(Request $request) {
     }   // /foreach...
 
     // chiude dati ultimo dipendente elaborato
-    $output .= "\t\t</Movimenti>";
-    $output .= "\t</Dipendente>";
+    $output .= "\t\t</Movimenti>\r\n";
+    $output .= "\t</Dipendente>\r\n";
 
     // aggiunge header e footer
     $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
