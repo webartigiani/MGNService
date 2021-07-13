@@ -405,8 +405,6 @@ export default {
                 }).then((result) => {
                     // Send request to the server
                     if (result.value) {
-
-                        console.log(item)
                         axios.delete('api/tracking/' + item.session_id).then(()=>{
                             Swal.fire(
                                 'Tragitto interrotto!',
@@ -416,6 +414,7 @@ export default {
                             // Fire.$emit('AfterCreate');
                             this.list();
                         }).catch((data)=> {
+                            console.log('data', data)
                             Swal.fire("Failed!", data.message, "warning");
                         });
                     }
