@@ -94,7 +94,7 @@ class TrackingController extends BaseController
             ->skip($skip)
             ->take($perPage)
             ->all();
-
+        $results = array_values($results);              // IMPORTANT: makes sure array doesn't have keys (from 2nd page)
         $result_p = new LengthAwarePaginator($results, $totalCount, $perPage, $page);
         return $this->sendResponse($result_p, 'Tracking Sessions List');
     }

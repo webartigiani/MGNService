@@ -15,6 +15,7 @@ use DB;
 use DateTime;
 use Illuminate\Pagination\Paginator;
 use \Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Controllers\API\V1\Collection;
 
 class AttendanceController extends BaseController
 {
@@ -94,8 +95,8 @@ class AttendanceController extends BaseController
         if ($limit > 0) $sql .= " limit {$limit}";
 
         // TEMP: to export full SQL query
-        #echo $sql;
-        #return;
+        //echo $sql;
+        //return;
 
         // checks if we have working days in selected period...
         if ($sql == '') {
@@ -107,7 +108,7 @@ class AttendanceController extends BaseController
         // if we have days to export
         $dbdata = DB::select(DB::raw($sql));
 
-        /** To paginate RAW Data for LaravelPaginator
+        /** IMPORTANT: to paginate RAW Data for LaravelPaginator
          * *****************************************
          * - turn array into a collection
          * - count records
@@ -123,6 +124,7 @@ class AttendanceController extends BaseController
             ->take($perPage)
             ->all();
 
+        $results = array_values($results);              // IMPORTANT: makes sure array doesn't have keys (from 2nd page)
         $result_p = new LengthAwarePaginator($results, $totalCount, $perPage, $page);
         return $this->sendResponse($result_p, 'Attendances List');
     }
@@ -565,8 +567,17 @@ public function exportNotes(Request $request) {
                                             /*
                                                 selects workers data, attendance data,
                                                 and calculates worked minutes by day and also worked hours and minutes (ready for format HH:mm)
+
+                                                FIX DI SIMONE 2021-07-13:
+                                                id=0 generato in caso di assenza potrebbe essere la causa di problemi
+                                                di visualizzazione e filtri nelle presenze.
+                                                Proviamo sostituendo id=0 in caso di assenza con un valore generato dalla data di riferimento
+                                                + l'id del dipendente
+
+                                                era     IFNULL(att.id, 0) id, calendar.ref_date,
+                                                diventa IFNULL(att.id, concat(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
                                             */
-                                            IFNULL(att.id, 0) id, calendar.ref_date,
+                                            IFNULL(att.id, CONCAT(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
                                             w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status,
                                             calendar.day_date,
                                             att.entrance_date, att.entrance_ip,

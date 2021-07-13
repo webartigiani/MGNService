@@ -14,9 +14,9 @@
                             v-model="filters.per_page"
                             @change="list()"
                             >
-                            <option value="10">10 per pagina</option>
-                            <option value="25">25 per pagina</option>
-                            <option value="50">50 per pagina</option>
+                            <option value=10>10 per pagina</option>
+                            <option value=25>25 per pagina</option>
+                            <option value=50>50 per pagina</option>
                         </select>
                     </div>
                     <!-- tools -->
@@ -285,7 +285,6 @@
                             </b>
                         </div>
 
-
                         <div class="form-group">
                             <label for="entrance_time">Orario Entrata</label>
                             <input type="time" name="entrance_time"
@@ -492,8 +491,7 @@ export default {
             params.query = this.$root.$route.query.search
             axios.get('api/attendance?page=' + page, {
                 params: params
-            }).then(({ data }) => (this.items = data.data));
-            this.$Progress.finish();
+            }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
         },
 
         // #region Modals
@@ -537,7 +535,7 @@ export default {
             this.checkFilters()
             let params = this.filters                           // appends filters and search
             params.query = this.$root.$route.query.search
-            axios.get('api/attendance', {
+            axios.get('api/attendance?page=1', {
                 params: params
             }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
         },
