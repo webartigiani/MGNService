@@ -2,7 +2,7 @@ export const environment = {
   production: false,
 
   APP_TITLE: 'MGN Service',                                 // APP Data
-  APP_VERSION: '1.1.0',
+  APP_VERSION: '1.1.1',
 
   WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',                   // localhost website
   WEB_SITE: 'https://gestionale.mgnservice.it/',              // public website url
@@ -14,8 +14,7 @@ export const environment = {
   API_END_POINT: 'https://gestionale.mgnservice.it/api/app',  // public endpoint
 
   LOCATION_TIMEOUT: 10,                                       // GPS location: request timout (in seconds)
-  LOCATION_INTERVAL: 15,                                      // interval (in seconds)
-  LOCATION_ACCURACY_THRESHOLD: 50,                            // soglia minima accuratezza accettata in geo-localizzazione (in mt). Set 0 to disable
+  LOCATION_INTERVAL: 5,                                       // interval (in seconds)
   MAX_PAUSE_TIMEOUT: 15,                                      // tempo massimo di pausa in minuti
 
   DEBUG_GPS: false,                                           // true to debug GPS data

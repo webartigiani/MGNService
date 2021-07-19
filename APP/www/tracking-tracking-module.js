@@ -107,6 +107,7 @@ let TrackingPage = class TrackingPage {
         this.isPaued = false;
         this.alreadyPaused = false;
         this.iTimer = null; // setInterval
+        this.data = [];
         // gets current session_id from storage
         this.sessionID = this.localData.readValue('session_id');
     }
@@ -116,11 +117,12 @@ let TrackingPage = class TrackingPage {
         // keep screen awake + keeps APP in foreground
         this.utils.keepScreenAwake();
         this.utils.keepForeground();
-        // 1st geo-location, then geo-locate by interval
+        // 1st geo-location, then geo-locate by 1" interval
+        this.data = [];
         this.geoLocate();
         this.iTimer = setInterval(() => {
             this.geoLocate();
-        }, src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_INTERVAL * 1000);
+        }, 1 * 1000);
     }
     // #endregion Component LifeCycls
     // #region Public Methods
@@ -202,39 +204,36 @@ let TrackingPage = class TrackingPage {
                 this.gpsData = data;
                 this.counter++;
             }
-            // Do we have to check accuracy?
-            if ((retry === undefined) && (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD > 0)) {
-                if (data.accuracy > src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD) {
-                    console.error('out of accuracy treshold', 'detected: ' + data.accuracy, 'max-allowed: ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD);
-                    // out of accuracy treshold: retry
-                    setTimeout(() => {
-                        this.geoLocate(true);
-                    }, 500);
-                    return;
-                }
-            }
-            else {
-                if (retry) {
-                    // retry done
-                }
-            }
-            const navigationStatus = this.isPaued ? 'pause' : 'running'; // status paused/running
-            this.api.continueTracking(this.sessionID, data, navigationStatus)
-                .then((result) => {
-                // continueTracking OK
-            }).catch((error) => {
-                // API Error
-                if (error.http_status.code === 404) {
-                    // ERORR 404 returned by server
-                    // tracking session stopped by admin
-                    this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
-                        this.stopTracker();
-                    });
-                    return;
-                }
-                // other API errors
-                console.error(error);
-            });
+            /*
+              Stores data into local array
+              when we got N (environment.LOCATION_INTERVAL) points, we get the best by accuracy
+              by sorting local array. Then we register the position, reset the local array,
+              and redo it all
+            */
+            this.data.push(data);
+            if (this.data.length === src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_INTERVAL) {
+                // sorts array by accuracy, then gets the first, resets the local array
+                this.data.sort((a, b) => parseInt(a.accuracy) - parseInt(b.accuracy));
+                data = this.data[0]; // gets the first point by accuracy
+                this.data = []; // resets local array
+                const navigationStatus = this.isPaued ? 'pause' : 'running'; // status paused/running
+                this.api.continueTracking(this.sessionID, data, navigationStatus)
+                    .then((result) => {
+                    // continueTracking OK
+                }).catch((error) => {
+                    // API Error
+                    if (error.http_status.code === 404) {
+                        // ERORR 404 returned by server
+                        // tracking session stopped by admin
+                        this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
+                            this.stopTracker();
+                        });
+                        return;
+                    }
+                    // other API errors
+                    console.error(error);
+                });
+            } // if (this.data.length...)
         }).catch((error) => {
             // geo-location error
             console.error('Geo-location error', error);
