@@ -30,12 +30,14 @@
         "admin-lte": "^3.1.0",
         "laravel-vue-pagination": "^2.3.1",
         "leaflet": "^1.7.1",
+        "leaflet-routing-machine": "^3.2.12",
         "moment": "^2.29.1",
         "sweetalert2": "^9.17.2",
         "vform": "^1.0.1",
         "vue-moment": "^4.1.0",
         "vue-progressbar": "^0.7.5",
         "vue-router": "^3.4.9",
-        "vue2-leaflet": "^2.7.0"
+        "vue2-leaflet": "^2.7.0",
+        "vue2-leaflet-polylinedecorator": "^2.0.1"
     }
 }

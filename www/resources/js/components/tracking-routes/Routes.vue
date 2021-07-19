@@ -194,28 +194,30 @@
                     </div>
 
                     <div class="modal-body">
-                        <!-- creates the map with polyline -->
-                        <l-map style="height: 800px"
+                        <!-- OpenStreetMap: creates the map with polyline -->
+                        <v-map style="height: 100%"
                             :zoom="mapSettings.zoom"
                             :center="mapData.center"
                         >
-                            <l-tile-layer :url="mapSettings.url"></l-tile-layer>
+                            <v-tilelayer :url="mapSettings.url"></v-tilelayer>
+                            <v-polyline-decorator :paths="mapData.polyline.latlngs" :patterns="patterns"></v-polyline-decorator>
+
                             <!-- start marker with options -->
-                            <l-marker
+                            <v-marker
                                 :lat-lng="mapData.startMarker"
                                 :icon="mapSettings.startPoint"
                                 >
-                                <l-tooltip :options="mapSettings.markerToolTipOptions">Partenza</l-tooltip>
-                            </l-marker>
+                                <v-tooltip :options="mapSettings.markerToolTipOptions">Partenza: {{ addresses.startPoint }}</v-tooltip>
+                            </v-marker>
                             <!-- end marker with options -->
-                            <l-marker
+                            <v-marker
                                 :lat-lng="mapData.endMarker"
                                 :icon="mapSettings.endPoint"
                                 >
-                                <l-tooltip :options="mapSettings.markerToolTipOptions">Arrivo</l-tooltip>
-                            </l-marker>
-                            <l-polyline :lat-lngs="mapData.polyline.latlngs" :color="mapSettings.color"></l-polyline>
-                        </l-map>
+                                <v-tooltip :options="mapSettings.markerToolTipOptions">Arrivo: {{ addresses.endPoint }} </v-tooltip>
+                            </v-marker>
+                            <v-polyline :lat-lngs="mapData.polyline.latlngs" :color="mapSettings.color"></v-polyline>
+                        </v-map>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
@@ -268,22 +270,35 @@ import Vue from 'vue'
 /* OpenStreetMap VueJS.
     components  https://vue2-leaflet.netlify.app/components/
     examples    https://vue2-leaflet.netlify.app/examples/
+
+    Other Plugins:
+    - vue2-leaflet-polylinedecorator
+        to decorate paths with arrows
+        see https://www.npmjs.com/package/vue2-leaflet-polylinedecorator
+
+    - vue2-leaflet-routing-machine
+        see https://github.com/giordanna/vue2-leaflet-routing-machine/blob/master/src/components/LRoutingMachine.vue
 */
+import L from "leaflet";
 import { latLng, icon } from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup, LTooltip, LPolyline } from "vue2-leaflet";
-import 'leaflet/dist/leaflet.css'
+//import { LMap, LTileLayer, LMarker, LPopup, LTooltip, LPolyline } from "vue2-leaflet";
+import * as Vue2Leaflet from "vue2-leaflet";
+import 'leaflet/dist/leaflet.css';
+import Vue2LeafletPolylineDecorator from 'vue2-leaflet-polylinedecorator'
+import { IRouter, IGeocoder, LineOptions } from 'leaflet-routing-machine'
+
+Vue.component('v-polyline-decorator', Vue2LeafletPolylineDecorator)
 
 export default {
     components: {
         VueTagsInput,
 
         // OpenStreetMap VueJS
-        LMap,
-        LTileLayer,
-        LMarker,
-        LPopup,
-        LTooltip,
-        LPolyline
+        'v-map': Vue2Leaflet.LMap,
+        'v-tilelayer': Vue2Leaflet.LTileLayer,
+        'v-marker': Vue2Leaflet.LMarker,
+        'v-tooltip': Vue2Leaflet.LTooltip,
+        'v-polyline': Vue2Leaflet.LPolyline
     },
 
     // #region Properties
@@ -315,7 +330,6 @@ export default {
             mapSettings: {
                 url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 zoom: 17,
-                color: 'gray',
                 // markers tooltip options
                 markerToolTipOptions: {
                     permanent: true,
@@ -331,7 +345,20 @@ export default {
                     iconUrl: "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png",
                     iconSize: [48, 48],
                     iconAnchor: [16, 32]
-                }),
+                })
+            },
+            patterns: [{
+                offset: 50,             /* pos of first arrow */
+                repeat: 100,             /* dist between arrows */
+                symbol: L.Symbol.arrowHead({ // Define the arrow symbol
+                    pixelSize: 10,      // Size
+                    polygon: false,     // false: ^ shape, true: triangle shape.
+                    pathOptions: {stroke: true} // Required to actually draw the arrow.
+                })
+            }],
+            addresses: {                // start-end address from  nominatim.org reverse API
+                startPoint: '',         // see: https://nominatim.org/release-docs/latest/api/Reverse/
+                endPoint: ''
             }
         }
     },
@@ -369,6 +396,10 @@ export default {
                         window.dispatchEvent(new Event('resize'))
                         this.$Progress.finish()
                     }, 250);
+
+                    // gets starting and end point addresses
+                    this.reversePoints(data)
+
                 } else {
                     Swal.fire({
                         title: 'Ops!',
@@ -459,6 +490,23 @@ export default {
         },
         // #endregion Filters Functions
 
+        // #region Geo-Coding API
+        reversePoints(data) {
+            let self = this
+            let url = ''
+
+            url = 'https://nominatim.openstreetmap.org/reverse?lat=' + data.data.start[0] + '&lon=' + data.data.start[1] + '&format=json'
+            axios.get(url, {}).then(({ data }) => {
+                self.addresses.startPoint = data.address.road + ', ' + data.address.house_number + ' - ' + data.address.town + ' (' + data.address.county + ')'
+            })
+            url = 'https://nominatim.openstreetmap.org/reverse?lat=' + data.data.end[0] + '&lon=' + data.data.end[1] + '&format=json'
+            axios.get(url, {}).then(({ data }) => {
+                self.addresses.endPoint = data.address.road + ', ' + data.address.house_number + ' - ' + data.address.town + ' (' + data.address.county + ')'
+            })
+        },
+
+        // #endregion Geo-Coding API
+
         // #region Utils
         presenzaString(item) {
             // returns presenza description
@@ -504,7 +552,7 @@ export default {
             if (t == null) return ''
             if (dayDate == '') return ''
             return t.replace(dayDate, '').trim()
-        }
+        },
         // #endregion utils
     },
     // #region Methods
