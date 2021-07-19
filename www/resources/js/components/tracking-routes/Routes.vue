@@ -195,7 +195,7 @@
 
                     <div class="modal-body">
                         <!-- creates the map with polyline -->
-                        <l-map style="height: 500px"
+                        <l-map style="height: 800px"
                             :zoom="mapSettings.zoom"
                             :center="mapData.center"
                         >
@@ -203,14 +203,14 @@
                             <!-- start marker with options -->
                             <l-marker
                                 :lat-lng="mapData.startMarker"
-                                :icon="mapSettings.carIcon"
+                                :icon="mapSettings.startPoint"
                                 >
                                 <l-tooltip :options="mapSettings.markerToolTipOptions">Partenza</l-tooltip>
                             </l-marker>
                             <!-- end marker with options -->
                             <l-marker
                                 :lat-lng="mapData.endMarker"
-                                :icon="mapSettings.carIcon"
+                                :icon="mapSettings.endPoint"
                                 >
                                 <l-tooltip :options="mapSettings.markerToolTipOptions">Arrivo</l-tooltip>
                             </l-marker>
@@ -314,17 +314,22 @@ export default {
             // OpenStreet Map Settings
             mapSettings: {
                 url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                zoom: 20,
-                color: 'red',
+                zoom: 17,
+                color: 'gray',
                 // markers tooltip options
                 markerToolTipOptions: {
                     permanent: true,
-                    opacity: 0.2
+                    opacity: 1
                 },
                 // markers custom icons
-                carIcon: icon({
-                    iconUrl: "https://image.flaticon.com/icons/png/512/65/65578.png",
-                    iconSize: [32, 32],
+                startPoint: icon({
+                    iconUrl: "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png",
+                    iconSize: [48, 48],
+                    iconAnchor: [16, 32]
+                }),
+                endPoint: icon({
+                    iconUrl: "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png",
+                    iconSize: [48, 48],
                     iconAnchor: [16, 32]
                 }),
             }
@@ -354,12 +359,11 @@ export default {
             axios.get('api/tracking/' + item.id, {}).then(({ data }) => {
 
                 if (data.success) {
-                    this.mapData.status = data.data.start
+                    this.mapData.startMarker = data.data.start
                     this.mapData.endMarker = data.data.end
                     this.mapData.center = data.data.start
                     this.mapData.polyline.latlngs = data.data.latlngs
 
-                    console.log(data.data.latlngs)
                     $('#modalTracking').modal('show');
                     setTimeout(function() {
                         window.dispatchEvent(new Event('resize'))
