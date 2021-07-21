@@ -587,9 +587,7 @@ public function exportNotes(Request $request) {
                                             IFNULL(att.duration_h_int, 0) duration_h_int,
                                             IFNULL(att.residual_m, 0) residual_m,
                                             IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
-                                            IFNULL(att.chk, -1) chk,
-                                            /* data_cessazione qui mi serve solo per poterlo usare nel where in fondo alla query */
-                                            w.data_cessazione
+                                            IFNULL(att.chk, -1) chk
                                         from
                                         (   /*
                                                 select days of period from calendar
@@ -608,12 +606,7 @@ public function exportNotes(Request $request) {
                                             and att.worker_id = w.id
                                     ) presenze
                                 where
-                                    /*
-                                        2021-07-20 SIMONE: aggiungo filtro dipendenti su data_cessazione
-                                        per escludere i dipendenti licenziati prima della data di riferimento.
-                                        Prima era where 1=1
-                                    */
-                                    data_cessazione is null or data_cessazione > ref_date
+                                    1=1
                                     ";
         if ($notAtWork) $sql .= " and chk <= 0";        // show only not at work?
         if ($searchQuery != '') {
