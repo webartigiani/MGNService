@@ -9,11 +9,44 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
+      "id": "cordova-plugin-appversion.RareloopAppVersion",
+      "file": "plugins/cordova-plugin-appversion/www/app-version.js",
+      "pluginId": "cordova-plugin-appversion",
+      "clobbers": [
+        "AppVersion"
+      ]
+    },
+    {
+      "id": "cordova-plugin-app-update.AppUpdate",
+      "file": "plugins/cordova-plugin-app-update/www/AppUpdate.js",
+      "pluginId": "cordova-plugin-app-update",
+      "clobbers": [
+        "AppUpdate"
+      ]
+    },
+    {
+      "id": "cordova-plugin-autostart.AutoStart",
+      "file": "plugins/cordova-plugin-autostart/www/auto-start.js",
+      "pluginId": "cordova-plugin-autostart",
+      "clobbers": [
+        "cordova.plugins.autoStart"
+      ]
+    },
+    {
       "id": "cordova-plugin-device.device",
       "file": "plugins/cordova-plugin-device/www/device.js",
       "pluginId": "cordova-plugin-device",
       "clobbers": [
         "device"
+      ]
+    },
+    {
+      "id": "cordova-plugin-background-mode.BackgroundMode",
+      "file": "plugins/cordova-plugin-background-mode/www/background-mode.js",
+      "pluginId": "cordova-plugin-background-mode",
+      "clobbers": [
+        "cordova.plugins.backgroundMode",
+        "plugin.backgroundMode"
       ]
     },
     {
@@ -37,6 +70,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "file": "plugins/cordova-plugin-geolocation/www/PositionError.js",
       "pluginId": "cordova-plugin-geolocation",
       "runs": true
+    },
+    {
+      "id": "cordova-plugin-insomnia.Insomnia",
+      "file": "plugins/cordova-plugin-insomnia/www/Insomnia.js",
+      "pluginId": "cordova-plugin-insomnia",
+      "clobbers": [
+        "window.plugins.insomnia"
+      ]
     },
     {
       "id": "cordova-plugin-ionic-keyboard.keyboard",
@@ -93,55 +134,19 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "call"
       ]
-    },
-    {
-      "id": "cordova-plugin-background-mode.BackgroundMode",
-      "file": "plugins/cordova-plugin-background-mode/www/background-mode.js",
-      "pluginId": "cordova-plugin-background-mode",
-      "clobbers": [
-        "cordova.plugins.backgroundMode",
-        "plugin.backgroundMode"
-      ]
-    },
-    {
-      "id": "cordova-plugin-insomnia.Insomnia",
-      "file": "plugins/cordova-plugin-insomnia/www/Insomnia.js",
-      "pluginId": "cordova-plugin-insomnia",
-      "clobbers": [
-        "window.plugins.insomnia"
-      ]
-    },
-    {
-      "id": "cordova-plugin-appversion.RareloopAppVersion",
-      "file": "plugins/cordova-plugin-appversion/www/app-version.js",
-      "pluginId": "cordova-plugin-appversion",
-      "clobbers": [
-        "AppVersion"
-      ]
-    },
-    {
-      "id": "cordova-plugin-app-update.AppUpdate",
-      "file": "plugins/cordova-plugin-app-update/www/AppUpdate.js",
-      "pluginId": "cordova-plugin-app-update",
-      "clobbers": [
-        "AppUpdate"
-      ]
-    },
-    {
-      "id": "cordova-plugin-autostart.AutoStart",
-      "file": "plugins/cordova-plugin-autostart/www/auto-start.js",
-      "pluginId": "cordova-plugin-autostart",
-      "clobbers": [
-        "cordova.plugins.autoStart"
-      ]
     }
   ];
   module.exports.metadata = {
     "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-android-permissions": "1.1.2",
+    "cordova-plugin-appversion": "1.0.0",
+    "cordova-plugin-app-update": "2.0.2",
+    "cordova-plugin-autostart": "2.3.0",
     "cordova-plugin-device": "2.0.3",
+    "cordova-plugin-background-mode": "0.7.3",
     "cordova-plugin-dreamover-uid": "1.3.0",
     "cordova-plugin-geolocation": "4.1.0",
+    "cordova-plugin-insomnia": "4.3.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "4.2.1",
     "cordova-plugin-nativegeocoder": "3.4.1",
@@ -149,11 +154,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-statusbar": "2.4.2",
     "cordova-plugin-unique-device-id2": "2.0.0",
     "cordova-plugin-whitelist": "1.3.3",
-    "mx.ferreyra.callnumber": "0.0.2",
-    "cordova-plugin-background-mode": "0.7.3",
-    "cordova-plugin-insomnia": "4.3.0",
-    "cordova-plugin-appversion": "1.0.0",
-    "cordova-plugin-app-update": "2.0.2",
-    "cordova-plugin-autostart": "2.3.0"
+    "mx.ferreyra.callnumber": "0.0.2"
   };
 });

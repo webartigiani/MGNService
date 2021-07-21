@@ -114,26 +114,33 @@ export class StartPage {
     // checks for App Updates
     if (!this.utils.isDebug()) {
       // running on Device
-      const updateUrl = this.updateUrl()
-      this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
-        /**
-         * Returns
-         *
-          {"code": 202, "msg": "success, up to date."}          // when APP is updated
-          {code: 201, msg: "success, need date."}               // when Update is needed
-         */
-        if (result.code === 201) {
-          this.statusDesc = 'Aggiornamento APP in corso...';    // Update needed
-          return
-        } else {
-          // other codes....
+
+      if (environment.LOOK_FOR_UPDATES) {
+        // looks for updates
+        const updateUrl = this.updateUrl()
+        this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
+          /**
+           * Returns
+           *
+            {"code": 202, "msg": "success, up to date."}          // when APP is updated
+            {code: 201, msg: "success, need date."}               // when Update is needed
+           */
+          if (result.code === 201) {
+            this.statusDesc = 'Aggiornamento APP in corso...';    // Update needed
+            return
+          } else {
+            // other codes....
+            this.startApp()
+          }
+        }).catch((error) => {
+          // error getting update info
+          console.error('checkUpdates errore', error);
           this.startApp()
-        }
-      }).catch((error) => {
-        // error getting update info
-        console.error('checkUpdates errore', error);
+        })
+      } else {
+        // NOTE: look for app updates disabled via environment
         this.startApp()
-      })
+      }
     } else {
       // DEBUG mode (browser)
       this.startApp()

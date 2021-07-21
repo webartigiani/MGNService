@@ -19,4 +19,5 @@ export const environment = {
 
   DEBUG_GPS: false,                                           // true to debug GPS data
   SOS_PHONE_NUMBER: '112',                                    // SOS Phone Number
+  LOOK_FOR_UPDATES: false                                     // looks for app updates at start up
 };

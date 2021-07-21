@@ -300,7 +300,7 @@ let UtilsService = class UtilsService {
             this.backgroundMode.enable();
             this.backgroundMode.on('activate').subscribe(() => {
                 // restores foreground when goes to background-mode
-                this.backgroundMode.moveToForeground();
+                //this.backgroundMode.moveToForeground();
             });
             setInterval(() => {
                 if (this.backgroundMode.isActive()) {
@@ -353,6 +353,7 @@ const environment = {
     MAX_PAUSE_TIMEOUT: 15,
     DEBUG_GPS: false,
     SOS_PHONE_NUMBER: '112',
+    LOOK_FOR_UPDATES: false // looks for app updates at start up
 };
 
 
