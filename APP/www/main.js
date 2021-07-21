@@ -340,7 +340,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
-    APP_VERSION: '1.1.1',
+    APP_VERSION: '1.1.0',
     WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
     WEB_SITE: 'https://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
@@ -349,7 +349,8 @@ const environment = {
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'https://gestionale.mgnservice.it/api/app',
     LOCATION_TIMEOUT: 10,
-    LOCATION_INTERVAL: 5,
+    LOCATION_INTERVAL: 15,
+    LOCATION_ACCURACY_THRESHOLD: 50,
     MAX_PAUSE_TIMEOUT: 15,
     DEBUG_GPS: false,
     SOS_PHONE_NUMBER: '112',
@@ -1638,7 +1639,7 @@ let GeoLocationService = class GeoLocationService {
         // open the Map APP (depending on the platform)
         // pointing to the specified coords
         // Android:       geo:44.6318615,11.1861538
-        // iOS:           maps://maps.apple.com/?q=40.943616,16.9213952
+        // iOS:           maps://maps.apple.com/?q=44.6318615,11.1861538
         // GoogleMaps:    https://www.google.it/maps/place/testo+ricerca/@44.6318615,11.1861538,17z
         let url = '';
         if (this.platform.is('android')) {

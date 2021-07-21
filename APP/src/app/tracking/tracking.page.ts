@@ -34,7 +34,6 @@ export class TrackingPage {
   isPaued: boolean = false
   alreadyPaused: boolean = false
   iTimer: any = null                        // setInterval
-  data = []
   // #endregion Variables
 
   // #region Constructor
@@ -66,12 +65,11 @@ export class TrackingPage {
     this.utils.keepScreenAwake()
     this.utils.keepForeground()
 
-    // 1st geo-location, then geo-locate by 1" interval
-    this.data = [];
-    this.geoLocate();
+    // 1st geo-location, then geo-locate by interval
+    this.geoLocate()
     this.iTimer = setInterval(() => {
-      this.geoLocate();
-    }, 1 * 1000);
+      this.geoLocate()
+    }, environment.LOCATION_INTERVAL * 1000);
   }
   // #endregion Component LifeCycls
 
@@ -155,51 +153,49 @@ export class TrackingPage {
        * we call continueTracking API
        */
       if (data.valid) {
-        this.gpsData = data;
-        this.counter++;
+        this.gpsData = data
+        this.counter++
       }
 
-      /*
-        Stores data into local array
-        when we got N (environment.LOCATION_INTERVAL) points, we get the best by accuracy
-        by sorting local array. Then we register the position, reset the local array,
-        and redo it all
-      */
-      this.data.push(data);
+      // Do we have to check accuracy?
+      if ((retry === undefined) && (environment.LOCATION_ACCURACY_THRESHOLD > 0)) {
+        if (data.accuracy > environment.LOCATION_ACCURACY_THRESHOLD) {
+          console.error('out of accuracy treshold', 'detected: ' + data.accuracy, 'max-allowed: ' + environment.LOCATION_ACCURACY_THRESHOLD)
+          // out of accuracy treshold: retry
+          setTimeout(() => {
+            this.geoLocate(true)
+          }, 500);
+          return
+        }
+      } else {
+        if (retry) {
+          // retry done
+        }
+      }
 
-      if (this.data.length === environment.LOCATION_INTERVAL) {
-        // sorts array by accuracy, then gets the first, resets the local array
-        this.data.sort((a, b) => parseInt(a.accuracy) - parseInt(b.accuracy));
-        data = this.data[0] ;           // gets the first point by accuracy
-        this.data = [];                 // resets local array
+      const navigationStatus =  this.isPaued ? 'pause': 'running'     // status paused/running
+      this.api.continueTracking(this.sessionID, data, navigationStatus)
+      .then((result) => {
+        // continueTracking OK
 
-        const navigationStatus =  this.isPaued ? 'pause': 'running';     // status paused/running
-        this.api.continueTracking(this.sessionID, data, navigationStatus)
-        .then((result) => {
-          // continueTracking OK
+      }).catch((error) => {
+        // API Error
+        if (error.http_status.code === 404) {
 
-        }).catch((error) => {
-          // API Error
-          if (error.http_status.code === 404) {
+          // ERORR 404 returned by server
+          // tracking session stopped by admin
+          this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
+            this.stopTracker()
+          })
+          return
+        }
 
-            // ERORR 404 returned by server
-            // tracking session stopped by admin
-            this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto',
-              'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
-              this.stopTracker();
-            });
-            return;
-          }
-
-          // other API errors
-          console.error(error);
-        });
-
-      } // if (this.data.length...)
-
+        // other API errors
+        console.error(error)
+      });
     }).catch((error) => {
       // geo-location error
-      console.error('Geo-location error', error);
+      console.error('Geo-location error', error)
     })
   }
   // #endregion Public Methods
