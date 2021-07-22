@@ -1,4 +1,11 @@
 {
+  "_args": [
+    [
+      "cordova-plugin-appversion@1.0.0",
+      "/Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/MGN/APP"
+    ]
+  ],
+  "_development": true,
   "_from": "cordova-plugin-appversion@1.0.0",
   "_id": "cordova-plugin-appversion@1.0.0",
   "_inBundle": false,
@@ -16,12 +23,10 @@
     "fetchSpec": "1.0.0"
   },
   "_requiredBy": [
-    "#DEV:/",
-    "#USER"
+    "#DEV:/"
   ],
   "_resolved": "https://registry.npmjs.org/cordova-plugin-appversion/-/cordova-plugin-appversion-1.0.0.tgz",
-  "_shasum": "b60a3913e475935f9008930b469725c263942891",
-  "_spec": "cordova-plugin-appversion@1.0.0",
+  "_spec": "1.0.0",
   "_where": "/Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/MGN/APP",
   "author": {
     "name": "Rareloop",
@@ -30,7 +35,6 @@
   "bugs": {
     "url": "https://github.com/Rareloop/cordova-plugin-app-version/issues"
   },
-  "bundleDependencies": false,
   "cordova": {
     "id": "cordova-plugin-appversion",
     "platforms": [
@@ -38,7 +42,6 @@
       "ios"
     ]
   },
-  "deprecated": false,
   "description": "Access the native app version & build number in JavaScript",
   "homepage": "https://github.com/Rareloop/cordova-plugin-app-version",
   "keywords": [

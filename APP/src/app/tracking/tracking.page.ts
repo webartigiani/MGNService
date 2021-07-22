@@ -64,7 +64,6 @@ export class TrackingPage {
 
     // keep screen awake + keeps APP in foreground
     this.utils.keepScreenAwake()
-    this.utils.keepForeground()
 
     // 1st geo-location, then geo-locate by 1" interval
     this.data = [];

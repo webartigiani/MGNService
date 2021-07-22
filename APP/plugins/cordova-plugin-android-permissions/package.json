@@ -1,35 +1,39 @@
 {
-  "_from": "cordova-plugin-android-permissions",
+  "_args": [
+    [
+      "cordova-plugin-android-permissions@1.1.2",
+      "/Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/MGN/APP"
+    ]
+  ],
+  "_development": true,
+  "_from": "cordova-plugin-android-permissions@1.1.2",
   "_id": "cordova-plugin-android-permissions@1.1.2",
   "_inBundle": false,
   "_integrity": "sha512-vJd56gLaSgQnB/4+uUjyVwVAii5TszBPAgjVkGvM8658cP5rjiNFAWmoOYkjeSe1I6dJk+MGrh/GbPkn0a+2OA==",
   "_location": "/cordova-plugin-android-permissions",
   "_phantomChildren": {},
   "_requested": {
-    "type": "tag",
+    "type": "version",
     "registry": true,
-    "raw": "cordova-plugin-android-permissions",
+    "raw": "cordova-plugin-android-permissions@1.1.2",
     "name": "cordova-plugin-android-permissions",
     "escapedName": "cordova-plugin-android-permissions",
-    "rawSpec": "",
+    "rawSpec": "1.1.2",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": "1.1.2"
   },
   "_requiredBy": [
-    "#DEV:/",
-    "#USER"
+    "#DEV:/"
   ],
   "_resolved": "https://registry.npmjs.org/cordova-plugin-android-permissions/-/cordova-plugin-android-permissions-1.1.2.tgz",
-  "_shasum": "ef1ef9a3e596066bf27b1bb4fb96f2331ed48d19",
-  "_spec": "cordova-plugin-android-permissions",
-  "_where": "/Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/Mobile/mobiLocator (ionic-angular)/mobi-locator",
+  "_spec": "1.1.2",
+  "_where": "/Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/MGN/APP",
   "author": {
     "name": "Jason Yang"
   },
   "bugs": {
     "url": "https://github.com/NeoLSN/cordova-plugin-android-permission/issues"
   },
-  "bundleDependencies": false,
   "cordova": {
     "id": "cordova-plugin-android-permissions",
     "platforms": [
@@ -38,7 +42,6 @@
       "browser"
     ]
   },
-  "deprecated": false,
   "description": "Android 6.0 permissions check.",
   "engines": [
     {

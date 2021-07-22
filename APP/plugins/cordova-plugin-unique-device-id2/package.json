@@ -1,28 +1,33 @@
 {
-  "_from": "cordova-plugin-unique-device-id2",
+  "_args": [
+    [
+      "cordova-plugin-unique-device-id2@2.0.0",
+      "/Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/MGN/APP"
+    ]
+  ],
+  "_development": true,
+  "_from": "cordova-plugin-unique-device-id2@2.0.0",
   "_id": "cordova-plugin-unique-device-id2@2.0.0",
   "_inBundle": false,
   "_integrity": "sha512-U7Y7LDThuVjekpKRHkmQ/I2EE5UG3/CtJQGGhFNSxkQVDiuTvZAIqojpEiTX+9TQNirEX5XW4Q+XVAungrKvIw==",
   "_location": "/cordova-plugin-unique-device-id2",
   "_phantomChildren": {},
   "_requested": {
-    "type": "tag",
+    "type": "version",
     "registry": true,
-    "raw": "cordova-plugin-unique-device-id2",
+    "raw": "cordova-plugin-unique-device-id2@2.0.0",
     "name": "cordova-plugin-unique-device-id2",
     "escapedName": "cordova-plugin-unique-device-id2",
-    "rawSpec": "",
+    "rawSpec": "2.0.0",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": "2.0.0"
   },
   "_requiredBy": [
-    "#DEV:/",
-    "#USER"
+    "#DEV:/"
   ],
   "_resolved": "https://registry.npmjs.org/cordova-plugin-unique-device-id2/-/cordova-plugin-unique-device-id2-2.0.0.tgz",
-  "_shasum": "9ae69923f5d84145739a5a2ced80c9e69d43961a",
-  "_spec": "cordova-plugin-unique-device-id2",
-  "_where": "/Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/Mobile/mobiLocator (ionic-angular)/mobi-locator",
+  "_spec": "2.0.0",
+  "_where": "/Users/simonescigliuzzi/Documents/WebArtigiani/Progetti/MGN/APP",
   "author": {
     "name": "Domonkos Pal",
     "email": "public@dpal.hu",
@@ -31,7 +36,6 @@
   "bugs": {
     "url": "https://github.com/wizpanda/cordova-plugin-unique-device-id2/issues"
   },
-  "bundleDependencies": false,
   "cordova": {
     "id": "cordova-plugin-unique-device-id2",
     "platforms": [
@@ -40,7 +44,6 @@
       "wp8"
     ]
   },
-  "deprecated": false,
   "description": "PhoneGap / Cordova unique device id (UUID) plugin for Android, iOS and Windows Phone 8.",
   "engines": [
     {

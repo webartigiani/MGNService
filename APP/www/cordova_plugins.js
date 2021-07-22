@@ -1,6 +1,14 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
   module.exports = [
     {
+      "id": "call-number.CallNumber",
+      "file": "plugins/call-number/www/CallNumber.js",
+      "pluginId": "call-number",
+      "clobbers": [
+        "call"
+      ]
+    },
+    {
       "id": "cordova-plugin-android-permissions.Permissions",
       "file": "plugins/cordova-plugin-android-permissions/www/permissions.js",
       "pluginId": "cordova-plugin-android-permissions",
@@ -9,19 +17,27 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
+      "id": "cordova-plugin-appversion.RareloopAppVersion",
+      "file": "plugins/cordova-plugin-appversion/www/app-version.js",
+      "pluginId": "cordova-plugin-appversion",
+      "clobbers": [
+        "AppVersion"
+      ]
+    },
+    {
+      "id": "cordova-plugin-app-update.AppUpdate",
+      "file": "plugins/cordova-plugin-app-update/www/AppUpdate.js",
+      "pluginId": "cordova-plugin-app-update",
+      "clobbers": [
+        "AppUpdate"
+      ]
+    },
+    {
       "id": "cordova-plugin-device.device",
       "file": "plugins/cordova-plugin-device/www/device.js",
       "pluginId": "cordova-plugin-device",
       "clobbers": [
         "device"
-      ]
-    },
-    {
-      "id": "cordova-plugin-dreamover-uid.uid",
-      "file": "plugins/cordova-plugin-dreamover-uid/www/uid.js",
-      "pluginId": "cordova-plugin-dreamover-uid",
-      "clobbers": [
-        "cordova.plugins.uid"
       ]
     },
     {
@@ -37,6 +53,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "file": "plugins/cordova-plugin-geolocation/www/PositionError.js",
       "pluginId": "cordova-plugin-geolocation",
       "runs": true
+    },
+    {
+      "id": "cordova-plugin-insomnia.Insomnia",
+      "file": "plugins/cordova-plugin-insomnia/www/Insomnia.js",
+      "pluginId": "cordova-plugin-insomnia",
+      "clobbers": [
+        "window.plugins.insomnia"
+      ]
     },
     {
       "id": "cordova-plugin-ionic-keyboard.keyboard",
@@ -85,75 +109,23 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "merges": [
         "window.plugins.uniqueDeviceID"
       ]
-    },
-    {
-      "id": "mx.ferreyra.callnumber.CallNumber",
-      "file": "plugins/mx.ferreyra.callnumber/www/CallNumber.js",
-      "pluginId": "mx.ferreyra.callnumber",
-      "clobbers": [
-        "call"
-      ]
-    },
-    {
-      "id": "cordova-plugin-background-mode.BackgroundMode",
-      "file": "plugins/cordova-plugin-background-mode/www/background-mode.js",
-      "pluginId": "cordova-plugin-background-mode",
-      "clobbers": [
-        "cordova.plugins.backgroundMode",
-        "plugin.backgroundMode"
-      ]
-    },
-    {
-      "id": "cordova-plugin-insomnia.Insomnia",
-      "file": "plugins/cordova-plugin-insomnia/www/Insomnia.js",
-      "pluginId": "cordova-plugin-insomnia",
-      "clobbers": [
-        "window.plugins.insomnia"
-      ]
-    },
-    {
-      "id": "cordova-plugin-appversion.RareloopAppVersion",
-      "file": "plugins/cordova-plugin-appversion/www/app-version.js",
-      "pluginId": "cordova-plugin-appversion",
-      "clobbers": [
-        "AppVersion"
-      ]
-    },
-    {
-      "id": "cordova-plugin-app-update.AppUpdate",
-      "file": "plugins/cordova-plugin-app-update/www/AppUpdate.js",
-      "pluginId": "cordova-plugin-app-update",
-      "clobbers": [
-        "AppUpdate"
-      ]
-    },
-    {
-      "id": "cordova-plugin-autostart.AutoStart",
-      "file": "plugins/cordova-plugin-autostart/www/auto-start.js",
-      "pluginId": "cordova-plugin-autostart",
-      "clobbers": [
-        "cordova.plugins.autoStart"
-      ]
     }
   ];
   module.exports.metadata = {
+    "call-number": "0.0.2",
     "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-android-permissions": "1.1.2",
+    "cordova-plugin-appversion": "1.0.0",
+    "cordova-plugin-app-update": "2.0.2",
     "cordova-plugin-device": "2.0.3",
-    "cordova-plugin-dreamover-uid": "1.3.0",
     "cordova-plugin-geolocation": "4.1.0",
+    "cordova-plugin-insomnia": "4.3.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "4.2.1",
     "cordova-plugin-nativegeocoder": "3.4.1",
     "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-statusbar": "2.4.2",
     "cordova-plugin-unique-device-id2": "2.0.0",
-    "cordova-plugin-whitelist": "1.3.3",
-    "mx.ferreyra.callnumber": "0.0.2",
-    "cordova-plugin-background-mode": "0.7.3",
-    "cordova-plugin-insomnia": "4.3.0",
-    "cordova-plugin-appversion": "1.0.0",
-    "cordova-plugin-app-update": "2.0.2",
-    "cordova-plugin-autostart": "2.3.0"
+    "cordova-plugin-whitelist": "1.3.3"
   };
 });

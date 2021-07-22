@@ -34,16 +34,6 @@ import { Network } from '@ionic-native/network/ngx';
 // see  https://ionicframework.com/docs/native/call-number
 import { CallNumber } from '@ionic-native/call-number/ngx'
 
-// Background Mode
-// see  https://ionicframework.com/docs/native/background-mode
-// see  https://github.com/katzer/cordova-plugin-background-mode
-// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
-//                      npm install @ionic-native/background-mode
-//          requires
-//          platforms/android/app/src/main/AndroidManifest.xml
-//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-
 // Insomina
 // Prevent the screen of the mobile device from falling asleep.
 // see  https://ionicframework.com/docs/native/insomnia
@@ -81,13 +71,6 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
             ...
 */
 import { AppUpdate } from '@ionic-native/app-update/ngx';
-
-// Autostart
-// see  https://ionicframework.com/docs/native/autostart
-// install  ionic cordova plugin add cordova-plugin-autostart
-//          npm install @ionic-native/autostart
-import { Autostart } from '@ionic-native/autostart/ngx';
-
 
 // WebArtigiani Classes
 import { AppService } from './Classes/App';
@@ -129,10 +112,8 @@ enableProdMode()
     ScreenOrientation,
     Network,
     CallNumber,
-    BackgroundMode,
     Insomnia,
     AppUpdate,
-    Autostart,
 
     // WebArtigiani
     AppService,

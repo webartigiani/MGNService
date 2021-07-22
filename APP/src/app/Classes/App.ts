@@ -58,11 +58,7 @@ import { ApiService } from '../Classes/API';
 */
 import { AppUpdate } from '@ionic-native/app-update/ngx';
 
-// Autostart
-// see  https://ionicframework.com/docs/native/autostart
-// install  ionic cordova plugin add cordova-plugin-autostart
-//          npm install @ionic-native/autostart
-import { Autostart } from '@ionic-native/autostart/ngx';
+declare let window;
 
 @Injectable()
 export class AppService {
@@ -78,8 +74,7 @@ export class AppService {
       private api: ApiService,
 
       private platform: Platform,
-      private appUpdate: AppUpdate,
-      private autostart: Autostart,
+      private appUpdate: AppUpdate
    ) {
       // constructor...
    }
@@ -87,31 +82,20 @@ export class AppService {
 
   // #region Public Methods
   appName() {
-    return environment.APP_TITLE
+    return environment.APP_TITLE;
   }
   appVersion() {
-    return environment.APP_VERSION
+    return environment.APP_VERSION;
   }
   debugGPS() {
-    return environment.DEBUG_GPS
+    return environment.DEBUG_GPS;
   }
-
-  setAutostart(enable) {
-    /**
-     * Enables/Disables APP autostart
+  exitKiosk() {
+    /** exit KioskMode
+     * requires cordova-plugin-kiosk
+     * https://github.com/hkalina/cordova-plugin-kiosk
      */
-
-    if (this.utils.isDebug()) {
-      console.warn('setAutostart disabled on browser');
-      return
-    }
-    console.log('setAutostart', enable)
-
-    if (enable) {
-      this.autostart.enable()
-    } else {
-      this.autostart.disable()
-    }
+    //window.KioskPlugin.exitKiosk();
   }
   // #endregion Public Methods
 

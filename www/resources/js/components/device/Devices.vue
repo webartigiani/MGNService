@@ -133,7 +133,7 @@ export default {
         getResults(page = 1) {
             this.$Progress.start()
             this.loadingTable = true
-            axios.get('api/worker?page=' + page).then(({ data }) => {
+            axios.get('api/device?page=' + page).then(({ data }) => {
                 this.items = data.data
                 this.$Progress.finish()
                 this.loadingTable = false

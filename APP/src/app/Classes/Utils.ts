@@ -39,16 +39,6 @@ import { Network } from '@ionic-native/network/ngx';
 // see https://ionicframework.com/docs/native/screen-orientation
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
-// Background Mode
-// see  https://ionicframework.com/docs/native/background-mode
-// see  https://github.com/katzer/cordova-plugin-background-mode
-// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
-//                      npm install @ionic-native/background-mode
-//          requires
-//          platforms/android/app/src/main/AndroidManifest.xml
-//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-
 // Insomina
 // Prevent the screen of the mobile device from falling asleep.
 // see  https://ionicframework.com/docs/native/insomnia
@@ -76,7 +66,6 @@ export class UtilsService {
       private device: Device,
       private network: Network,
       private screenOrientation: ScreenOrientation,
-      private backgroundMode: BackgroundMode,
       private insomnia: Insomnia,
    ) {
       // constructor...
@@ -187,29 +176,6 @@ export class UtilsService {
           // onError
         }
       );
-    }
-  }
-
-  keepForeground() {
-    /**
-     * Keep APP in foreground
-     */
-
-    // - enables background mode
-    // - restores foreground when app is sent to background (background mode activated)
-    // - restores foreground by a 500ms timer, if app is in background mode
-    if (!this.isDebug()) {
-      this.backgroundMode.enable()
-      this.backgroundMode.on('activate').subscribe(() => {
-        // restores foreground when goes to background-mode
-        this.backgroundMode.moveToForeground();
-      });
-      setInterval(() => {
-        if (this.backgroundMode.isActive()) {
-          // restores foreground if in background-mode
-          this.backgroundMode.moveToForeground();
-        }
-      }, 250);
     }
   }
   //#endregion Public Methods

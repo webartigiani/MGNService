@@ -102,7 +102,6 @@ export class StartPage {
     Called once
     */
     console.log('ngOnInit')
-    this.app.setAutostart(true)     // sets APP for auto-start
   }
   ngAfterViewInit() {
     console.log('start', 'ngAfterViewInit')
@@ -123,6 +122,7 @@ export class StartPage {
           {code: 201, msg: "success, need date."}               // when Update is needed
          */
         if (result.code === 201) {
+          this.app.exitKiosk()                                  // exitKiosk() before update
           this.statusDesc = 'Aggiornamento APP in corso...';    // Update needed
           return
         } else {
