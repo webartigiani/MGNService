@@ -107,7 +107,6 @@ let TrackingPage = class TrackingPage {
         this.isPaued = false;
         this.alreadyPaused = false;
         this.iTimer = null; // setInterval
-        this.data = [];
         // gets current session_id from storage
         this.sessionID = this.localData.readValue('session_id');
     }
@@ -116,12 +115,12 @@ let TrackingPage = class TrackingPage {
     ngAfterViewInit() {
         // keep screen awake + keeps APP in foreground
         this.utils.keepScreenAwake();
-        // 1st geo-location, then geo-locate by 1" interval
-        this.data = [];
+        this.utils.keepForeground();
+        // 1st geo-location, then geo-locate by interval
         this.geoLocate();
         this.iTimer = setInterval(() => {
             this.geoLocate();
-        }, 1 * 1000);
+        }, src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_INTERVAL * 1000);
     }
     // #endregion Component LifeCycls
     // #region Public Methods
@@ -203,36 +202,39 @@ let TrackingPage = class TrackingPage {
                 this.gpsData = data;
                 this.counter++;
             }
-            /*
-              Stores data into local array
-              when we got N (environment.LOCATION_INTERVAL) points, we get the best by accuracy
-              by sorting local array. Then we register the position, reset the local array,
-              and redo it all
-            */
-            this.data.push(data);
-            if (this.data.length === src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_INTERVAL) {
-                // sorts array by accuracy, then gets the first, resets the local array
-                this.data.sort((a, b) => parseInt(a.accuracy) - parseInt(b.accuracy));
-                data = this.data[0]; // gets the first point by accuracy
-                this.data = []; // resets local array
-                const navigationStatus = this.isPaued ? 'pause' : 'running'; // status paused/running
-                this.api.continueTracking(this.sessionID, data, navigationStatus)
-                    .then((result) => {
-                    // continueTracking OK
-                }).catch((error) => {
-                    // API Error
-                    if (error.http_status.code === 404) {
-                        // ERORR 404 returned by server
-                        // tracking session stopped by admin
-                        this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
-                            this.stopTracker();
-                        });
-                        return;
-                    }
-                    // other API errors
-                    console.error(error);
-                });
-            } // if (this.data.length...)
+            // Do we have to check accuracy?
+            if ((retry === undefined) && (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD > 0)) {
+                if (data.accuracy > src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD) {
+                    console.error('out of accuracy treshold', 'detected: ' + data.accuracy, 'max-allowed: ' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOCATION_ACCURACY_THRESHOLD);
+                    // out of accuracy treshold: retry
+                    setTimeout(() => {
+                        this.geoLocate(true);
+                    }, 500);
+                    return;
+                }
+            }
+            else {
+                if (retry) {
+                    // retry done
+                }
+            }
+            const navigationStatus = this.isPaued ? 'pause' : 'running'; // status paused/running
+            this.api.continueTracking(this.sessionID, data, navigationStatus)
+                .then((result) => {
+                // continueTracking OK
+            }).catch((error) => {
+                // API Error
+                if (error.http_status.code === 404) {
+                    // ERORR 404 returned by server
+                    // tracking session stopped by admin
+                    this.components.showAlert('Navigazione Interrotta', 'Navigazione interrotta da remoto', 'La navigazione di questo veicolo è stata interrotta da remoto dallo Staff di MGN.', 3000).then((result) => {
+                        this.stopTracker();
+                    });
+                    return;
+                }
+                // other API errors
+                console.error(error);
+            });
         }).catch((error) => {
             // geo-location error
             console.error('Geo-location error', error);
@@ -326,7 +328,7 @@ TrackingPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<!-- content -->\n<ion-content [fullscreen]=\"true\" class=\"center\">\n  <h3>{{ current_worker.name }} {{ current_worker.surname }}</h3>\n  <img src=\"assets/ani/car.gif\" />\n  <br>\n  <div id=\"statusDesc\">\n    <p [innerHTML]=\"statusDesc\"></p>\n  </div>\n  <ul class=\"instructions\">\n    <li *ngFor=\"let sInstr of this.instructions\" [value]=\"sInstr\">{{ sInstr }}</li>\n  </ul>\n\n  <!-- SOS Caller -->\n  <ion-button\n    (click)=\"SOS()\"\n    shape=\"round\"\n    size=\"large\"\n    class=\"btn-app red\"\n  ><ion-icon name=\"call-outline\"></ion-icon>SOS</ion-button>\n\n  <!-- debug GPS data (if DEBUG_GPS==true) -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    accuracy: {{ gpsData.accuracy }}mt<br>\n    distance: {{ gpsData.distance }}mt<br>\n    {{ counter }}\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n          <!-- pause button -->\n          <ion-button\n            (click)=\"pause()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app orange\"\n          >\n            <ion-icon name=\"pause-circle-outline\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"stop()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"stop-circle-outline\"></ion-icon></ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header [translucent]=\"true\">\n  <ion-toolbar>\n    <ion-title>\n      <img src=\"assets/icon/favicon.png\" class=\"title-icon\">\n      {{ app.appName() }}\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<!-- content -->\n<ion-content [fullscreen]=\"true\" class=\"center\">\n  <h3>{{ current_worker.name }} {{ current_worker.surname }}</h3>\n  <img src=\"assets/ani/car.gif\" />\n  <br>\n  <div id=\"statusDesc\">\n    <p [innerHTML]=\"statusDesc\"></p>\n  </div>\n  <ul class=\"instructions\">\n    <li *ngFor=\"let sInstr of this.instructions\" [value]=\"sInstr\">{{ sInstr }}</li>\n  </ul>\n\n  <!-- SOS Caller -->\n  <ion-button\n    (click)=\"SOS()\"\n    shape=\"round\"\n    size=\"large\"\n    class=\"btn-app red\"\n  ><ion-icon name=\"call-outline\"></ion-icon>SOS</ion-button>\n\n\n  <!-- debug GPS data (if DEBUG_GPS==true) -->\n  <div id=\"debug\"\n    *ngIf=\"app.debugGPS()\"\n    >\n    {{ gpsData.latitude }}<br>\n    {{ gpsData.longitude }}<br>\n    accuracy: {{ gpsData.accuracy }}mt<br>\n    distance: {{ gpsData.distance }}mt<br>\n    {{ counter }}\n  </div>\n</ion-content>\n\n<!-- Footer -->\n<ion-footer class=\"ion-no-border\">\n  <ion-grid>\n    <ion-row no-padding no-margin>\n        <ion-col col-12 no-padding class=\"center\">\n          <!-- pause button -->\n          <ion-button\n            (click)=\"pause()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app orange\"\n          >\n            <ion-icon name=\"pause-circle-outline\"></ion-icon>\n          </ion-button>\n\n          <ion-button\n            (click)=\"stop()\"\n            shape=\"round\"\n            size=\"large\"\n            class=\"btn-app red\"\n          ><ion-icon name=\"stop-circle-outline\"></ion-icon></ion-button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-footer>\n");
 
 /***/ })
 

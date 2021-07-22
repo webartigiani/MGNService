@@ -10,6 +10,9 @@
   <title>{{ config('app.name') }}</title>
 
   <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
+
+  <!-- mapbox -->
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css" rel="stylesheet" />
 </head>
 <body class="hold-transition sidebar-mini">
     <div class="wrapper" id="app">
