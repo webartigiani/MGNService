@@ -2,7 +2,7 @@ export const environment = {
   production: false,
 
   APP_TITLE: 'MGN Service',                                 // APP Data
-  APP_VERSION: '1.1.9',
+  APP_VERSION: '1.2.3',
 
   WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',                   // localhost website
   WEB_SITE: 'https://gestionale.mgnservice.it/',              // public website url
@@ -19,5 +19,5 @@ export const environment = {
 
   DEBUG_GPS: false,                                           // true to debug GPS data
   SOS_PHONE_NUMBER: '112',                                    // SOS Phone Number
-  LOOK_FOR_UPDATES: false                                     // looks for app updates at start up
+  LOOK_FOR_UPDATES: true,                                     // true to enable auto-update
 };

@@ -58,6 +58,14 @@ import { ApiService } from '../Classes/API';
 */
 import { AppUpdate } from '@ionic-native/app-update/ngx';
 
+/* Autostart
+    This plugin automatically starts your Android app after every boot or auto-update.
+    You can enable or disable the autostart function in your app.
+        npm install @ionic-native/autostart
+        see: https://ionicframework.com/docs/native/autostart
+*/
+import { Autostart } from '@ionic-native/autostart/ngx';
+
 declare let window;
 
 @Injectable()
@@ -74,7 +82,8 @@ export class AppService {
       private api: ApiService,
 
       private platform: Platform,
-      private appUpdate: AppUpdate
+      private appUpdate: AppUpdate,
+      private autostart: Autostart
    ) {
       // constructor...
    }
@@ -89,6 +98,14 @@ export class AppService {
   }
   debugGPS() {
     return environment.DEBUG_GPS;
+  }
+  setAutostart(enable) {
+    console.log('setAutostart', enable)
+    if (enable) {
+      this.autostart.enable();
+    } else {
+      this.autostart.disable();
+    }
   }
   exitKiosk() {
     /** exit KioskMode

@@ -101,7 +101,8 @@ export class StartPage {
     after Angular first displays the data-bound properties and sets the directive or component's input properties.
     Called once
     */
-    console.log('ngOnInit')
+    console.log('ngOnInit');
+    this.app.setAutostart(true);    // enable Autostart
   }
   ngAfterViewInit() {
     console.log('start', 'ngAfterViewInit')

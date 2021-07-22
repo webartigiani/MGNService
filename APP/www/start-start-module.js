@@ -118,6 +118,7 @@ let StartPage = class StartPage {
         Called once
         */
         console.log('ngOnInit');
+        this.app.setAutostart(true); // enable Autostart
     }
     ngAfterViewInit() {
         console.log('start', 'ngAfterViewInit');

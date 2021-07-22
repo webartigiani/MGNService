@@ -307,7 +307,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
-    APP_VERSION: '1.1.9',
+    APP_VERSION: '1.2.3',
     WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
     WEB_SITE: 'https://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
@@ -320,7 +320,7 @@ const environment = {
     MAX_PAUSE_TIMEOUT: 15,
     DEBUG_GPS: false,
     SOS_PHONE_NUMBER: '112',
-    LOOK_FOR_UPDATES: false // looks for app updates at start up
+    LOOK_FOR_UPDATES: true,
 };
 
 
@@ -343,6 +343,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
 /* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
 /* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
+/* harmony import */ var _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/autostart/ngx */ "F6t2");
 /*
   AppService Class
   implements various components, such as loading, alert
@@ -400,17 +401,25 @@ __webpack_require__.r(__webpack_exports__);
             ...
 */
 
+/* Autostart
+    This plugin automatically starts your Android app after every boot or auto-update.
+    You can enable or disable the autostart function in your app.
+        npm install @ionic-native/autostart
+        see: https://ionicframework.com/docs/native/autostart
+*/
+
 let AppService = class AppService {
     // #region Variables
     // #endregion Variables
     // #region Constructors
     constructor(
     // WebArtigiani
-    utils, api, platform, appUpdate) {
+    utils, api, platform, appUpdate, autostart) {
         this.utils = utils;
         this.api = api;
         this.platform = platform;
         this.appUpdate = appUpdate;
+        this.autostart = autostart;
         // constructor...
     }
     // #endregion Constructors
@@ -424,6 +433,15 @@ let AppService = class AppService {
     debugGPS() {
         return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].DEBUG_GPS;
     }
+    setAutostart(enable) {
+        console.log('setAutostart', enable);
+        if (enable) {
+            this.autostart.enable();
+        }
+        else {
+            this.autostart.disable();
+        }
+    }
     exitKiosk() {
         /** exit KioskMode
          * requires cordova-plugin-kiosk
@@ -436,7 +454,8 @@ AppService.ctorParameters = () => [
     { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_4__["UtilsService"] },
     { type: _Classes_API__WEBPACK_IMPORTED_MODULE_5__["ApiService"] },
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"] },
-    { type: _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__["AppUpdate"] }
+    { type: _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__["AppUpdate"] },
+    { type: _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_7__["Autostart"] }
 ];
 AppService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
@@ -1088,13 +1107,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/call-number/ngx */ "Wwn5");
 /* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
 /* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
-/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
+/* harmony import */ var _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @ionic-native/autostart/ngx */ "F6t2");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
 
 /*
 app.module.ts
@@ -1159,6 +1179,13 @@ src/app.module.ts
             ...
 */
 
+/* Autostart
+    This plugin automatically starts your Android app after every boot or auto-update.
+    You can enable or disable the autostart function in your app.
+        npm install @ionic-native/autostart
+        see: https://ionicframework.com/docs/native/autostart
+*/
+
 // WebArtigiani Classes
 
 
@@ -1167,13 +1194,6 @@ src/app.module.ts
 
 
 
-/* NOT USED
- UniqueDeviceID (see https://ionicframework.com/docs/native/unique-device-id)
-// see also https://www.freakyjolly.com/ionic-4-get-unique-device-id-other-uids-of-uuid-imei-imsi-iccid-and-mac-using-native-cordova-plugins/
-import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
-import { Uid } from '@ionic-native/uid/ngx';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-*/
 Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["enableProdMode"])();
 let AppModule = class AppModule {
 };
@@ -1201,14 +1221,15 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__["CallNumber"],
             _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_14__["Insomnia"],
             _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_15__["AppUpdate"],
+            _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_16__["Autostart"],
             // WebArtigiani
-            _Classes_App__WEBPACK_IMPORTED_MODULE_16__["AppService"],
-            _Classes_API__WEBPACK_IMPORTED_MODULE_17__["ApiService"],
-            _Classes_Utils__WEBPACK_IMPORTED_MODULE_18__["UtilsService"],
-            _Classes_Components__WEBPACK_IMPORTED_MODULE_19__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_20__["GeoLocationService"],
-            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_21__["LocalDataService"],
-            _Classes_Phone__WEBPACK_IMPORTED_MODULE_22__["PhoneServices"],
+            _Classes_App__WEBPACK_IMPORTED_MODULE_17__["AppService"],
+            _Classes_API__WEBPACK_IMPORTED_MODULE_18__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_19__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_20__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_21__["GeoLocationService"],
+            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_22__["LocalDataService"],
+            _Classes_Phone__WEBPACK_IMPORTED_MODULE_23__["PhoneServices"],
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })
