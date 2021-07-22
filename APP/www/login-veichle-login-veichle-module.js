@@ -165,7 +165,7 @@ let LoginVeichlePage = class LoginVeichlePage {
     // #endregion Constructor
     // #region Component LifeCycle
     ngAfterViewInit() {
-        // allows screen falling asleep + keeps APP in foreground
+        // allows screen falling asleep
         this.utils.allowScreenFallAsleep();
     }
     ngAfterViewChecked() {

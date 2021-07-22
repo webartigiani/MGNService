@@ -127,8 +127,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
 /* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
 /* harmony import */ var _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/screen-orientation/ngx */ "0QAI");
-/* harmony import */ var _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/background-mode/ngx */ "1xeP");
-/* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
+/* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
 /*
   UtilsService Class
   interacts with http://gestionale.mgnservice.it/ APIs
@@ -165,15 +164,6 @@ __webpack_require__.r(__webpack_exports__);
 // ScreenOrientation
 // see https://ionicframework.com/docs/native/screen-orientation
 
-// Background Mode
-// see  https://ionicframework.com/docs/native/background-mode
-// see  https://github.com/katzer/cordova-plugin-background-mode
-// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
-//                      npm install @ionic-native/background-mode
-//          requires
-//          platforms/android/app/src/main/AndroidManifest.xml
-//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
 // Insomina
 // Prevent the screen of the mobile device from falling asleep.
 // see  https://ionicframework.com/docs/native/insomnia
@@ -191,13 +181,12 @@ let UtilsService = class UtilsService {
     // #region Variables
     // #endregion Variables
     // #region Constructors
-    constructor(platform, device, network, screenOrientation, backgroundMode, insomnia) {
+    constructor(platform, device, network, screenOrientation, insomnia) {
         // constructor...
         this.platform = platform;
         this.device = device;
         this.network = network;
         this.screenOrientation = screenOrientation;
-        this.backgroundMode = backgroundMode;
         this.insomnia = insomnia;
         // Lock screen orientation and listen for screen-orientation changes
         /*this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY)
@@ -289,35 +278,13 @@ let UtilsService = class UtilsService {
             });
         }
     }
-    keepForeground() {
-        /**
-         * Keep APP in foreground
-         */
-        // - enables background mode
-        // - restores foreground when app is sent to background (background mode activated)
-        // - restores foreground by a 500ms timer, if app is in background mode
-        if (!this.isDebug()) {
-            this.backgroundMode.enable();
-            this.backgroundMode.on('activate').subscribe(() => {
-                // restores foreground when goes to background-mode
-                //this.backgroundMode.moveToForeground();
-            });
-            setInterval(() => {
-                if (this.backgroundMode.isActive()) {
-                    // restores foreground if in background-mode
-                    this.backgroundMode.moveToForeground();
-                }
-            }, 250);
-        }
-    }
 };
 UtilsService.ctorParameters = () => [
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"] },
     { type: _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_4__["Device"] },
     { type: _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_5__["Network"] },
     { type: _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_6__["ScreenOrientation"] },
-    { type: _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_7__["BackgroundMode"] },
-    { type: _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_8__["Insomnia"] }
+    { type: _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_7__["Insomnia"] }
 ];
 UtilsService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
@@ -340,7 +307,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
-    APP_VERSION: '1.1.0',
+    APP_VERSION: '1.1.9',
     WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
     WEB_SITE: 'https://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
@@ -349,8 +316,7 @@ const environment = {
     API_END_POINT_LOCAL: 'http://127.0.0.1:8000/api/app',
     API_END_POINT: 'https://gestionale.mgnservice.it/api/app',
     LOCATION_TIMEOUT: 10,
-    LOCATION_INTERVAL: 15,
-    LOCATION_ACCURACY_THRESHOLD: 50,
+    LOCATION_INTERVAL: 5,
     MAX_PAUSE_TIMEOUT: 15,
     DEBUG_GPS: false,
     SOS_PHONE_NUMBER: '112',
@@ -377,7 +343,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Classes/Utils */ "1ZYi");
 /* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Classes/API */ "YBWL");
 /* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
-/* harmony import */ var _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/autostart/ngx */ "F6t2");
 /*
   AppService Class
   implements various components, such as loading, alert
@@ -435,23 +400,17 @@ __webpack_require__.r(__webpack_exports__);
             ...
 */
 
-// Autostart
-// see  https://ionicframework.com/docs/native/autostart
-// install  ionic cordova plugin add cordova-plugin-autostart
-//          npm install @ionic-native/autostart
-
 let AppService = class AppService {
     // #region Variables
     // #endregion Variables
     // #region Constructors
     constructor(
     // WebArtigiani
-    utils, api, platform, appUpdate, autostart) {
+    utils, api, platform, appUpdate) {
         this.utils = utils;
         this.api = api;
         this.platform = platform;
         this.appUpdate = appUpdate;
-        this.autostart = autostart;
         // constructor...
     }
     // #endregion Constructors
@@ -465,29 +424,19 @@ let AppService = class AppService {
     debugGPS() {
         return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].DEBUG_GPS;
     }
-    setAutostart(enable) {
-        /**
-         * Enables/Disables APP autostart
+    exitKiosk() {
+        /** exit KioskMode
+         * requires cordova-plugin-kiosk
+         * https://github.com/hkalina/cordova-plugin-kiosk
          */
-        if (this.utils.isDebug()) {
-            console.warn('setAutostart disabled on browser');
-            return;
-        }
-        console.log('setAutostart', enable);
-        if (enable) {
-            this.autostart.enable();
-        }
-        else {
-            this.autostart.disable();
-        }
+        //window.KioskPlugin.exitKiosk();
     }
 };
 AppService.ctorParameters = () => [
     { type: _Classes_Utils__WEBPACK_IMPORTED_MODULE_4__["UtilsService"] },
     { type: _Classes_API__WEBPACK_IMPORTED_MODULE_5__["ApiService"] },
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"] },
-    { type: _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__["AppUpdate"] },
-    { type: _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_7__["Autostart"] }
+    { type: _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_6__["AppUpdate"] }
 ];
 AppService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
@@ -1137,17 +1086,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
 /* harmony import */ var _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ionic-native/network/ngx */ "kwrG");
 /* harmony import */ var _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/call-number/ngx */ "Wwn5");
-/* harmony import */ var _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ionic-native/background-mode/ngx */ "1xeP");
-/* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
-/* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
-/* harmony import */ var _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @ionic-native/autostart/ngx */ "F6t2");
-/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
-/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
-/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
-/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
-/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
-/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
-/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
+/* harmony import */ var _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ionic-native/insomnia/ngx */ "pOfa");
+/* harmony import */ var _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ionic-native/app-update/ngx */ "u4kk");
+/* harmony import */ var _Classes_App__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Classes/App */ "FNOQ");
+/* harmony import */ var _Classes_API__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Classes/API */ "YBWL");
+/* harmony import */ var _Classes_Utils__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Classes/Utils */ "1ZYi");
+/* harmony import */ var _Classes_Components__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Classes/Components */ "Vw97");
+/* harmony import */ var _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./Classes/GeoLocation */ "vA/e");
+/* harmony import */ var _Classes_LocalData__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./Classes/LocalData */ "/zBf");
+/* harmony import */ var _Classes_Phone__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./Classes/Phone */ "JgwU");
 
 /*
 app.module.ts
@@ -1175,15 +1122,6 @@ src/app.module.ts
 
 // CallNumber
 // see  https://ionicframework.com/docs/native/call-number
-
-// Background Mode
-// see  https://ionicframework.com/docs/native/background-mode
-// see  https://github.com/katzer/cordova-plugin-background-mode
-// NOTES:   requires    ionic cordova plugin add cordova-plugin-background-mode
-//                      npm install @ionic-native/background-mode
-//          requires
-//          platforms/android/app/src/main/AndroidManifest.xml
-//          <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 // Insomina
 // Prevent the screen of the mobile device from falling asleep.
@@ -1220,11 +1158,6 @@ src/app.module.ts
               <name>MyApp</name>
             ...
 */
-
-// Autostart
-// see  https://ionicframework.com/docs/native/autostart
-// install  ionic cordova plugin add cordova-plugin-autostart
-//          npm install @ionic-native/autostart
 
 // WebArtigiani Classes
 
@@ -1266,18 +1199,16 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_10__["ScreenOrientation"],
             _ionic_native_network_ngx__WEBPACK_IMPORTED_MODULE_12__["Network"],
             _ionic_native_call_number_ngx__WEBPACK_IMPORTED_MODULE_13__["CallNumber"],
-            _ionic_native_background_mode_ngx__WEBPACK_IMPORTED_MODULE_14__["BackgroundMode"],
-            _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_15__["Insomnia"],
-            _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_16__["AppUpdate"],
-            _ionic_native_autostart_ngx__WEBPACK_IMPORTED_MODULE_17__["Autostart"],
+            _ionic_native_insomnia_ngx__WEBPACK_IMPORTED_MODULE_14__["Insomnia"],
+            _ionic_native_app_update_ngx__WEBPACK_IMPORTED_MODULE_15__["AppUpdate"],
             // WebArtigiani
-            _Classes_App__WEBPACK_IMPORTED_MODULE_18__["AppService"],
-            _Classes_API__WEBPACK_IMPORTED_MODULE_19__["ApiService"],
-            _Classes_Utils__WEBPACK_IMPORTED_MODULE_20__["UtilsService"],
-            _Classes_Components__WEBPACK_IMPORTED_MODULE_21__["ComponentsService"],
-            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_22__["GeoLocationService"],
-            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_23__["LocalDataService"],
-            _Classes_Phone__WEBPACK_IMPORTED_MODULE_24__["PhoneServices"],
+            _Classes_App__WEBPACK_IMPORTED_MODULE_16__["AppService"],
+            _Classes_API__WEBPACK_IMPORTED_MODULE_17__["ApiService"],
+            _Classes_Utils__WEBPACK_IMPORTED_MODULE_18__["UtilsService"],
+            _Classes_Components__WEBPACK_IMPORTED_MODULE_19__["ComponentsService"],
+            _Classes_GeoLocation__WEBPACK_IMPORTED_MODULE_20__["GeoLocationService"],
+            _Classes_LocalData__WEBPACK_IMPORTED_MODULE_21__["LocalDataService"],
+            _Classes_Phone__WEBPACK_IMPORTED_MODULE_22__["PhoneServices"],
         ],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]],
     })
@@ -1639,7 +1570,7 @@ let GeoLocationService = class GeoLocationService {
         // open the Map APP (depending on the platform)
         // pointing to the specified coords
         // Android:       geo:44.6318615,11.1861538
-        // iOS:           maps://maps.apple.com/?q=44.6318615,11.1861538
+        // iOS:           maps://maps.apple.com/?q=40.943616,16.9213952
         // GoogleMaps:    https://www.google.it/maps/place/testo+ricerca/@44.6318615,11.1861538,17z
         let url = '';
         if (this.platform.is('android')) {

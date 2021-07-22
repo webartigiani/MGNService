@@ -102,14 +102,12 @@ export class StartPage {
     Called once
     */
     console.log('ngOnInit')
-    this.app.setAutostart(true)     // sets APP for auto-start
   }
   ngAfterViewInit() {
     console.log('start', 'ngAfterViewInit')
 
     // allows screen falling asleep (NOTE: here, we DO NOT keep APP in foreground)
     this.utils.allowScreenFallAsleep()
-    //this.utils.keepForeground()
 
     // checks for App Updates
     if (!this.utils.isDebug()) {
