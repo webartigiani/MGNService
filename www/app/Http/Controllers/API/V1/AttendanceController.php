@@ -587,7 +587,10 @@ public function exportNotes(Request $request) {
                                             IFNULL(att.duration_h_int, 0) duration_h_int,
                                             IFNULL(att.residual_m, 0) residual_m,
                                             IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
-                                            IFNULL(att.chk, -1) chk
+                                            IFNULL(att.chk, -1) chk,
+
+                                            /* SIMONE: data_cessazione ci serve solo per potervi filtrare */
+                                            w.data_cessazione
                                         from
                                         (   /*
                                                 select days of period from calendar
@@ -606,7 +609,10 @@ public function exportNotes(Request $request) {
                                             and att.worker_id = w.id
                                     ) presenze
                                 where
-                                    1=1
+                                    /* esclude i dipendenti il cui rapporto di lavoro è cessato prima della data di riferimento
+                                       Prima era 1=1
+                                    */
+                                    data_cessazione is null or data_cessazione > ref_date
                                     ";
         if ($notAtWork) $sql .= " and chk <= 0";        // show only not at work?
         if ($searchQuery != '') {
