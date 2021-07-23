@@ -125,7 +125,7 @@ export class UtilsService {
         'app_version': environment.APP_VERSION
       }
     }
-    return ret
+    return ret;
   }
 
   isDeviceOnLine() {
@@ -142,8 +142,6 @@ export class UtilsService {
     else
     return this.network.type.toLocaleLowerCase()
   }
-
-
 
   timestampToDateTime(ts) {
     return new Date(ts) //.toLocaleDateString("it-IT")

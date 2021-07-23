@@ -110,7 +110,7 @@ export class StartPage {
     console.log('start', 'ngAfterViewInit')
 
     // allows screen falling asleep (NOTE: here, we DO NOT keep APP in foreground)
-    this.utils.allowScreenFallAsleep()
+    this.utils.allowScreenFallAsleep();
 
     // checks for App Updates
     if (!this.utils.isDebug()) {
@@ -118,7 +118,8 @@ export class StartPage {
 
       if (environment.LOOK_FOR_UPDATES) {
         // looks for updates
-        const updateUrl = this.updateUrl()
+        const updateUrl = this.updateUrl();
+        console.log('looking for App Updates', updateUrl);
         this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
           /**
            * Returns
@@ -264,7 +265,9 @@ export class StartPage {
   private updateUrl() {
     // returns the App Update Url
 
-    let ret = ''
+    const d = this.utils.getDeviceData();   // gets device data
+    let ret = '';
+
     if (this.platform.is('cordova')) {
         // running on device
         ret = environment.WEB_SITE
@@ -275,7 +278,8 @@ export class StartPage {
         else
           ret = environment.WEB_SITE
     }
-    return ret += 'app/update/'
+    ret += 'app/update/?d=' + d['uuid'];
+    return ret;
   }
   // #endregion Private Mehods
 }

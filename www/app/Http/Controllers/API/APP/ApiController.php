@@ -47,9 +47,20 @@ public function autoUpdate(Request $request) {
      * GET  app/update/
      * returns XML for AppUpdate APP plugin
      */
+    $deviceUUID = $request->d;          //  gets device UUID from query-string
+
     $appName =      env('APP_NAME');
     $dummy =        explode('.', trim(strtolower(env('APP_VERSION'))));
     $appUrl =       $this->url->to('/downloads/' . env('APP_URI'));
+
+    /* for Debug
+        UUID 27a53d7ce75ba7e7 is my Dogee N20
+        We want to force download of dummy APP version 9.9.9
+    */
+    if ($deviceUUID == '27a53d7ce75ba7e7') {
+        $dummy = explode('.', trim(strtolower('9.9.9')));
+    }
+    // for Debug
 
     // converts version number from x.y.z format into x0y0z
     $appVersion = $dummy[0] . '0' . $dummy[1] . '0' . $dummy[2];

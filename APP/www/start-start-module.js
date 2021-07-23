@@ -132,6 +132,7 @@ let StartPage = class StartPage {
             if (src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].LOOK_FOR_UPDATES) {
                 // looks for updates
                 const updateUrl = this.updateUrl();
+                console.log('looking for App Updates', updateUrl);
                 this.appUpdate.checkAppUpdate(updateUrl).then((result) => {
                     /**
                      * Returns
@@ -269,6 +270,7 @@ let StartPage = class StartPage {
     // #region Private Methods
     updateUrl() {
         // returns the App Update Url
+        const d = this.utils.getDeviceData(); // gets device data
         let ret = '';
         if (this.platform.is('cordova')) {
             // running on device
@@ -281,7 +283,8 @@ let StartPage = class StartPage {
             else
                 ret = src_environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].WEB_SITE;
         }
-        return ret += 'app/update/';
+        ret += 'app/update/?d=' + d['uuid'];
+        return ret;
     }
 };
 StartPage.ctorParameters = () => [
