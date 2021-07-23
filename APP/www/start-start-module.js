@@ -119,6 +119,8 @@ let StartPage = class StartPage {
         */
         console.log('ngOnInit');
         this.app.setAutostart(true); // enable Autostart
+        this.app.enterPinnedMode(); // enter pinned mode
+        // sets fullscreen by config.xml and AndroidManifest.xml
     }
     ngAfterViewInit() {
         console.log('start', 'ngAfterViewInit');

@@ -66,7 +66,7 @@ import { AppUpdate } from '@ionic-native/app-update/ngx';
 */
 import { Autostart } from '@ionic-native/autostart/ngx';
 
-declare let window;
+declare let window: any;
 
 @Injectable()
 export class AppService {
@@ -100,13 +100,48 @@ export class AppService {
     return environment.DEBUG_GPS;
   }
   setAutostart(enable) {
-    console.log('setAutostart', enable)
     if (enable) {
       this.autostart.enable();
     } else {
       this.autostart.disable();
     }
   }
+  enterPinnedMode() {
+    /* enter pinned mode
+        requires cordova-plugin-screen-pinning
+        https://github.com/fedme/cordova-plugin-screen-pinning
+    */
+    console.log('enterPinnedMode...');
+    window.cordova.plugins.screenPinning.enterPinnedMode(
+      function () {
+          console.log('Pinned mode activated!');
+      },
+      function (errorMessage) {
+          console.log('Error activating pinned mode:', errorMessage);
+      }
+    );
+  }
+  enterImmersiveMode() {
+    /* NO PLUGIN IS NEEDED HERE!
+        NOTE:
+        to set full screen
+        1) edit config.xml by adding
+              <preference name="Fullscreen" value="true" />
+
+        2) edit AndroidManifest.xml by specifyng theme
+              android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen"
+
+            or edit config.xml by adding
+              <platform name="android">
+                <!-- edit activity theme into android manifest -->
+                <edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:label='@string/activity_name']" mode="merge">
+                    <activity android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen"></activity>
+                </edit-config>
+              </platform>
+            to get this setting persistent, even when you remove/add Android platform
+    */
+  }
+
   exitKiosk() {
     /** exit KioskMode
      * requires cordova-plugin-kiosk

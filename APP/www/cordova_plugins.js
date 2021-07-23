@@ -87,6 +87,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       ]
     },
     {
+      "id": "cordova-plugin-screen-pinning.screenPinning",
+      "file": "plugins/cordova-plugin-screen-pinning/www/screenPinning.js",
+      "pluginId": "cordova-plugin-screen-pinning",
+      "clobbers": [
+        "cordova.plugins.screenPinning"
+      ]
+    },
+    {
       "id": "cordova-plugin-splashscreen.SplashScreen",
       "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
       "pluginId": "cordova-plugin-splashscreen",
@@ -123,6 +131,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "4.2.1",
     "cordova-plugin-nativegeocoder": "3.4.1",
+    "cordova-plugin-screen-pinning": "1.1.3",
     "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-statusbar": "2.4.2",
     "cordova-plugin-unique-device-id2": "2.0.0",

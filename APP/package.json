@@ -1,6 +1,6 @@
 {
   "name": "wa-mgn",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "author": "WebArtigiani",
   "homepage": "http://gestionale.mgnservice.it/",
   "scripts": {
@@ -22,6 +22,7 @@
     "@angular/platform-browser": "~11.2.0",
     "@angular/platform-browser-dynamic": "~11.2.0",
     "@angular/router": "~11.2.0",
+    "@capacitor/android": "^2.4.7",
     "@capacitor/core": "2.4.7",
     "@ionic-native/android-permissions": "^5.32.1",
     "@ionic-native/app-update": "^5.33.0",
@@ -42,6 +43,8 @@
     "cordova-plugin-network-information": "^2.0.2",
     "cordova-plugin-screen-orientation": "^3.0.2",
     "cordova-plugin-uniquedeviceid": "^1.3.2",
+    "es6-promise-plugin": "^4.2.2",
+    "ionic-native": "^2.9.0",
     "leaflet": "^1.7.1",
     "rxjs": "~6.6.0",
     "rxjs-compat": "^6.6.7",
@@ -78,6 +81,7 @@
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^4.2.1",
     "cordova-plugin-nativegeocoder": "^3.4.1",
+    "cordova-plugin-screen-pinning": "^1.1.3",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
     "cordova-plugin-uid": "^1.3.0",
@@ -120,7 +124,8 @@
       "mx.ferreyra.callnumber": {},
       "cordova-plugin-insomnia": {},
       "cordova-plugin-app-update": {},
-      "call-number": {}
+      "call-number": {},
+      "cordova-plugin-screen-pinning": {}
     },
     "platforms": [
       "android"

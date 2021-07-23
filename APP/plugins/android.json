@@ -36,6 +36,9 @@
     "cordova-plugin-nativegeocoder": {
       "PACKAGE_NAME": "io.webartigiani.mgn"
     },
+    "cordova-plugin-screen-pinning": {
+      "PACKAGE_NAME": "io.webartigiani.mgn"
+    },
     "cordova-plugin-splashscreen": {
       "PACKAGE_NAME": "io.webartigiani.mgn"
     },

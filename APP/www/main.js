@@ -307,7 +307,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: false,
     APP_TITLE: 'MGN Service',
-    APP_VERSION: '1.2.3',
+    APP_VERSION: '1.2.4',
     WEB_SITE_LOCAL: 'http://127.0.0.1:8000/',
     WEB_SITE: 'https://gestionale.mgnservice.it/',
     API_TOKEN: '5be65b9c-2902-4490-9640-45f8c6ad360b',
@@ -434,13 +434,44 @@ let AppService = class AppService {
         return src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].DEBUG_GPS;
     }
     setAutostart(enable) {
-        console.log('setAutostart', enable);
         if (enable) {
             this.autostart.enable();
         }
         else {
             this.autostart.disable();
         }
+    }
+    enterPinnedMode() {
+        /* enter pinned mode
+            requires cordova-plugin-screen-pinning
+            https://github.com/fedme/cordova-plugin-screen-pinning
+        */
+        console.log('enterPinnedMode...');
+        window.cordova.plugins.screenPinning.enterPinnedMode(function () {
+            console.log('Pinned mode activated!');
+        }, function (errorMessage) {
+            console.log('Error activating pinned mode:', errorMessage);
+        });
+    }
+    enterImmersiveMode() {
+        /* NO PLUGIN IS NEEDED HERE!
+            NOTE:
+            to set full screen
+            1) edit config.xml by adding
+                  <preference name="Fullscreen" value="true" />
+    
+            2) edit AndroidManifest.xml by specifyng theme
+                  android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen"
+    
+                or edit config.xml by adding
+                  <platform name="android">
+                    <!-- edit activity theme into android manifest -->
+                    <edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:label='@string/activity_name']" mode="merge">
+                        <activity android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen"></activity>
+                    </edit-config>
+                  </platform>
+                to get this setting persistent, even when you remove/add Android platform
+        */
     }
     exitKiosk() {
         /** exit KioskMode
