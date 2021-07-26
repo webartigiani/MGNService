@@ -37,8 +37,10 @@ class TrackingSessionController extends Controller
 
         $errorMessage = '';
 
+        $worker_password = strval($worker_password);
+
         // Checks worker: id, status, modo_timbratura (0|1), password, cessazione, deleted
-        $sql = "select count(*) value from workers where id = {$worker->id} and password_timbratura = '{$worker_password}' and stato = 1 and modo_timbratura <= 1 and data_cessazione is null and deleted_at is null";
+        $sql = "select count(*) value from workers where id = {$worker->id} and password_timbratura like '%{$worker_password}' and stato = 1 and modo_timbratura <= 1 and data_cessazione is null and deleted_at is null";
         $data = DB::select($sql);
         $result = $data[0]->value;
         if ($result <> 1) {
