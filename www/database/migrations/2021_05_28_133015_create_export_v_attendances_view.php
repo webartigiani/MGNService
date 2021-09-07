@@ -1,5 +1,12 @@
 <?php
+/*
+NOTA:   questa è la vecchia versione della view "export_v_attendances"
+        modificata in data 07/09/2021 per aggiungere il supporto alle pause di lavoro
+        (doppia timbrata giornaliera)
 
+        Per la nuova versione della view si veda migration
+        2021_09_07_125720_edit_export_v_attendances_view.php
+*/
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

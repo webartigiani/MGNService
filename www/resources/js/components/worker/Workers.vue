@@ -123,6 +123,7 @@
                             <th>Uso Veicolo</th>
                             <th>Codice Timbrata</th>
                             <th style="width:100px;">Ore Sett.</th>
+                            <th style="width:100px;">Pausa</th>
                             <th>Data Assunzione</th>
                             <th>Data Cessazione</th>
                             <th>Azioni</th>
@@ -147,6 +148,14 @@
                         </td>
                         <td>{{ item.password_timbratura }}</td>
                         <td>{{ item.ore_settimanali }}</td>
+                        <td class="center">
+                            <i
+                                v-if="item.pausa_orario === 1"
+                                class="fas fa-check green"></i>
+                            <i
+                                v-if="item.pausa_orario !== 1"
+                                class="fas fa-minus-circle gray"></i>
+                        </td>
                         <td>{{ $root.utils.datetime.formatDate(item.data_assunzione) }}</td>
                         <td>{{ $root.utils.datetime.formatDate(item.data_cessazione) }}</td>
                         <td>
@@ -255,6 +264,16 @@
                                 v-model="form.ore_settimanali">
                             <has-error :form="form" field="ore_settimanali"></has-error>
                         </div>
+                        <div class="form-group">
+                            <label>Pausa Orario</label>
+                            <select name="pausa_orario"
+                                v-model="form.pausa_orario"
+                                class="form-control"
+                                >
+                                <option value="0">No</option>
+                                <option value="1">Si</option>
+                            </select>
+                        </div>
 
                         <div class="form-group">
                             <!--
@@ -326,6 +345,7 @@ export default {
                 telefono: '',
                 modo_timbratura: 0,
                 ore_settimanali: 1,
+                pausa_orario: 0,
                 data_assunzione: '',
                 data_cessazione: ''
             }),

@@ -164,6 +164,8 @@
                       <th><!-- Presenza --></th>
                       <th>Entrata</th>
                       <th>Uscita</th>
+                      <th>Rientro</th>
+                      <th>Uscita</th>
                       <th>Ore Presenza</th>
                       <th>Ore Lavorate</th>
                       <th>Ore Assenza</th>
@@ -176,22 +178,24 @@
                     v-show="items.data.length > 0"
                     >
                      <tr v-for="item in items.data" :key="item.id">
-                      <td style="width:20px;">
-                          <i class="fa fa-dot-circle"
-                            :title="(item.worker_status==1 ? 'attualmente presente' : 'attualmente assente')"
-                            :class="(item.worker_status==1 ? 'green' : 'orange')"></i>
-                      </td>
-                      <!-- <td>{{ item.id }}</td> -->
-                      <td>{{ item.day_date }}</td>
-                      <td>{{ item.nome }}</td>
-                      <td>{{ item.cognome }}</td>
-                      <td>
-                          <span class="badge"
-                          :class="presenzaToClass(item)"
-                          >{{ presenzaString(item) }}</span>
-                      </td>
-                      <td>{{ attendanceTime(item.day_date, item.entrance_date) }}</td>
-                      <td>{{ attendanceTime(item.day_date, item.exit_date) }}</td>
+                        <td style="width:20px;">
+                            <i class="fa fa-dot-circle"
+                                :title="(item.worker_status==1 ? 'attualmente presente' : 'attualmente assente')"
+                                :class="(item.worker_status==1 ? 'green' : 'orange')"></i>
+                        </td>
+                        <!-- <td>{{ item.id }}</td> -->
+                        <td>{{ item.day_date }}</td>
+                        <td>{{ item.nome }}</td>
+                        <td>{{ item.cognome }}</td>
+                        <td>
+                            <span class="badge"
+                            :class="presenzaToClass(item)"
+                            >{{ presenzaString(item) }}</span>
+                        </td>
+                        <td>{{ attendanceTime(item.day_date, item.entrance_date) }}</td>
+                        <td>{{ attendanceTime(item.day_date, item.exit_date) }}</td>
+                        <td>{{ attendanceTime(item.day_date, item.entrance_date_2) }}</td>
+                        <td>{{ attendanceTime(item.day_date, item.exit_date_2) }}</td>
                         <td>{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) }}</td>
                         <td>{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) }}</td>
                         <td>{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}</td>
@@ -270,7 +274,7 @@
                 <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" v-show="!editmode">NON IMPLEMENTATA</h5>
-                    <h5 class="modal-title" v-show="editmode">Modifca Timbrate</h5>
+                    <h5 class="modal-title" v-show="editmode">Modifca Timbrata</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -278,32 +282,73 @@
 
                 <form @submit.prevent="editmode ? updateItem() : createItem()">
                     <div class="modal-body">
-                        <div class="form-group">
-                            <b>
-                            {{ form.nome }} {{ form.cognome }}<br>
-                            {{ form.day_date }}
-                            </b>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Dipendente</label><br>
+                                {{ form.nome }} {{ form.cognome }}
+                            </div>
+                            <div class="col-md-6">
+                                <label>Data</label><br>
+                                {{ form.day_date }}
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="entrance_time">Orario Entrata</label>
+                                    <input type="time" name="entrance_time"
+                                        class="form-control"
+                                        :class="{ 'is-invalid': form.errors.has('entrance_time') }"
+                                        step="1"
+                                        v-model="form.entrance_time"
+                                        >
+                                    <has-error :form="form" field="entrance_time"></has-error>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="entrance_time">{{ form.pausa_orario ? 'Orario Pausa' : 'Orario Uscita'}}</label>
+                                    <input type="time" name="exit_date"
+                                        class="form-control"
+                                        :class="{ 'is-invalid': form.errors.has('exit_date') }"
+                                        step="1"
+                                        v-model="form.exit_time"
+                                        >
+                                    <has-error :form="form" field="exit_date"></has-error>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="entrance_time">Orario Entrata</label>
-                            <input type="time" name="entrance_time"
-                                class="form-control"
-                                :class="{ 'is-invalid': form.errors.has('entrance_time') }"
-                                step="1"
-                                v-model="form.entrance_time"
-                                >
-                            <has-error :form="form" field="entrance_time"></has-error>
-                        </div>
-                        <div class="form-group">
-                            <label>Orario Uscita</label>
-                            <input type="time" name="exit_date"
-                                class="form-control"
-                                :class="{ 'is-invalid': form.errors.has('exit_date') }"
-                                step="1"
-                                v-model="form.exit_time"
-                                >
-                            <has-error :form="form" field="exit_date"></has-error>
+                        <!-- orario seconda timbrata se il dipendente è abilitato -->
+                        <div class="row"
+                            v-if="form.pausa_orario"
+                        >
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="entrance_time_2">Orario Rientro</label>
+                                    <input type="time" name="entrance_time_2"
+                                        class="form-control"
+                                        :class="{ 'is-invalid': form.errors.has('entrance_time_2') }"
+                                        step="1"
+                                        v-model="form.entrance_time_2"
+                                        >
+                                    <has-error :form="form" field="entrance_time_2"></has-error>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="exit_time_2">Orario Uscita</label>
+                                    <input type="time" name="exit_time_2"
+                                        class="form-control"
+                                        :class="{ 'is-invalid': form.errors.has('exit_date_2') }"
+                                        step="1"
+                                        v-model="form.exit_time_2"
+                                        >
+                                    <has-error :form="form" field="exit_date_2"></has-error>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -447,6 +492,7 @@ export default {
                 nome: '',
                 cognome: '',
                 codice_fiscale: '',
+                pausa_orario: false,
                 matricola: '',
                 entrance_date: '',
                 entrance_time: '',
@@ -454,6 +500,10 @@ export default {
                 exit_date: '',
                 exit_time: '',
                 exit_ip: '',
+                entrance_time_2: '',
+                entrance_ip_2: '',
+                exit_time_2: '',
+                exit_ip_2: '',
                 ref_date: '',
                 worker_id: '',
                 worker_status: '',
@@ -509,6 +559,9 @@ export default {
             // sets entrance/exit time
             this.form.entrance_time = this.attendanceTime(item.day_date, item.entrance_date)
             this.form.exit_time = this.attendanceTime(item.day_date, item.exit_date)
+            this.form.entrance_time_2 = this.attendanceTime(item.day_date, item.entrance_date_2)
+            this.form.exit_time_2 = this.attendanceTime(item.day_date, item.exit_date_2)
+            this.form.pausa_orario = (item.pausa_orario === 1)
         },
         addEditAbscence(item) {
             // Adds/Edits Abscence
@@ -540,6 +593,9 @@ export default {
             }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
         },
         createItem(){
+            /*
+            NOTE: attendance store/create functions is disabled
+
             this.$Progress.start();
 
             this.form.post('api/attendance')
@@ -567,8 +623,15 @@ export default {
                         title: 'Si è verificato un errore! Prego, riprova'
                     });
                 })
+            */
         },
         updateItem(){
+            // validates data
+            if (!this.validateForm()) return
+
+
+            console.log(this.form)
+
             this.$Progress.start();
 
             this.form.put('api/attendance/' + this.form.id)
@@ -614,6 +677,86 @@ export default {
                     }
                 })
         },
+        validateForm() {
+
+            // validates required data
+            if (this.form.pausa_orario) {
+                // dipendente con pausa
+                if (this.form.entrance_time === '' || this.form.exit_time_2 === '') {
+                    Toast.fire({
+                        icon: 'error',
+                        title: '"Orario Entrata" e "Orario Uscita" sono entrambi richiesti'
+                    });
+                    return false
+                }
+
+                // se ha inserito pausa, richiede entrambi i dati
+                if (this.form.entrance_time_2 !== '' || this.form.exit_time !== '') {
+                    if (this.form.entrance_time_2 === '' || this.form.exit_time === '') {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'In caso di pausa, "Orario Pausa" e "Orario Rientro" devono essere entrambi specificati.'
+                        })
+                        return false
+                    }
+                }
+            } else {
+                // dipendente senza pausa
+                if (this.form.entrance_time === '' || this.form.exit_time === '') {
+                    Toast.fire({
+                        icon: 'error',
+                        title: '"Orario Entrata" e "Orario Uscita" sono entrambi richiesti'
+                    });
+                    return false
+                }
+            }
+
+            // checks times:
+            // inserisce gli orari in un array, ne crea una copia, e fa il sorting
+            // quindi confronta copia con array originale.
+            // se vi sono differenze, l'utente ha inserito orari d'entrata successivi alle uscite
+            const arr1 = []
+            arr1.push(this.form.entrance_time)
+            if (this.form.exit_time !== '') arr1.push(this.form.exit_time)
+            if (this.form.entrance_time_2 !== '') arr1.push(this.form.entrance_time_2)
+            if (this.form.exit_time_2 !== '') arr1.push(this.form.exit_time_2)
+
+            const arr2 = JSON.parse(JSON.stringify(arr1)).sort()    // sorting degli orari inseriti
+
+            if (arr1.join() !== arr2.join()) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Gli orari di uscita devono essere successivi a quelli di entrata'
+                });
+                return false
+            }
+
+            // checks duplicates:
+            let arr3 = [...new Set(arr1)];
+            if (arr3.length < arr1.length) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Gli orari di uscita devono essere successivi a quelli di entrata'
+                });
+                return false
+            }
+
+            // normalizes form
+            if (arr2.length === 2) {
+                this.form.entrance_time = arr2[0]
+                this.form.exit_time = arr2[1]
+                this.form.entrance_time_2 = ''
+                this.form.exit_time_2 = ''
+            }
+            if (arr2.length === 2) {
+                this.form.entrance_time = arr2[0]
+                this.form.exit_time = arr2[1]
+                this.form.entrance_time_2 = arr2[2]
+                this.form.exit_time_2 = arr2[3]
+            }
+            return true
+        },
+
         upsertAbscence() {
             // inserts/updates abscence
             this.$Progress.start();

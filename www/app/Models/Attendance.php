@@ -16,6 +16,6 @@ class Attendance extends Model
      * @var array
      */
     protected $fillable = [
-        'worker', 'entrance_date', 'entrance_ip', 'entrance_latitude', 'entrance_longitude', 'entrance_accuracy', 'exit_date', 'exit_ip', 'exit_latitude', 'exit_longitude', 'exit_accuracy', 'check'
+        'worker', 'entrance_date', 'entrance_ip', 'entrance_latitude', 'entrance_longitude', 'entrance_accuracy', 'exit_date', 'exit_ip', 'exit_latitude', 'exit_longitude', 'exit_accuracy', 'entrance_date_2', 'entrance_ip_2', 'entrance_latitude_2', 'entrance_longitude_2', 'entrance_accuracy_2', 'exit_date_2', 'exit_ip_2', 'exit_latitude_2', 'exit_longitude_2', 'exit_accuracy_2', 'check'
     ];
 }

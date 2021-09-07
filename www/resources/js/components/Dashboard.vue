@@ -36,8 +36,14 @@
                                                 >{{ timbrataToString(item.chk) }}</span>
                                             </td>
                                             <td>{{ item.day_date }}</td>
-                                            <td v-if="item.chk < 1">{{ attendanceTime(item.day_date, item.entrance_date) }}</td>
-                                            <td v-if="item.chk == 1">{{ attendanceTime(item.day_date, item.exit_date) }}</td>
+                                            <td v-if="item.chk < 1">
+                                                <!-- entrance date/time 1 or 2 -->
+                                                {{ item.entrance_date_2 === null ? attendanceTime(item.day_date, item.entrance_date) : attendanceTime(item.day_date, item.entrance_date2) }}
+                                            </td>
+                                            <td v-if="item.chk == 1">
+                                                <!-- exit date/time 1 or 2 -->
+                                                {{ item.exit_date_2 === null ? attendanceTime(item.day_date, item.exit_date) : attendanceTime(item.day_date, item.exit_date_2) }}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

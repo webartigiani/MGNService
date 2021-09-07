@@ -115,6 +115,7 @@ class WorkerController extends BaseController
             'email' => $data['email'],
             'telefono' => $data['telefono'],
             'ore_settimanali' => $data['ore_settimanali'],
+            'pausa_orario' => $data['pausa_orario'],
             'modo_timbratura' => $data['modo_timbratura'],
             'data_assunzione' => $data['data_assunzione'],
             'data_cessazione' => $data['data_cessazione'],
@@ -316,8 +317,8 @@ public function exportCodes(Request $request) {
 
                         $thisID = $this->hasTimbrataEntrata($workerID, $today);
                         if ($thisID == 0) {
-                            // timbrata in entrata non ancora esistente
-                            // esegue timbrata in entrata e ottiene il suo ID
+                            // prima timbrata in entrata non ancora esistente
+                            // esegue prima timbrata in entrata e ottiene il suo ID
                             $thisID = DB::table('attendances')->insertGetId(
                                 array(
                                     'worker' => $workerID,
@@ -329,12 +330,11 @@ public function exportCodes(Request $request) {
                                 )
                             );
                             $this->setStatus($workerID, 1);             // sets worker's status to 1
-
                         } else {
-                            // timbrata in entrata già esistente
-                            // verifica se manca timbrata in uscita
+                            // prima timbrata in entrata già esistente
+                            // verifica se manca prima timbrata in uscita
                             if ($this->hasTimbrataUscita($workerID, $today) == 0) {
-                                // esegue timbrata in uscita
+                                // esegue prima timbrata in uscita
                                 DB::table('attendances')->where('id', $thisID)
                                 ->update(
                                     array(
@@ -346,31 +346,78 @@ public function exportCodes(Request $request) {
                                 );
                                 $this->setStatus($workerID, 0);         // sets worker's status to 0
                             } else {
-                                // timbrate E/U entrambi esistenti
-                                // non è richiesta timbratura
-                                $errorMessage = 'hai già eseguito tutte le timbrate della giornata';
-                                return 0;
+                                // prime timbrate E/U entrambi esistenti
+                                // Se il dipendente è abilitato alla pausa, verifica le seconde timbrate giornaliere
+
+                                if ($this->canPauseOrario($workerID)) {
+                                    // Dipendente abilitato alla pausa in orario di lavoro.
+                                    // Verifica seconda timbrata in entrata
+                                    $thisID = $this->hasTimbrataEntrata2($workerID, $today);
+                                    if ($thisID == 0) {
+                                        // seconda timbrata in entrata non ancora esistente
+                                        // esegue seconda timbrata in entrata e ottiene il suo ID
+                                        $thisID = $this->hasTimbrataUscita($workerID, $today);
+                                        DB::table('attendances')->where('id', $thisID)
+                                        ->update(
+                                            array(
+                                                'entrance_date_2' => $this->utils->OraItaliana(),
+                                                'entrance_ip_2' => $ip,
+                                                'check' => 0,
+                                                'updated_at' => $this->utils->OraItaliana()
+                                            )
+                                        );
+                                        $this->setStatus($workerID, 1);             // sets worker's status to 1
+                                    } else {
+                                        // seconda timbrata in entrata già esistente
+                                        // verifica se manca seconda timbrata in uscita
+                                        if ($this->hasTimbrataUscita2($workerID, $today) == 0) {
+                                            // esegue seconda timbrata in uscita
+                                            DB::table('attendances')->where('id', $thisID)
+                                            ->update(
+                                                array(
+                                                    'exit_date_2' => $this->utils->OraItaliana(),
+                                                    'exit_ip_2' => $ip,
+                                                    'check' => 1,
+                                                    'updated_at' => $this->utils->OraItaliana()
+                                                )
+                                            );
+                                            $this->setStatus($workerID, 0);         // sets worker's status to 0
+                                        } else {
+                                            // Dipendente abilitato alla pausa in orario di lavoro.
+                                            // Ha già eseguito le prime e seconde timbrate E/U della giornata
+                                            // Non può eseguire ulteriori timbrate nella giornata corrente
+                                            $errorMessage = 'Hai già eseguito tutte le timbrate della giornata.';
+                                            return 0;
+                                        }
+                                    }
+                                } else {
+                                    // Dipendente NON abilitato alla pausa in orario di lavoro.
+                                    // Ha già eseguito le prime timbrate E/U della giornata
+                                    // Non può eseguire ulteriori timbrate nella giornata corrente
+                                    $errorMessage = 'Hai già eseguito tutte le timbrate della giornata.';
+                                    return 0;
+                                }
                             }
                         }
                         return $thisID;
                     } else {
                         // today is sunday
-                        $errorMessage = 'giorno non lavorativo';
+                        $errorMessage = 'Giorno non lavorativo.';
                         return 0;
                     }
                 } else {
                     // password not valid
-                    $errorMessage = 'hai digitato un codice timbrata non valido';
+                    $errorMessage = 'Hai digitato un codice timbrata non valido.';
                     return 0;
                 }
             } else {
                 // worker not hired
-                $errorMessage = 'il dipendente selezionato non è presente in archivio o non è abilitato';
+                $errorMessage = 'Il dipendente selezionato non è presente in archivio o non è abilitato.';
                 return 0;
             }
         } else {
             // worker doesn't exists
-            $errorMessage = 'Dipendente non trovato';
+            $errorMessage = 'Dipendente non trovato.';
             return 0;
         }
     }
@@ -397,7 +444,17 @@ public function exportCodes(Request $request) {
     }
 
     /**
-     * if the specified worker has en attendace entrance in the specified date
+     * returns true if the employee is enabled to take breaks during working hours (e.g. lunch break)
+     */
+    public function canPauseOrario($id) {
+        $tableName = 'workers';
+        $data = DB::table($tableName)->where('id', $id)->where('pausa_orario', true)->take(1)->get();
+        if (isset($data)) return isset($data[0]);
+        return false;
+    }
+
+    /**
+     * if the specified worker has an attendace for 1st entrance in the specified date
      * returns its id
      * otherwise returns 0
      */
@@ -415,7 +472,7 @@ public function exportCodes(Request $request) {
     }
 
     /**
-     * if the specified worker has en attendace exit in the specified date
+     * if the specified worker has and attendace for 1st exit in the specified date
      * returns its id
      * otherwise returns 0
      */
@@ -426,6 +483,42 @@ public function exportCodes(Request $request) {
 
         $tableName = 'attendances';
         $data = DB::table($tableName)->where('worker', $id)->whereBetween('exit_date', [$startDate, $toDate])->take(1)->get();
+        if (isset($data)) {
+            if (isset($data[0])) $ret = $data[0]->id;
+          }
+        return $ret;
+    }
+
+    /**
+     * if the specified worker has an attendace for 2nd entrance in the specified date
+     * returns its id
+     * otherwise returns 0
+     */
+    public function hasTimbrataEntrata2($id, $date) {
+        $ret = 0;
+        $startDate = $date . ' 00:00:00';
+        $toDate = $date . ' 23:59:59';
+
+        $tableName = 'attendances';
+        $data = DB::table($tableName)->where('worker', $id)->whereBetween('entrance_date_2', [$startDate, $toDate])->take(1)->get();
+        if (isset($data)) {
+          if (isset($data[0])) $ret = $data[0]->id;
+        }
+        return $ret;
+    }
+
+    /**
+     * if the specified worker has and attendace for 2nd exit in the specified date
+     * returns its id
+     * otherwise returns 0
+     */
+    public function hasTimbrataUscita2($id, $date) {
+        $ret = 0;
+        $startDate = $date . ' 00:00:00';
+        $toDate = $date . ' 23:59:59';
+
+        $tableName = 'attendances';
+        $data = DB::table($tableName)->where('worker', $id)->whereBetween('exit_date_2', [$startDate, $toDate])->take(1)->get();
         if (isset($data)) {
             if (isset($data[0])) $ret = $data[0]->id;
           }

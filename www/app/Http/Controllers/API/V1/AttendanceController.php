@@ -94,9 +94,11 @@ class AttendanceController extends BaseController
         $sql = $this->listAttendancesQuery($startDate, $endDate, $search, $notatwork, $orderBy);
         if ($limit > 0) $sql .= " limit {$limit}";
 
-        // TEMP: to export full SQL query
-        //echo $sql;
-        //return;
+        // NOTE: to debug SQL query, use param "debug-query=y"
+        if (isset($params['debug-query'])) {
+            echo $sql;
+            return;
+        }
 
         // checks if we have working days in selected period...
         if ($sql == '') {
@@ -183,6 +185,24 @@ class AttendanceController extends BaseController
             $data['exit_date'] = null;
             $data['exit_ip'] = '0.0.0.0';
         }
+        if (isset($data['entrance_time_2'])) {
+            $data['entrance_date_2'] = $data['ref_date'] . ' ' . $data['entrance_time_2'];
+            $data['entrance_ip_2'] = '0.0.0.0';
+            if (!isset($data['exit_time_2'])) $data['check']  = -1;
+        } else {
+            $data['entrance_date_2'] = null;
+            $data['entrance_ip_2'] = '0.0.0.0';
+        }
+        if (isset($data['exit_time_2'])) {
+            $data['exit_date_2'] = $data['ref_date'] . ' ' . $data['exit_time_2'];
+            $data['exit_ip_2'] = '0.0.0.0';
+            $data['check'] = 1;
+            if (!isset($data['entrance_time_2'])) $data['check']  = -1;
+        } else {
+            $data['exit_date_2'] = null;
+            $data['exit_ip_2'] = '0.0.0.0';
+        }
+
 
         // Updates data
         $attendance->update($data);
@@ -207,7 +227,6 @@ class AttendanceController extends BaseController
 // #endregion API Methods
 
 // #region API Export Methods
-
 public function export(Request $request) {
     /**
      * Exports presenze as CSV
@@ -230,7 +249,9 @@ public function export(Request $request) {
     //return;
 
     $sql = "select
-                day_date, worker_id, nome, cognome, codice_fiscale, matricola, entrance_date, entrance_ip, exit_date, exit_ip,
+                day_date, worker_id, nome, cognome, codice_fiscale, matricola,
+                entrance_date, entrance_ip, exit_date, exit_ip,
+                entrance_date_2, entrance_ip_2, exit_date_2, exit_ip_2,
                 case
                     when chk < 0 then 'Assente'
                     when chk = 0 then 'Incompleta'
@@ -244,7 +265,7 @@ public function export(Request $request) {
                 {$sql}
             ) tbl";
 
-    $header = "Giorno;Dipendente;Nome;Cognome;Codice Fiscale;Matricola;Entrata;IP Entrata;Uscita;IP Uscita;Presenza;Ore Lavorate;Ore Assenza;Cod. Giustificativo Assenza;Giustificativo Assenza;Ore Totali";
+    $header = "Giorno;Dipendente;Nome;Cognome;Codice Fiscale;Matricola;Entrata;IP Entrata;Uscita;IP Uscita;Rientro;IP Rientro;Uscita;IP Uscita;Presenza;Ore Lavorate;Ore Assenza;Cod. Giustificativo Assenza;Giustificativo Assenza;Ore Totali";
     $dbdata = DB::select(DB::raw($sql));
     return $this->sendExport($header, $dbdata, ';', 'text/csv');
 }
@@ -578,10 +599,14 @@ public function exportNotes(Request $request) {
                                                 diventa IFNULL(att.id, concat(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
                                             */
                                             IFNULL(att.id, CONCAT(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
-                                            w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status,
+                                            w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status, w.pausa_orario,
                                             calendar.day_date,
                                             att.entrance_date, att.entrance_ip,
                                             att.exit_date, att.exit_ip,
+                                            /* 2021-09-07 Considera anche seconda timbrata giornaliera */
+                                            att.entrance_date_2, att.entrance_ip_2,
+                                            att.exit_date_2, att.exit_ip_2,
+                                            /* NOTA: minuti lavorati, ore (float e int), minuti residui, sono calcolati dalla view export_v_attendances */
                                             IFNULL(att.duration_m, 0) duration_m,
                                             IFNULL(att.duration_h, 0) duration_h,
                                             IFNULL(att.duration_h_int, 0) duration_h_int,
@@ -589,7 +614,7 @@ public function exportNotes(Request $request) {
                                             IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
                                             IFNULL(att.chk, -1) chk,
 
-                                            /* SIMONE: data_cessazione ci serve solo per potervi filtrare */
+                                            /* SIMONE: data_cessazione ci serve solo per poterci filtrare */
                                             w.data_cessazione
                                         from
                                         (   /*
@@ -614,18 +639,6 @@ public function exportNotes(Request $request) {
                                     */
                                     data_cessazione is null or data_cessazione > ref_date
                                     ";
-        if ($notAtWork) $sql .= " and chk <= 0";        // show only not at work?
-        if ($searchQuery != '') {
-            $sql .= " and (
-                /*
-                    do search...
-                */
-                nome like '%" . $searchQuery . "%'
-                or cognome like '%" . $searchQuery . "%'
-                or codice_fiscale like '%" . $searchQuery . "%'
-            )";
-        }
-
         $sql .= " ) presenze
                     /* join absences to get abscence if present */
                     left outer join absences assenze
@@ -639,7 +652,24 @@ public function exportNotes(Request $request) {
                         on  presenze.worker_id = wn.worker_id
                         and presenze.ref_date = wn.ref_date
             ) results
+        /*
+            Apply filters
+        */
+        where
+            1=1
         ";
+        if ($searchQuery != '') {
+            $sql .= " and
+                /*
+                    do search...
+                */
+                (nome like '%" . $searchQuery . "%'
+                or cognome like '%" . $searchQuery . "%'
+                or codice_fiscale like '%" . $searchQuery . "%'
+                )
+            ";
+        }
+        if ($notAtWork) $sql .= " and chk <= 0";        // show only not at work?
 
         // order by
         if ($orderBy != '') $sql .= " order by " . $orderBy;

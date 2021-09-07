@@ -148,25 +148,35 @@ export default {
                 const response = result.data
                 const data = result.data.data
 
-                console.log(data);
-
                 if (response.success) {
                     // timbrata OK
                     let title = ''
+                    let timbrata = 1
                     let msg = this.form.worker.name + ' ' + this.form.worker.surname
 
                     // genera messaggio a seconda se timbrata di entrata o uscita
+                    // e se si tratta di prima o seconda timbrata
                     if (data.check == 0) {
                         // entrance
                         title = 'Entrata'
+                        if (data.entrance_date_2 != null) timbrata = 2
+
                         msg = this.form.worker.name + ' ' + this.form.worker.surname
-                        msg += '<br><br>timbrata entrata alle ore ' + this.formatTime(data.entrance_date)
+                        if (timbrata === 1)
+                            msg += '<br><br>timbrata entrata alle ore ' + this.formatTime(data.entrance_date)
+                        else
+                            msg += '<br><br>timbrata rientro alle ore ' + this.formatTime(data.entrance_date_2)
                     }
                     if (data.check == 1) {
                         // exit
                         title = 'Uscita'
+                        if (data.exit_date_2 != null) timbrata = 2
+
                         msg = this.form.worker.name + ' ' + this.form.worker.surname
-                        msg += '<br><br>timbrata uscita alle ore ' + this.formatTime(data.exit_date)
+                        if (timbrata === 1)
+                            msg += '<br><br>timbrata uscita alle ore ' + this.formatTime(data.exit_date)
+                        else
+                            msg += '<br><br>timbrata uscita alle ore ' + this.formatTime(data.exit_date_2)
                     }
                     Swal.fire({
                         title: title,
