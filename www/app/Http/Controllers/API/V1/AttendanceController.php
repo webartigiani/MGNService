@@ -634,10 +634,10 @@ public function exportNotes(Request $request) {
                                             and att.worker_id = w.id
                                     ) presenze
                                 where
-                                    /* esclude i dipendenti il cui rapporto di lavoro è cessato prima della data di riferimento
-                                       Prima era 1=1
+                                    /* esclude i dipendenti il cui rapporto di lavoro è cessato prima della data di riferimento (Prima era 1=1)
+                                       2021-09-30 >= ref_date, fasi che venga fornita la presenza anche per il giorno di cessazione rapporto
                                     */
-                                    data_cessazione is null or data_cessazione > ref_date
+                                    data_cessazione is null or data_cessazione >= ref_date
                                     ";
         $sql .= " ) presenze
                     /* join absences to get abscence if present */
