@@ -1,9 +1,19 @@
 <?php
-
+/*
+    Create new command
+        php artisan make:command CommandName
+    Schedule
+        php artisan schedule:list       // lists all running schedules
+        php artisan schedule:run        // runs schedules
+        php artisan schedule:work       // runs schedules on local development machine
+**/
 namespace App\Console;
 
+use App\Console\Commands\DemoCommand;
+use App\Console\Commands\StopTracking;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Storage;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,7 +23,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
     ];
 
     /**
@@ -24,7 +33,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        /*
+        $path = 'storage/logs';
+        $schedule->command(StopTracking::class)
+            ->everyMinute()
+            ->appendOutputTo("{$path}/Scheduler-StopTracking.txt");
+        */
     }
 
     /**

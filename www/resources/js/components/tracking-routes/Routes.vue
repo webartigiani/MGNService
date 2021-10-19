@@ -136,14 +136,13 @@
                             <i class="fa fa-dot-circle"
                                 :title="(item.device_online==1 ? 'attualmente online' : 'attualmente offline')"
                                 :class="(item.device_online==1 ? 'green' : 'orange')"></i>
-                            {{ item.device_manufacter }} {{ item.device_model }} ({{ item.device_platform }} {{ item.device_version }})</td>
+                            {{ item.device_manufacter }} {{ item.device_model }} ({{ item.device_platform }} {{ item.device_version }})
                         </td>
-
                         <td>
                             <a href="#"
                                 class="action"
                                 title="Visualizza Tragitto"
-                                @click="viewModal(item)"
+                                @click="viewRoute(item)"
                                 >
                                 <i class="fas fa-eye blue"></i>
                             </a>
@@ -182,49 +181,8 @@
           </div>
         </div>
 
-    <!-- Modal Viewer  -->
-        <div class="modal fade modal-fullscreen" id="modalTracking" tabindex="-1" role="dialog" aria-labelledby="modalTracking" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Dettagli Tragitto</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <!-- OpenStreetMap: creates the map with polyline -->
-                        <v-map style="height: 100%"
-                            :zoom="mapSettings.zoom"
-                            :center="mapData.center"
-                        >
-                            <v-tilelayer :url="mapSettings.url"></v-tilelayer>
-                            <v-polyline-decorator :paths="mapData.polyline.latlngs" :patterns="patterns"></v-polyline-decorator>
-
-                            <!-- start marker with options -->
-                            <v-marker
-                                :lat-lng="mapData.startMarker"
-                                :icon="mapSettings.startPoint"
-                                >
-                                <v-tooltip :options="mapSettings.markerToolTipOptions">Partenza: {{ addresses.startPoint }}</v-tooltip>
-                            </v-marker>
-                            <!-- end marker with options -->
-                            <v-marker
-                                :lat-lng="mapData.endMarker"
-                                :icon="mapSettings.endPoint"
-                                >
-                                <v-tooltip :options="mapSettings.markerToolTipOptions">Arrivo: {{ addresses.endPoint }} </v-tooltip>
-                            </v-marker>
-                            <v-polyline :lat-lngs="mapData.polyline.latlngs" :color="mapSettings.color"></v-polyline>
-                        </v-map>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- route QUI -->
+        <route-component ref="RouteComponent"></route-component>
     </div>
   </section>
 </template>
@@ -241,64 +199,19 @@ a.action {
 textarea.notes {
   resize: none;
 }
-
-/* modal-fullscreen */
-.modal.modal-fullscreen .modal-dialog {
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  max-width: none;
-}
-
-.modal.modal-fullscreen .modal-content {
-  height: auto;
-  height: 100vh;
-  border-radius: 0;
-  border: none;
-}
-
-.modal.modal-fullscreen .modal-body {
-  overflow-y: auto;
-}
 </style>
 
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
 import Vue from 'vue'
 
-/* OpenStreetMap VueJS.
-    components  https://vue2-leaflet.netlify.app/components/
-    examples    https://vue2-leaflet.netlify.app/examples/
-
-    Other Plugins:
-    - vue2-leaflet-polylinedecorator
-        to decorate paths with arrows
-        see https://www.npmjs.com/package/vue2-leaflet-polylinedecorator
-
-    - vue2-leaflet-routing-machine
-        see https://github.com/giordanna/vue2-leaflet-routing-machine/blob/master/src/components/LRoutingMachine.vue
-*/
-import L from "leaflet";
-import { latLng, icon } from "leaflet";
-//import { LMap, LTileLayer, LMarker, LPopup, LTooltip, LPolyline } from "vue2-leaflet";
-import * as Vue2Leaflet from "vue2-leaflet";
-import 'leaflet/dist/leaflet.css';
-import Vue2LeafletPolylineDecorator from 'vue2-leaflet-polylinedecorator'
-import { IRouter, IGeocoder, LineOptions } from 'leaflet-routing-machine'
-
-Vue.component('v-polyline-decorator', Vue2LeafletPolylineDecorator)
+// Components
+import RouteComponent from './RouteComponent'
 
 export default {
     components: {
         VueTagsInput,
-
-        // OpenStreetMap VueJS
-        'v-map': Vue2Leaflet.LMap,
-        'v-tilelayer': Vue2Leaflet.LTileLayer,
-        'v-marker': Vue2Leaflet.LMarker,
-        'v-tooltip': Vue2Leaflet.LTooltip,
-        'v-polyline': Vue2Leaflet.LPolyline
+        RouteComponent
     },
 
     // #region Properties
@@ -316,49 +229,6 @@ export default {
             },
             form: {
                 id: '',
-            },
-            // OpenStreet Map Data
-            mapData: {
-                center: [0,0],
-                startMarker: [0,0],
-                endMarker: [0,0],
-                polyline: {
-                    latlngs: [[0,0],[0,0]]
-                },
-            },
-            // OpenStreet Map Settings
-            mapSettings: {
-                url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                zoom: 17,
-                // markers tooltip options
-                markerToolTipOptions: {
-                    permanent: true,
-                    opacity: 1
-                },
-                // markers custom icons
-                startPoint: icon({
-                    iconUrl: "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png",
-                    iconSize: [48, 48],
-                    iconAnchor: [16, 32]
-                }),
-                endPoint: icon({
-                    iconUrl: "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png",
-                    iconSize: [48, 48],
-                    iconAnchor: [16, 32]
-                })
-            },
-            patterns: [{
-                offset: 50,             /* pos of first arrow */
-                repeat: 100,             /* dist between arrows */
-                symbol: L.Symbol.arrowHead({ // Define the arrow symbol
-                    pixelSize: 10,      // Size
-                    polygon: false,     // false: ^ shape, true: triangle shape.
-                    pathOptions: {stroke: true} // Required to actually draw the arrow.
-                })
-            }],
-            addresses: {                // start-end address from  nominatim.org reverse API
-                startPoint: '',         // see: https://nominatim.org/release-docs/latest/api/Reverse/
-                endPoint: ''
             }
         }
     },
@@ -380,43 +250,11 @@ export default {
             this.$Progress.finish();
         },
 
-        // #region Modals
-        viewModal(item) {
-            this.$Progress.start();
-            axios.get('api/tracking/' + item.id, {}).then(({ data }) => {
-
-                if (data.success) {
-                    this.mapData.startMarker = data.data.start
-                    this.mapData.endMarker = data.data.end
-                    this.mapData.center = data.data.start
-                    this.mapData.polyline.latlngs = data.data.latlngs
-
-                    $('#modalTracking').modal('show');
-                    setTimeout(function() {
-                        window.dispatchEvent(new Event('resize'))
-                        this.$Progress.finish()
-                    }, 250);
-
-                    // gets starting and end point addresses
-                    this.reversePoints(data)
-
-                } else {
-                    Swal.fire({
-                        title: 'Ops!',
-                        icon:'warning',
-                        html: "Si è verificato un errore durante il caricamento dei dati del tragitto. Prego, riprova più tardi.<br><br>Se il problema persiste, contatta il supporto tecnico.",
-                    });
-                }
-            }).catch((data)=> {
-                // API Error
-                Swal.fire({
-                    title: 'Ops!',
-                    icon:'warning',
-                    html: "Si è verificato un errore durante il caricamento dei dati del tragitto. Prego, riprova più tardi.<br><br>Se il problema persiste, contatta il supporto tecnico.",
-                });
-            });
+        viewRoute(item) {
+            // open the specified route into the RouteComponent modal
+            console.log(item)
+            this.$refs.RouteComponent.show(item)
         },
-        // #endregion Modals
 
         // #region CRUD Functions
         list() {
@@ -489,23 +327,6 @@ export default {
             this.list();
         },
         // #endregion Filters Functions
-
-        // #region Geo-Coding API
-        reversePoints(data) {
-            let self = this
-            let url = ''
-
-            url = 'https://nominatim.openstreetmap.org/reverse?lat=' + data.data.start[0] + '&lon=' + data.data.start[1] + '&format=json'
-            axios.get(url, {}).then(({ data }) => {
-                self.addresses.startPoint = data.address.road + ', ' + data.address.house_number + ' - ' + data.address.town + ' (' + data.address.county + ')'
-            })
-            url = 'https://nominatim.openstreetmap.org/reverse?lat=' + data.data.end[0] + '&lon=' + data.data.end[1] + '&format=json'
-            axios.get(url, {}).then(({ data }) => {
-                self.addresses.endPoint = data.address.road + ', ' + data.address.house_number + ' - ' + data.address.town + ' (' + data.address.county + ')'
-            })
-        },
-
-        // #endregion Geo-Coding API
 
         // #region Utils
         presenzaString(item) {
