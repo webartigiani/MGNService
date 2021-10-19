@@ -4,7 +4,7 @@
         <div class="row">
           <div class="col-12">
 
-            <h3>Tragitti</h3>
+            <h3>Tragitti {{ filters.description }}</h3>
 
             <div class="card">
                 <div class="card-header">
@@ -42,6 +42,7 @@
                     <div class="card-title col-12">
                         <div class="row">
                             <div class="col-10">
+                                <!-- filtri date -->
                                 <input
                                     v-model="filters.date_start"
                                     type="date"
@@ -62,6 +63,56 @@
                                     title="Fine Periodo"
                                 />
 
+                                <!-- pulsanti impostazione filtri date -->
+                                <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    title="Anno in corso"
+                                    @click="setCurrentYear()">
+                                    <i class="far fa-calendar"></i>
+                                    365
+                                </button>
+                                <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    title="Mese Scorso"
+                                    @click="setLastMonth()">
+                                    <i class="fas fa-history"></i>
+                                    30
+                                </button>
+                                <button type="button"
+                                    class="btn btn-sm btn-primary btn-green"
+                                    title="Mese in corso"
+                                    @click="setCurrentMonth()">
+                                    <i class="far fa-calendar"></i>
+                                    30
+                                </button>
+                                <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    title="Settimana scorsa"
+                                    @click="setLastWeek()">
+                                    <i class="fas fa-history"></i>
+                                    7
+                                </button>
+                                <button type="button"
+                                    class="btn btn-sm btn-primary btn-green"
+                                    title="Settimana in corso"
+                                    @click="setCurrentWeek()">
+                                    <i class="far fa-calendar"></i>
+                                    7
+                                </button>
+                                <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    title="Ieri"
+                                    @click="setYesterday()">
+                                    <i class="fas fa-history"></i>
+                                    Ieri
+                                </button>
+                                <button type="button"
+                                    class="btn btn-sm btn-primary btn-green"
+                                    title="Oggi"
+                                    @click="setToday()">
+                                    <i class="far fa-clock"></i>
+                                    Oggi
+                                </button>
                             </div>
                             <div class="col-2 text-right">
                                 <label for="status">Stato</label>
@@ -72,7 +123,7 @@
                                     >
                                     <option value="-1">-- qualunque --</option>
                                     <option value="1">in corso</option>
-                                    <option value="0">conclusa</option>
+                                    <option value="0">concluso</option>
                                 </select>
                             </div>
                         </div>
@@ -105,7 +156,7 @@
                      <tr v-for="item in items.data" :key="item.id">
                         <td style="width:20px;">
                             <i class="fa fa-dot-circle"
-                                :title="(item.session_status==1 ? 'in corso' : 'conclusa')"
+                                :title="(item.session_status==1 ? 'in corso' : 'concluso')"
                                 :class="(item.session_status==1 ? 'green' : 'orange')"></i>
                         </td>
                         <!-- <td>{{ item.id }}</td> -->
@@ -234,7 +285,8 @@ export default {
                 date_start: null,
                 date_end: null,
                 status: -1,
-                per_page: 50
+                per_page: 50,
+                description: ''
             },
             form: {
                 id: '',
@@ -267,7 +319,6 @@ export default {
             // open the specified route into the RouteComponent modal
             this.$refs.RouteComponent.show(item)
         },
-
         deviceToUpgrade() {
             // returns the number of device to upgrade
             if (this.items.length === 0) return 0
@@ -362,6 +413,78 @@ export default {
             // checks dates
             if (this.filters.date_start > this.filters.date_end) this.filters.date_end = this.filters.date_start
         },
+        setToday() {
+            const now = new Date();
+            const d = this.$root.utils.generic.padZero(now.getDate());
+            const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
+            const y = now.getFullYear()
+
+            this.filters.date_start = y + '-' + m + '-' + d;
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'di oggi';
+            this.list();
+        },
+        setYesterday() {
+            const today = new Date()
+            const yesterday = new Date(today)
+            yesterday.setDate(yesterday.getDate() - 1)
+
+            const d = this.$root.utils.generic.padZero(yesterday.getDate());
+            const m = this.$root.utils.generic.padZero(yesterday.getMonth() + 1);
+            const y = yesterday.getFullYear()
+
+            this.filters.date_start = y + '-' + m + '-' + d;
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'di ieri';
+            this.list();
+        },
+        setCurrentWeek() {
+            let now = new Date();
+            let cw = new Date();
+
+            var day = cw.getDay()                   // current week
+            const diff = cw.getDate() - day + (day == 0 ? -6:1);     // adjust when day is monday
+            cw =  new Date(cw.setDate(diff));
+
+            const d1 = this.$root.utils.generic.padZero(cw.getDate());
+            const m1 = this.$root.utils.generic.padZero(cw.getMonth() + 1);
+            const y1 = cw.getFullYear()
+
+            const d = this.$root.utils.generic.padZero(now.getDate());
+            const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
+            const y = now.getFullYear()
+
+            this.filters.date_start = y1 + '-' + m1+ '-' + d1;
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'della settimana corrente';
+            this.list();
+        },
+        setLastWeek() {
+            let lw = new Date();
+            lw.setDate(lw.getDate() - 7)            // last week
+            var day = lw.getDay()
+            const diff = lw.getDate() - day + (day == 0 ? -6:1);        // adjust when day is monday
+            lw =  new Date(lw.setDate(diff));
+
+            const d1 = this.$root.utils.generic.padZero(lw.getDate());
+            const m1 = this.$root.utils.generic.padZero(lw.getMonth() + 1);
+            const y1 = lw.getFullYear()
+
+            let cw = new Date();
+
+            var day2 = cw.getDay()                   // current week
+            const diff2 = cw.getDate() - day2 + (day2 == 0 ? -6:1);     // adjust when day is monday
+            cw =  new Date(cw.setDate(diff2 - 1));                      //n points to previous sunday
+
+            const d = this.$root.utils.generic.padZero(cw.getDate());
+            const m = this.$root.utils.generic.padZero(cw.getMonth() + 1);
+            const y = cw.getFullYear()
+
+            this.filters.date_start = y1 + '-' + m1+ '-' + d1;
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'della settimana scorsa';
+            this.list();
+        },
         setCurrentMonth() {
             const now = new Date();
             const d = this.$root.utils.generic.padZero(now.getDate());
@@ -372,6 +495,34 @@ export default {
             this.filters.date_end = y + '-' + m + '-' + d;
             this.filters.description = 'del mese corrente';
             this.list();
+        },
+        setLastMonth() {
+            let now = new Date()
+            now.setDate(0)                            // last day of the previous month
+
+            const d = this.$root.utils.generic.padZero(now.getDate());
+            const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
+            const y = now.getFullYear()
+
+            this.filters.date_start = y + '-' + m + '-01';
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'del mese scorso';
+            this.list();
+        },
+        setCurrentYear() {
+            // sets period to current year
+            const now = new Date();
+            const d = this.$root.utils.generic.padZero(now.getDate());
+            const m = this.$root.utils.generic.padZero(now.getMonth() + 1);
+            const y = now.getFullYear()
+
+            this.filters.date_start = y + '-01-01';
+            this.filters.date_end = y + '-' + m + '-' + d;
+            this.filters.description = 'da inizio anno';
+            this.list();
+        },
+        setPeriod() {
+            this.filters.description = 'nel periodo selezionato';
         },
         // #endregion Filters Functions
 
