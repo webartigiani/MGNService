@@ -58,7 +58,17 @@
                             ></i>
                             {{ item.platform }} {{ item.version }}
                         </td>
-                        <td>{{ item.app_version }}</td>
+                        <td>
+                            {{ item.app_version }}
+                            <a href="#"
+                                v-if="item.app_version !== lastAppVersion"
+                                class="action ml-2"
+                                title="Aggiornamento App Richiesto"
+                                @click="appUpgradeRequired(item)"
+                                >
+                                <i class="fas fa-exclamation-triangle red"></i>
+                            </a>
+                        </td>
                         <td>
                             <i class="fa fa-check green"
                                 v-if="item.enabled==1"
@@ -126,6 +136,10 @@ export default {
     filters: {
     },
     computed: {
+        lastAppVersion() {
+            // returns the last APP release version number
+            return process.env.MIX_APP_VERSION
+        }
     },
     // #endregion Properties
 
@@ -154,6 +168,18 @@ export default {
             this.form.fill(item);
         },
         // #endregion Modals
+
+        appUpgradeRequired(item) {
+            console.log(item)
+            const msg = `Il dispositivo ${item.manufacter} ${item.model} (${item.platform} ${item.version}) sta usando una <b>versione obsoleta dell'App, che non supporta l'aggiornamento automatico..<br><br><span>Per aggiornare manualmente il dispositivo alla versione ${this.lastAppVersion} dell'App:<br>- accedere a "Impostazioni/Installa APP" su questo sito<br>- scansionare il QRCode con la fotocamera del dispositivo<br>- seguire la procedura di download e installazione dell'App sul telefono.</span>`;
+            Swal.fire({
+                title: 'Aggiornamento Richiesto',
+                icon:'warning',
+                html: msg,
+                confirmButtonText: 'Ok',
+                customClass: 'swal-wide',
+            })
+        },
 
         // #region CRUD Functions
         list() {

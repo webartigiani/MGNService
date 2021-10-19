@@ -154,6 +154,15 @@
                                 >
                                 <i class="far fa-stop-circle blue"></i>
                             </a>
+                            <!-- aggiornamento richiesto se versione app device < last release -->
+                            <a href="#"
+                                v-if="item.device_app_version !== lastAppVersion"
+                                class="action"
+                                title="Aggiornamento App Richiesto"
+                                @click="appUpgradeRequired(item)"
+                                >
+                                <i class="fas fa-exclamation-triangle red"></i>
+                            </a>
                         </td>
                     </tr>
                   </tbody>
@@ -235,6 +244,10 @@ export default {
     filters: {
     },
     computed: {
+        lastAppVersion() {
+            // returns the last APP release version number
+            return process.env.MIX_APP_VERSION
+        }
     },
     // #endregion Properties
 
@@ -252,8 +265,15 @@ export default {
 
         viewRoute(item) {
             // open the specified route into the RouteComponent modal
-            console.log(item)
             this.$refs.RouteComponent.show(item)
+        },
+
+        deviceToUpgrade() {
+            // returns the number of device to upgrade
+            if (this.items.length === 0) return 0
+
+            const obsoletes = this.items.data.filter((item) => { return item.device_app_version !== this.lastAppVersion })
+            return obsoletes.length
         },
 
         // #region CRUD Functions
@@ -264,7 +284,24 @@ export default {
             params.query = this.$root.$route.query.search
             axios.get('api/tracking', {
                 params: params
-            }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
+            }).then(({ data }) => {
+
+                this.items = data.data
+                this.$Progress.finish()
+
+                // Checks if there's device to upgrade
+                const devToUpgrade = this.deviceToUpgrade()
+
+                if (devToUpgrade > 0) {
+                    const msg = `Attenzione: ${devToUpgrade} tragitti sono stati acquisiti con dispositivi che non stanno eseguendo l'aggironamento automatico dell'App.<br><br>Si consiglia di aggiornare manualmente l'App alla versione ${this.lastAppVersion} su tutti i dispositivi in uso.<br><br>Per informazioni, cliccare il triangolo rosso in corrispondenva del tragitto.`;
+                    Swal.fire({
+                        title: 'Aggiornamenti Richiesti',
+                        icon:'warning',
+                        html: msg,
+                        confirmButtonText: 'Ok',
+                    })
+                }
+            });
         },
         deleteItem(item) {
             const msg = "Interrompere il tragitto in corso di<br>" + item.nome + " " + item.cognome + "<br>con " + item.veichle_manufacter + " " + item.veichle_model + " (" + item.veichle_licence_plate + ")?";
@@ -292,6 +329,16 @@ export default {
                         });
                     }
                 })
+        },
+        appUpgradeRequired(item) {
+            const msg = `Il dispositivo ${item.device_manufacter} ${item.device_model} (${item.device_platform} ${item.device_version}) sta usando una <b>versione obsoleta dell'App, che non supporta l'aggiornamento automatico..<br><br><span>Per aggiornare manualmente il dispositivo alla versione ${this.lastAppVersion} dell'App:<br>- accedere a "Impostazioni/Installa APP" su questo sito<br>- scansionare il QRCode con la fotocamera del dispositivo<br>- seguire la procedura di download e installazione dell'App sul telefono.</span>`;
+            Swal.fire({
+                title: 'Aggiornamento Richiesto',
+                icon:'warning',
+                html: msg,
+                confirmButtonText: 'Ok',
+                customClass: 'swal-wide',
+            })
         },
         // #endregion CRUD Functions
 
@@ -383,14 +430,14 @@ export default {
     },
     created() {
         this.$Progress.start();
-        this.setCurrentMonth()
-        this.list();                    // lists presenze
+        this.setCurrentMonth()  // imposta mese corrente e lista tragitti
         this.$Progress.finish();
     },
     beforeMount() {
     },
     mounted() {
         // sets search-query fron url
+        console.clear()
         this.$root.search.query = this.$root.$route.query.search
     },
     beforeDestroy() {

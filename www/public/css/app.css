@@ -70492,6 +70492,14 @@ div.filters select.form-control {
 
 /* #endregion Form */
 
+/* #region Swal */
+
+.swal-wide {
+  width: 850px !important;
+}
+
+/* #endregion Swal */
+
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);

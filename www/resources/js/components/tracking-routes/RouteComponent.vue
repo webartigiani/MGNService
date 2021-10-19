@@ -1,6 +1,7 @@
 <template>
     <!-- Modal Viewer  -->
     <div class="modal fade modal-fullscreen"
+        v-if="item !== null"
         id="modalTracking"
         tabindex="-1" role="dialog"
         aria-labelledby="modalTracking"
@@ -192,7 +193,7 @@ export default {
                 startPoint: '',         // see: https://nominatim.org/release-docs/latest/api/Reverse/
                 endPoint: ''
             },
-            item: {},
+            item: null,
             rendering: 0
         }
     },
