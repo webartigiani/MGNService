@@ -170,6 +170,7 @@ class TrackingController extends BaseController
                     where
                         session_id = '{$sessionID}'
                     limit 1";
+
             $dbdata = DB::select(DB::raw($sql));
 
             $result = new \stdClass();                      // creates an output object
@@ -247,7 +248,8 @@ class TrackingController extends BaseController
                         /* get veichle data */
                         ts.veichle veichle_id, v.manufacter veichle_manufacter, v.model veichle_model, v.licence_plate veichle_licence_plate, v.status veichle_status,
                         /* get device data */
-                        ts.device device_id, d.manufacter device_manufacter, d.model device_model, d.platform device_platform, d.`version` device_version, d.`uuid` device_uuid, d.is_online device_online
+                        ts.device device_id, d.manufacter device_manufacter,
+                        d.model device_model, d.platform device_platform, d.`version` device_version, d.`uuid` device_uuid, d.is_online device_online, d.app_version device_app_version
                     from tracking_sessions ts
                     inner join workers w
                         on ts.worker = w.id

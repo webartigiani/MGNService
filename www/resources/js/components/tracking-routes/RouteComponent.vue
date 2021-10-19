@@ -10,6 +10,9 @@
             <div class="modal-content">
                 <!-- header -->
                 <div class="modal-header">
+                    <i class="fa fa-dot-circle mt-2 mr-2"
+                        :title="(item.session_status==1 ? 'in corso' : 'conclusa')"
+                        :class="(item.session_status==1 ? 'green' : 'orange')"></i>
                     <h5 class="modal-title">Dettagli Tragitto #{{ item.id }}: {{ item.nome }} {{ item.cognome }}, {{ item.start_date_time.substring(0, 10) }}</h5>
 
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -60,12 +63,9 @@
                   </div>
                   <div class="col-lg-3">
                     <small>
-                        <i class="fa fa-dot-circle"
-                            :title="(item.session_status==1 ? 'in corso' : 'conclusa')"
-                            :class="(item.session_status==1 ? 'green' : 'orange')"></i>
-                        {{ item.session_status==1 ? 'Veicolo in Transito' : 'Percorso Concluso' }}<br>
                       <b>Veicolo:</b> {{ item.veichle_manufacter }} {{ item.veichle_model }} ({{ item.veichle_licence_plate }})<br>
-                      <b>Dispositivo:</b> {{ item.device_manufacter }} {{ addresses.device_model }} ({{ item.device_platform }} {{ item.device_version }})
+                      <b>Dispositivo:</b> {{ item.device_manufacter }} {{ addresses.device_model }} ({{ item.device_platform }} {{ item.device_version }})<br>
+                      <b>Versione APP:</b> {{ item.device_app_version }}
                     </small>
                   </div>
                   <div class="col-lg-3">
