@@ -51,6 +51,20 @@
                             <v-tooltip :options="mapSettings.markerToolTipOptions">Arrivo: {{ item.end_date_time }} {{ addresses.endPoint }} </v-tooltip>
                         </v-marker>
                         <v-polyline :lat-lngs="mapData.polyline.latlngs" :color="mapSettings.color"></v-polyline>
+
+                        <!--    WebMaster Advanced Functions:
+                                sets a marker for each point -->
+                        <div v-if="webMasterADV">
+                            <v-marker
+                                v-for="(pos, index) in mapData.polyline.latlngs"
+                                :key="index"
+                                :lat-lng="pos"
+                                :icon="mapSettings.blankIcon"
+                                @click="viewPositionGoogleMaps(pos)"
+                                >
+                                <v-tooltip :options="mapSettings.markerToolTipOptions">{{ pos[0] }}, {{ pos[1] }}</v-tooltip>
+                            </v-marker>
+                        </div>
                     </v-map>
                 </div>
 
@@ -178,8 +192,14 @@ export default {
                     iconUrl: "https://icons.iconarchive.com/icons/icons-land/vista-map-markers/256/Map-Marker-Ball-Right-Pink-icon.png",
                     iconSize: [48, 48],
                     iconAnchor: [32, 32]
-                })
+                }),
+                blankIcon: icon({
+                    iconUrl: "https://cdn.iconscout.com/icon/free/png-256/circle-geometric-red-round-37922.png",
+                    iconSize: [6, 6],
+                    iconAnchor: [-3, -3]
+                }),
             },
+            //data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==
             patterns: [{
                 offset: 50,              /* position of first arrow */
                 repeat: 150,             /* dist between arrows */
@@ -194,19 +214,33 @@ export default {
                 endPoint: ''
             },
             item: null,
-            rendering: 0
+            webMasterADV: false
         }
-    },
-    filters: {
     },
     computed: {
     },
     // #endregion Properties
 
+    // #region Component Life Cycle
+    beforeCreate() {
+    },
+    created() {
+    },
+    beforeMount() {
+    },
+    mounted() {
+    },
+    beforeDestroy() {
+    },
+    destroyed() {
+    },
+    // #endregion Component Life Cycle
+
     // #region Methods
     methods: {
-        show(item) {
+        show(item, webMasterADV) {
             this.item = item
+            this.webMasterADV = webMasterADV        // with/without WebMasterADV
             axios.get('api/tracking/' + item.id, {}).then(({ data }) => {
                 if (data.success) {
                     this.mapData.startMarker = data.data.start
@@ -239,6 +273,14 @@ export default {
             });
         },
 
+        // #region GoogleMaps
+        viewPositionGoogleMaps(position) {
+            // open coords on GoogleMaps
+            window.open(`https://www.google.com/maps/place/${position[0]},${position[1]}`, '_blank');
+        },
+
+        // #endregion GoogleMaps
+
         // #region Geo-Coding API
         reversePoints: async function(data) {
             let self = this
@@ -268,21 +310,6 @@ export default {
         },
         // #endregion Geo-Coding API
     },
-    // #region Methods
-
-    // #region Component Life Cycle
-    beforeCreate() {
-    },
-    created() {
-    },
-    beforeMount() {
-    },
-    mounted() {
-    },
-    beforeDestroy() {
-    },
-    destroyed() {
-    }
-    // #endregion Component Life Cycle
+    // #endregion Methods
 }
 </script>

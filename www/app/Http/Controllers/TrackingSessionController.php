@@ -2,6 +2,9 @@
 /**
  * TrackingSessionController
  * provides methods to create, start, stop tracking sessions
+ *
+ * NOTE: TrackingSessionController functions, used to track devices via APP/API
+ *          are invoked from Controllers/API/APP/ApiController
  */
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
@@ -36,7 +39,6 @@ class TrackingSessionController extends Controller
     public function startNew($worker, $worker_password, $veichle, $device, $gpsData, &$errorMessage) {
 
         $errorMessage = '';
-
         $worker_password = strval($worker_password);
 
         // Checks worker: id, status, modo_timbratura (0|1), password, cessazione, deleted
@@ -165,69 +167,77 @@ class TrackingSessionController extends Controller
 
         if ($this->sessionExists($trackingSessionID)) {
             if ($this->isSessionOpen($trackingSessionID)) {
-                // tracking-session exists and it's opened
-                $thisID = DB::table('tracking_data')->insertGetId(
-                    array(
-                        'session_id' => $trackingSessionID,
-                        'latitude' => $gpsData->latitude,
-                        'longitude' => $gpsData->longitude,
-                        'accuracy' => $gpsData->accuracy,
-                        'distance' => $gpsData->distance,
-                        'is_valid' => $gpsData->valid,
-                        'gps_timestamp' => $gpsData->timestamp,
-                        'navigation_status' => $navigationStatus,
-                        'connection_status' => 1,
-                        'created_at' =>  $this->utils->OraItaliana(),
-                        'updated_at' => $this->utils->OraItaliana()
-                    )
-                );
+                if (!$this->sessionHasData($trackingSessionID, $gpsData)) {
 
-                if ($thisID > 0) {
-                    // insert ok: updates session
-                    DB::table('tracking_sessions')
-                        ->where('session_id', $trackingSessionID)
-                        ->update([
+                    // tracking-session exists and it's opened
+                    $thisID = DB::table('tracking_data')->insertGetId(
+                        array(
+                            'session_id' => $trackingSessionID,
+                            'latitude' => $gpsData->latitude,
+                            'longitude' => $gpsData->longitude,
+                            'accuracy' => $gpsData->accuracy,
+                            'distance' => $gpsData->distance,
+                            'is_valid' => $gpsData->valid,
+                            'gps_timestamp' => $gpsData->timestamp,
+                            'navigation_status' => $navigationStatus,
+                            'connection_status' => 1,
+                            'created_at' =>  $this->utils->OraItaliana(),
                             'updated_at' => $this->utils->OraItaliana()
-                        ]);
+                        )
+                    );
 
-                    // updates device geo-location and last_position
-                    $sql = "update devices set
-                            is_online = 1,
-                            latitude = '{$gpsData->latitude}',
-                            longitude = '{$gpsData->longitude}',
-                            accuracy = '{$gpsData->accuracy}',
-                            last_position = '" . $this->utils->OraItaliana()->format('Y-m-d H:i:s') . "'
-                        where
-                            id in (select device from tracking_sessions where session_id = '{$trackingSessionID}')
-                        limit 1
-                    ";
-                    DB::update($sql);
+                    if ($thisID > 0) {
+                        // insert ok: updates session
+                        DB::table('tracking_sessions')
+                            ->where('session_id', $trackingSessionID)
+                            ->update([
+                                'updated_at' => $this->utils->OraItaliana()
+                            ]);
 
-                    // updates worker geo-location and last_position
-                    $sql = "update workers set
-                            latitude = '{$gpsData->latitude}',
-                            longitude = '{$gpsData->longitude}',
-                            accuracy = '{$gpsData->accuracy}',
-                            last_position = '" . $this->utils->OraItaliana()->format('Y-m-d H:i:s') . "'
-                        where
-                            id in (select worker from tracking_sessions where session_id = '{$trackingSessionID}')
-                        limit 1
-                    ";
-                    DB::update($sql);
+                        // updates device geo-location and last_position
+                        $sql = "update devices set
+                                is_online = 1,
+                                latitude = '{$gpsData->latitude}',
+                                longitude = '{$gpsData->longitude}',
+                                accuracy = '{$gpsData->accuracy}',
+                                last_position = '" . $this->utils->OraItaliana()->format('Y-m-d H:i:s') . "'
+                            where
+                                id in (select device from tracking_sessions where session_id = '{$trackingSessionID}')
+                            limit 1
+                        ";
+                        DB::update($sql);
 
-                    // updates veichle geo-location and last_position
-                    $sql = "update veichles set
-                            latitude = '{$gpsData->latitude}',
-                            longitude = '{$gpsData->longitude}',
-                            accuracy = '{$gpsData->accuracy}',
-                            last_position = '" . $this->utils->OraItaliana()->format('Y-m-d H:i:s') . "'
-                        where
-                            id in (select veichle from tracking_sessions where session_id = '{$trackingSessionID}')
-                        limit 1
-                    ";
-                    DB::update($sql);
+                        // updates worker geo-location and last_position
+                        $sql = "update workers set
+                                latitude = '{$gpsData->latitude}',
+                                longitude = '{$gpsData->longitude}',
+                                accuracy = '{$gpsData->accuracy}',
+                                last_position = '" . $this->utils->OraItaliana()->format('Y-m-d H:i:s') . "'
+                            where
+                                id in (select worker from tracking_sessions where session_id = '{$trackingSessionID}')
+                            limit 1
+                        ";
+                        DB::update($sql);
+
+                        // updates veichle geo-location and last_position
+                        $sql = "update veichles set
+                                latitude = '{$gpsData->latitude}',
+                                longitude = '{$gpsData->longitude}',
+                                accuracy = '{$gpsData->accuracy}',
+                                last_position = '" . $this->utils->OraItaliana()->format('Y-m-d H:i:s') . "'
+                            where
+                                id in (select veichle from tracking_sessions where session_id = '{$trackingSessionID}')
+                            limit 1
+                        ";
+                        DB::update($sql);
+                    }
+                    return ($thisID > 0);
+                } else {
+                    // this point (gps_timestamp) is already saved
+                    // we return true, without saving point
+                    // NOTE: this scenario occurs when user unlock device after a display stand-by
+                    return true;
                 }
-                return ($thisID > 0);
             } else {
                 // tracking-session is closed
                 return false;
@@ -248,7 +258,6 @@ class TrackingSessionController extends Controller
             if ($this->isSessionOpen($trackingSessionID)) {
                 // tracking-session exists and it's opened
 
-                // insert ok: updates session
                 DB::table('tracking_sessions')
                 ->where('session_id', $trackingSessionID)
                 ->update([
@@ -335,6 +344,19 @@ class TrackingSessionController extends Controller
         $data = DB::select($sql);
         $result = $data[0]->value;
         return ($result == 1);
+    }
+
+    // Returns true if we already got this point: based on the GPS timestamp
+    public function sessionHasData($trackingSessionID, $gpsData) {
+
+        $trackingSessionID = trim(strtolower($trackingSessionID));
+        if ($trackingSessionID == '') return false;
+
+        $sql = "select count(*) value from tracking_data where session_id = '{$trackingSessionID}' and gps_timestamp = '{$gpsData->timestamp}' limit 1";
+        $data = DB::select($sql);
+        $result = $data[0]->value;
+
+        return ($result > 0);
     }
 //#endregion Public Methods
 }

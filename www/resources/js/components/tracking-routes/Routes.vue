@@ -143,10 +143,10 @@
                       <th>Partenza</th>
                       <th>Arrivo</th>
                       <th>Durata</th>
-                      <!-- <th></th> -->
                       <th>Dipendente</th>
                       <th>Veicolo</th>
                       <th>Dispositivo</th>
+                      <th v-if="user_type === 'webmaster'">Punti</th>
                       <th>Azioni</th>
                     </tr>
                   </thead>
@@ -163,14 +163,6 @@
                         <td>{{ $root.utils.datetime.formatDateTime(item.start_date_time) }}</td>
                         <td>{{ $root.utils.datetime.formatDateTime(item.end_date_time) }}</td>
                         <td>{{ item.duration }}</td>
-                        <!--
-                        <td style="width:20px;">
-                            <i class="fas fa-exclamation-triangle red"
-                                v-show="item.anomaly == 1"
-                                title="Anomalie nel tragitto"
-                            ></i>
-                        </td>
-                        -->
                         <td>
                             <i class="fa fa-dot-circle"
                                 :title="(item.worker_status==1 ? 'attualmente presente' : 'attualmente assente')"
@@ -188,6 +180,9 @@
                                 :title="(item.device_online==1 ? 'attualmente online' : 'attualmente offline')"
                                 :class="(item.device_online==1 ? 'green' : 'orange')"></i>
                             {{ item.device_manufacter }} {{ item.device_model }} ({{ item.device_platform }} {{ item.device_version }})
+                        </td>
+                        <td v-if="user_type === 'webmaster'">
+                            {{ item.points }}
                         </td>
                         <td>
                             <a href="#"
@@ -243,11 +238,14 @@
 
         <!-- route QUI -->
         <route-component ref="RouteComponent"></route-component>
+
+        <!-- vue-confirm-dialog -->
+        <vue-confirm-dialog></vue-confirm-dialog>
     </div>
   </section>
 </template>
 
-<style scoped>
+<style>
 a.action {
     margin-right:5px!important;
 }
@@ -258,6 +256,11 @@ a.action {
 }
 textarea.notes {
   resize: none;
+}
+
+/* vue-confirm-dialog */
+div.vc-container {
+    width: 640px!important;
 }
 </style>
 
@@ -275,6 +278,9 @@ export default {
     },
 
     // #region Properties
+    props: [
+        'user_type'          // user property is the Laravel User object passed throught <router-view user_type="{{ Auth::user()->type }}"></router-view> in master.blade
+    ],
     data () {
         return {
             mapProvider: process.env.MIX_MAP_PROVIDER.toLowerCase(),
@@ -290,10 +296,12 @@ export default {
             },
             form: {
                 id: '',
+            },
+            webMasterADV: {
+                response: false,
+                enable: false
             }
         }
-    },
-    filters: {
     },
     computed: {
         lastAppVersion() {
@@ -302,6 +310,27 @@ export default {
         }
     },
     // #endregion Properties
+
+    // #region Component Life Cycle
+    beforeCreate() {
+    },
+    created() {
+        this.$Progress.start();
+        this.setCurrentMonth()  // imposta mese corrente e lista tragitti
+        this.$Progress.finish();
+    },
+    beforeMount() {
+    },
+    mounted() {
+        // sets search-query fron url
+        console.clear()
+        this.$root.search.query = this.$root.$route.query.search
+    },
+    beforeDestroy() {
+    },
+    destroyed() {
+    },
+    // #endregion Component Life Cycle
 
     // #region Methods
     methods: {
@@ -314,10 +343,38 @@ export default {
             }).then(({ data }) => (this.items = data.data));
             this.$Progress.finish();
         },
-
         viewRoute(item) {
             // open the specified route into the RouteComponent modal
-            this.$refs.RouteComponent.show(item)
+
+            // if user is WebMaster, ask to use advanced functions
+            if (this.user_type === 'webmaster') {
+                if (this.webMasterADV.response) {
+                    // ha già chiesto se abilitare le funzioni avanzate WebMaster
+                    this.$refs.RouteComponent.show(item, this.webMasterADV.enable)  // opens map with/without WebMasterADV
+                } else {
+                    this.$confirm(
+                    {
+                        title: 'Funzioni Avanzate WebMaster',
+                        message: `Poichè sei connesso come WebMaster, puoi abilitare le funzioni avanzate di navigazione: che ti consentono di visualizzare le coordinate di ogni punto raccolto, muovendoti sulla mappa. NOTA: le funzioni WebMaster avanzate possono rallentare il client. Per disattivarle, ricaricare la pagina e rispondere "Annulla" a questo messaggio.`,
+                        button: {
+                            no: 'Annulla',
+                            yes: 'Si'
+                        },
+                        /**
+                         * Callback Function
+                         * @param {Boolean} confirm
+                         */
+                        callback: confirm => {
+                            this.webMasterADV.response = true                               // we've got a response
+                            if (confirm) this.webMasterADV.enable = true                    // we enable webMaster ADV
+                            this.$refs.RouteComponent.show(item, this.webMasterADV.enable)  // opens map with/without WebMasterADV
+                        }
+                    })
+                }
+            } else {
+                // other user type (open map without WebMasterADV)
+                this.$refs.RouteComponent.show(item, false)
+            }
         },
         deviceToUpgrade() {
             // returns the number of device to upgrade
@@ -338,6 +395,7 @@ export default {
             }).then(({ data }) => {
 
                 this.items = data.data
+                console.log(this.items)
                 this.$Progress.finish()
 
                 // Checks if there's device to upgrade
@@ -573,28 +631,7 @@ export default {
             return t.replace(dayDate, '').trim()
         },
         // #endregion utils
-    },
-    // #region Methods
-
-    // #region Component Life Cycle
-    beforeCreate() {
-    },
-    created() {
-        this.$Progress.start();
-        this.setCurrentMonth()  // imposta mese corrente e lista tragitti
-        this.$Progress.finish();
-    },
-    beforeMount() {
-    },
-    mounted() {
-        // sets search-query fron url
-        console.clear()
-        this.$root.search.query = this.$root.$route.query.search
-    },
-    beforeDestroy() {
-    },
-    destroyed() {
     }
-    // #endregion Component Life Cycle
+    // #region Methods
 }
 </script>

@@ -87,7 +87,7 @@
         <!-- /.content-header -->
 
         <!-- Main content -->
-        <router-view></router-view>
+        <router-view user_type="{{ Auth::user()->type }}"></router-view>
         <vue-progress-bar></vue-progress-bar>
         {{-- /.content --}}
     </div>

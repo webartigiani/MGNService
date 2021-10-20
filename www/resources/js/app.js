@@ -89,17 +89,27 @@ Vue.component(
 );
 
 // Filter Section
-
 Vue.filter('myDate',function(created){
     return moment(created).format('MMMM Do YYYY');
 });
 
 Vue.filter('yesno', value => (value ? '<i class="fas fa-check green"></i>' : '<i class="fas fa-times red"></i>'));
-
 // end Filter
 
+// Vue Moment
 import VueMoment from 'vue-moment'
 Vue.use(VueMoment)
+
+// #region VueConfirmDialog
+/* requires
+        vue-confirm-dialog
+        npm install --save vue-confirm-dialog
+        https://www.npmjs.com/package/vue-confirm-dialog
+*/
+import VueConfirmDialog from 'vue-confirm-dialog'
+Vue.use(VueConfirmDialog)
+Vue.component('vue-confirm-dialog', VueConfirmDialog.default)
+// #endregion VueConfirmDialog
 
 const app = new Vue({
     el: '#app',

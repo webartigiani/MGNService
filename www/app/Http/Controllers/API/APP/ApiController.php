@@ -14,6 +14,7 @@ use App\Http\Controllers\API\V1\AttendanceController;
 use App\Http\Controllers\TrackingSessionController;
 use App\Http\Controllers\UtilsController;
 use Illuminate\Routing\UrlGenerator;
+use Illuminate\Support\Facades\Http;
 use DB;
 
 class ApiController extends Controller
@@ -97,7 +98,7 @@ public function autoUpdate(Request $request) {
         if (!$this->routeAPP($request)) return $this->redicretHome();
         $payload = $request->json()->all();         // gets payload
 
-        //#region Validations
+        // #region Validations
         // 1. checks veichle:   must have
         //                      - enabled=true
         //                      - status=0
@@ -146,7 +147,7 @@ public function autoUpdate(Request $request) {
         } else {
             return $this->sendError('Timbrata mancante', ['Prima di avviare il veicolo devi timbrare l\'entrata.'], 403);
         }
-// #endregion Validations
+        // #endregion Validations
 
         // converts GPS data into an object
         $gpsData = (object) $payload['gps'];
@@ -226,6 +227,109 @@ public function autoUpdate(Request $request) {
             // tracking session doesn't exists
             return $this->sendError('Sessione non trovata', ['Sessione di navigazione non trovata'], 403);
         }
+    }
+
+    public function adjustTrackingPoints(Request $request) {
+        //  1       160ms
+        //  10      4.60"
+        //  50      24.60"
+        // 100      49.70"
+        // 300      2' 29.70"
+
+        // settings
+        $radiuses = 50;         // (INT) raggio, in metri, per rilevare il punto più vicino
+        $lastHint = '';         // last hint from each response
+
+        $trackingSessionID = '616e837b-21-8-12';        // DEMO
+        $data = DB::table('tracking_data')
+                ->where('session_id', '=', $trackingSessionID)
+                ->whereNull('osrm_done')
+                ->orderBy('id', 'asc')
+                ->limit(300)
+                ->get();
+
+        foreach($data as $r) {
+            $url = "http://router.project-osrm.org/nearest/v1/driving/{$r->longitude},{$r->latitude}?number=1&radiuses={$radiuses}&generate_hints=true&hints={$lastHint}";
+
+            $response = Http::accept('application/json')->get($url);
+            $result = $response->json();
+
+            $code = strtoupper($result['code']);
+
+            if ($code == 'OK') {
+                $lastHint = $result['waypoints'][0]['hint'];
+                $new_latitude = $result['waypoints'][0]['location'][1];
+                $new_longitude = $result['waypoints'][0]['location'][0];
+                $distance = $result['waypoints'][0]['distance'];
+
+                // response
+                echo "OK OSRM Nearest API (id {$r->id}): OLD COORDS: {$r->latitude}, {$r->longitude}; NEW COORDS: {$new_latitude}, {$new_longitude}<br>";
+
+                // updates data
+                DB::table('tracking_data')
+                    ->where('id', $r->id)
+                    ->update(
+                        array(
+                            'osrm_prev_latitude' => $r->latitude,
+                            'osrm_prev_longitude' => $r->longitude,
+                            'latitude' => $new_latitude,
+                            'longitude' => $new_longitude,
+                            'osrm_distance' => $distance,
+                            'osrm_done' => true,
+                            'updated_at' => DB::raw('NOW()')
+                        )
+                    );
+
+            } else {
+                // errore
+                echo "Errore OSRM Nearest API (id {$r->id}): ERROR '{$code}', URL: {$url}<br>";
+            }
+        }
+
+        /*
+        $lastHint = '';
+
+        foreach($data as $r){
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+              CURLOPT_URL => "http://router.project-osrm.org/nearest/v1/driving/{$r->longitude},{$r->latitude}?number=1&radiuses={$radiuses}&generate_hints=true&hints={$lastHint}",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => '',
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 0,
+              CURLOPT_FOLLOWLOCATION => true,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => 'GET',
+            ));
+
+            $response = curl_exec($curl);
+            $result = json_decode($response);
+
+            if ($result->code == 'Ok') {
+                $lastHint = $result->waypoints[0]->hint;
+                $new_latitude = $result->waypoints[0]->location[1];
+                $new_longitude = $result->waypoints[0]->location[0];
+                $distance = $result->waypoints[0]->distance;
+
+                $sql = "update tracking_data set
+                    osrm_prev_latitude = {$r->latitude},
+                    osrm_prev_longitude = {$r->longitude},
+                    latitude = {$new_latitude},
+                    longitude = {$new_longitude},
+                    osrm_distance = {$distance},
+                    osrm_done = 1
+                where id = {$r->id}";
+                DB::update($sql);
+
+                echo "OK {$r->id}<br>';
+            } else {
+                echo 'cazzo cazzo!<br>';
+                exit();
+            }
+            curl_close($curl);
+        }
+        */
     }
 // #endregion Tracking methods
 

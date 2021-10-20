@@ -148,6 +148,9 @@ div.bg-warning a.mini-link {
 <script>
 export default {
     // #region Properties
+    props: [
+        'user_type'          // user property is the Laravel User object passed throught <router-view user_type="{{ Auth::user()->type }}"></router-view> in master.blade
+    ],
     data () {
         return {
             loadingTable: true,
@@ -170,8 +173,6 @@ export default {
                 list: [],
             }
         }
-    },
-    filters: {
     },
     computed: {
     },
@@ -286,7 +287,7 @@ export default {
         }
         // #endregion utils
     },
-    // #region Methods
+    // #endregion Methods
 
     // #region Component Life Cycle
     beforeCreate() {

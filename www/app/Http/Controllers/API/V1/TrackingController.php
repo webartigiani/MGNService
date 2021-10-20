@@ -66,8 +66,7 @@ class TrackingController extends BaseController
         $sql = $this->baseQuery($startDate, $endDate, $status, $search, $orderBy);
 
         // TEMP: to export full SQL query
-        //echo $sql;
-        //return;
+        //die($sql);
 
         // checks if we have working days in selected period...
         if ($sql == '') {
@@ -241,8 +240,8 @@ class TrackingController extends BaseController
                         ts.id, ts.session_id, ts.start_date_time, ts.end_date_time,
                         /* calculates timediff */
                         timediff(ts.end_date_time, ts.start_date_time) duration,
-                        /* calculates if tracking data has anomalies (1:yes; 0:no) */
-                        IFNULL(ta.anomaly, 0) anomaly,
+                        /* calculates tracking-session points */
+                        ta.points,
                         /* get worker data */
                         ts.worker worker_id, w.nome, w.cognome, w.stato worker_status,
                         /* get veichle data */
@@ -259,9 +258,8 @@ class TrackingController extends BaseController
                         on ts.device = d.id
                     left outer join  (
                         select
-                            session_id, '1' anomaly
+                            session_id, count(*) points
                         from tracking_data
-                        where navigation_status <> 'running'
                         group by session_id
                         ) ta
                         on ts.session_id = ta.session_id
