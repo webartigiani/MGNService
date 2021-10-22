@@ -446,7 +446,9 @@ let AppService = class AppService {
             requires cordova-plugin-screen-pinning
             https://github.com/fedme/cordova-plugin-screen-pinning
         */
-        console.log('enterPinnedMode...');
+        // in debug-mode by-pass pinned mode
+        if (this.utils.isDebug())
+            return;
         window.cordova.plugins.screenPinning.enterPinnedMode(function () {
             console.log('Pinned mode activated!');
         }, function (errorMessage) {
