@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Requests\Workers\WorkerRequest;
 use App\Models\Worker;
 use Illuminate\Http\Request;
+use App\Http\Controllers\TrackingSessionController;
 use App\Http\Controllers\UtilsController;
 use DB;
 use Hamcrest\Util;
@@ -13,6 +14,7 @@ class WorkerController extends BaseController
 {
     protected $worker = '';
     private $utils;
+    private $TSC;
 
 // #region Constructor
     /**
@@ -20,11 +22,12 @@ class WorkerController extends BaseController
      *
      * @return void
      */
-    public function __construct(Worker $worker, UtilsController $utilsController)
+    public function __construct(Worker $worker, UtilsController $utilsController, TrackingSessionController $tsc)
     {
         $this->middleware('auth:api');
         $this->worker = $worker;
         $this->utils = $utilsController;
+        $this->TSC = $tsc;
     }
 // #endregion Constructor
 
@@ -294,6 +297,10 @@ public function exportCodes(Request $request) {
      * - timbratura in uscita se presente quella in entrata, ma manca quella in uscita
      * - non esegue alcuna timbratura se entrambe presenti in data odierna
      * restituisce l'id della timbratura, oppure 0 in caso di errore
+     *
+     * NOTE:
+     * - quando esegue timbratura in uscita, verifica e termina eventuali tragitti in corso
+     *   tramite:   TrackingSessionController: $TSC->endSession(session_id))
      */
     public function timbra($workerID, $codice_timbratura, &$errorMessage) {
 
@@ -344,6 +351,7 @@ public function exportCodes(Request $request) {
                                         'updated_at' => $this->utils->OraItaliana()
                                     )
                                 );
+                                $this->TSC->endUserSessions($workerID); // ends up all tracking sessions for current worker
                                 $this->setStatus($workerID, 0);         // sets worker's status to 0
                             } else {
                                 // prime timbrate E/U entrambi esistenti
@@ -381,6 +389,7 @@ public function exportCodes(Request $request) {
                                                     'updated_at' => $this->utils->OraItaliana()
                                                 )
                                             );
+                                            $this->TSC->endUserSessions($workerID); // ends up all tracking sessions for current worker
                                             $this->setStatus($workerID, 0);         // sets worker's status to 0
                                         } else {
                                             // Dipendente abilitato alla pausa in orario di lavoro.

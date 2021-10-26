@@ -322,6 +322,19 @@ class TrackingSessionController extends Controller
         }
     }
 
+    // Ends up all the tracking sessions for the specified worker
+    public function endUserSessions($workerID) {
+
+        if ($workerID < 1) return;
+
+        $openedSessions = DB::table('tracking_sessions')
+            ->where('worker', $workerID)
+            ->whereNull('end_date_time')->get();
+        foreach($openedSessions as $session) {
+            $this->endSession($session->session_id);
+        }
+    }
+
     // Returns true if the speciefied tracking-session-id exists
     public function sessionExists($trackingSessionID) {
 
