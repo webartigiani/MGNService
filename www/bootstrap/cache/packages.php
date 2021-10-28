@@ -1,4 +1,11 @@
 <?php return array (
+  'beyondcode/laravel-masked-db-dump' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'BeyondCode\\LaravelMaskedDumper\\LaravelMaskedDumpServiceProvider',
+    ),
+  ),
   'facade/ignition' => 
   array (
     'providers' => 

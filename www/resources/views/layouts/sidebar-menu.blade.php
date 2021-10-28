@@ -73,6 +73,14 @@
                     <p>Installa APP</p>
                 </router-link>
             </li>
+            @can('isWebMaster')
+            <li class="nav-item">
+                <router-link to="/backup" class="nav-link">
+                    <i class="fa fa-database nav-icon white"></i>
+                    <p>Backup</p>
+                </router-link>
+            </li>
+            @endcan
         </ul>
       </li>
       @endcan

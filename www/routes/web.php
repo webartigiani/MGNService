@@ -17,6 +17,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () { return view('welcome'); });
 
+// Download Dumps route
+Route::get('/download-dump/', function() {
+    $f = request('f');
+    $path = public_path() . "/dumps/";
+    return response()->download($path . $f);
+});
+
 /**
  * IonicAPP API
  * require
@@ -34,15 +41,14 @@ Route::group([
     Route::post('api/app/workers/startTrackingSession', 'ApiController@startTrackingSession');      // tracking-session management
     Route::post('api/app/workers/continueTracking', 'ApiController@continueTracking');
     Route::post('api/app/workers/stopTrackingSession', 'ApiController@stopTrackingSession');
-    Route::post('api/app/workers/adjustTrackingPoints', 'ApiController@adjustTrackingPoints');      // NEW: adjustTrackingPoints
-    Route::post('api/website/workers/timbra', 'ApiController@timbra');
+    Route::get('api/app/backup/tracking', 'ApiController@backupTracking');                         // Backup/Dumps API
 
     // WebSite Called APIs
+    Route::post('api/website/workers/timbra', 'ApiController@timbra');
     Route::get('api/ws/workers/list/', 'ApiController@listWorkersWS');
 });
 
 Auth::routes(['verify' => true]);
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('home', function () { return redirect('/dashboard'); });
 
 Route::get('/{vue_capture?}', function () {

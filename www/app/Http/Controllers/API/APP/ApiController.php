@@ -9,13 +9,18 @@ namespace App\Http\Controllers\Api\APP;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Routing\UrlGenerator;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Artisan;
+use DB;
+
 use App\Http\Controllers\API\V1\WorkerController;
 use App\Http\Controllers\API\V1\AttendanceController;
 use App\Http\Controllers\TrackingSessionController;
 use App\Http\Controllers\UtilsController;
-use Illuminate\Routing\UrlGenerator;
-use Illuminate\Support\Facades\Http;
-use DB;
+use App\Http\Controllers\DumpController;
+
 
 class ApiController extends Controller
 {
@@ -23,6 +28,7 @@ class ApiController extends Controller
     private $TSC;
     private $workerController;
     private $attendanceController;
+    private $dumpController;
     protected $url;
 
 // #region Contructor
@@ -31,13 +37,16 @@ class ApiController extends Controller
      *
      * @return void
      */
-    public function __construct(TrackingSessionController $tsc, UtilsController $utils, UrlGenerator $url, WorkerController $workerController, AttendanceController $attendanceController)
+    public function __construct(TrackingSessionController $tsc, UtilsController $utils,
+        UrlGenerator $url, WorkerController $workerController, AttendanceController $attendanceController,
+        DumpController $dump)
     {
         $this->TSC = $tsc;
         $this->utils = $utils;
         $this->url = $url;
         $this->workerController = $workerController;
         $this->attendanceController = $attendanceController;
+        $this->dumpController = $dump;
     }
 // #endregion Contructor
 
@@ -229,16 +238,10 @@ public function autoUpdate(Request $request) {
         }
     }
 
-    public function adjustTrackingPoints(Request $request) {
-        //  1       160ms
-        //  10      4.60"
-        //  50      24.60"
-        // 100      49.70"
-        // 300      2' 29.70"
-
-        // settings
-        $radiuses = 50;         // (INT) raggio, in metri, per rilevare il punto più vicino
-        $lastHint = '';         // last hint from each response
+    public function backupTracking(Request $request) {
+        //$this->dumpController->listDumps();
+        $res = $this->dumpController->dumpTracking();
+        die("backup eseguito su {$res}");
 
         $trackingSessionID = '616e837b-21-8-12';        // DEMO
         $data = DB::table('tracking_data')
@@ -285,9 +288,19 @@ public function autoUpdate(Request $request) {
                 echo "Errore OSRM Nearest API (id {$r->id}): ERROR '{$code}', URL: {$url}<br>";
             }
         }
+    }
 
+    public function AdjustPoints() {
+        //  1       160ms
+        //  10      4.60"
+        //  50      24.60"
+        // 100      49.70"
+        // 300      2' 29.70"
         /*
-        $lastHint = '';
+
+        // settings
+        $radiuses = 50;         // (INT) raggio, in metri, per rilevare il punto più vicino
+        $lastHint = '';         // last hint from each response
 
         foreach($data as $r){
             $curl = curl_init();
