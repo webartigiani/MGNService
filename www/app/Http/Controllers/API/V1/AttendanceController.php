@@ -107,6 +107,10 @@ class AttendanceController extends BaseController
             return $this->sendResponse($result_p, 'Empty Attendances List');
         }
 
+        // TEMP
+        // die($sql);               // to debug SQL
+        // TEMP
+
         // if we have days to export
         $dbdata = DB::select(DB::raw($sql));
 
@@ -244,9 +248,9 @@ public function export(Request $request) {
     // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
     $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, nome, cognome');
 
-    // TEMP:
-    //echo $sql;
-    //return;
+    // TEMP
+    // die($sql);               // to debug SQL
+    // TEMP
 
     $sql = "select
                 day_date, worker_id, nome, cognome, codice_fiscale, matricola,
@@ -614,8 +618,8 @@ public function exportNotes(Request $request) {
                                             IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
                                             IFNULL(att.chk, -1) chk,
 
-                                            /* SIMONE: data_cessazione ci serve solo per poterci filtrare */
-                                            w.data_cessazione
+                                            /* SIMONE: data_cessazione, data_assunzione: ci servono solo per poterci filtrare */
+                                            w.data_cessazione, w.data_assunzione
                                         from
                                         (   /*
                                                 select days of period from calendar
@@ -634,10 +638,12 @@ public function exportNotes(Request $request) {
                                             and att.worker_id = w.id
                                     ) presenze
                                 where
-                                    /* esclude i dipendenti il cui rapporto di lavoro è cessato prima della data di riferimento (Prima era 1=1)
-                                       2021-09-30 >= ref_date, fasi che venga fornita la presenza anche per il giorno di cessazione rapporto
+                                    /*  a) 	include i soli dipendenti il cui rapporto di lavoro è ancora in corso, o è cessato DOPO della data di riferimento:
+                                            >= ref_date, fasi che venga fornita la presenza anche per il giorno di cessazione rapporto
+                                        b)	include i soli dipendenti la cui data di assunzione è >= alla data di riferimento: escludendo quelli non ancora in forza
                                     */
-                                    data_cessazione is null or data_cessazione >= ref_date
+                                    (data_cessazione IS NULL OR data_cessazione >= ref_date)
+                                    and data_assunzione <= ref_date
                                     ";
         $sql .= " ) presenze
                     /* join absences to get abscence if present */

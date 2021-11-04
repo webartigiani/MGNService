@@ -278,14 +278,14 @@
                         <div class="form-group">
                             <!--
                                 data_assunzione
-                                between date-7 => date+7
+                                between date-15 => date+15
                             -->
                             <label>Data Assunzione</label>
                             <input v-model="form.data_assunzione" type="date" name="data_assunzione"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('data_assunzione') }"
                                 :readonly="editmode"
-                                :min="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), -7))"
-                                :max="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), 7))"
+                                :min="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), -15))"
+                                :max="$root.utils.datetime.formatDateISO($root.utils.datetime.dateAddDays(new Date(), 15))"
                                 >
                             <has-error :form="form" field="data_assunzione"></has-error>
                         </div>
