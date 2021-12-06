@@ -277,7 +277,8 @@ public function export(Request $request) {
 public function exportXML(Request $request) {
     /**
      * Exports presenze as XML (Zucchetti, TRRIPW.XML)
-     * NOTES: filters by dates
+     * NOTES:   filters by dates
+     * DOCS:    https://remote.cedbrianteo.it/PagheWEB/help/infinity/ITA/mergedProjects/Infinity_PagheWeb/intro/intro_interfaccia_presenze.htm#Formato_XML
      */
 
     // gets filters
@@ -292,6 +293,7 @@ public function exportXML(Request $request) {
     $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'worker_id, ref_date');
     $sql = "select
         worker_id,
+        matricola,
         ref_date,
         duration_h_int hours, residual_m_int minutes,
         abscence_h_int absence_hours, abscence_minutes_int abscence_minutes, abscence_justification,
@@ -316,6 +318,7 @@ public function exportXML(Request $request) {
         $giustificativo = "01";                     // giustificativo ufficiale
         $codiceazienda = trim(env("CODICE_AZIENDA"));
         $workerID = $row->worker_id;                // ID dipendente corrente
+        $matr = $row->matricola;               // Numero matricola
         $refdate = $row->ref_date;                  // data riferimento YYYY-MM-DD
         $hours = $row->hours;                       // ore eff. lavorate
         $minutes = $row->minutes;                   // minuti lavorati aggiuntivi, orario effettivo
@@ -326,7 +329,7 @@ public function exportXML(Request $request) {
         //NO!!! if ($row->chk <= 0) $giornodiriposo = 'S';  // giorno di riposo se assente o incompleto
 
         $codiceazienda = str_pad($codiceazienda, 6, "0", STR_PAD_LEFT);     // codice azienda con zero-padding-left 6 cifre
-        $workerID = str_pad($workerID, 7, "0", STR_PAD_LEFT);               // id dipendente con zero-padding-left 7 cifre
+        $matr = str_pad($matr, 7, "0", STR_PAD_LEFT);             // matricola (SIMONE, fix. 2021-12-06, era id dipendente)
 
         // se cambia il dipendente...
         if ($workerID != $lastWorkerID) {
@@ -337,7 +340,7 @@ public function exportXML(Request $request) {
             }
 
             // apre ramo XML dipendente corrente
-            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$workerID}\">\r\n";
+            $output .= "\t<Dipendente CodAziendaUfficiale=\"{$codiceazienda}\" CodDipendenteUfficiale=\"{$matr}\">\r\n";
             $output .= "\t\t<Movimenti GenerazioneAutomaticaDaTeorico=\"N\">\r\n";
         }   // /se cambia il dipendente...
         $lastWorkerID = $workerID;              // memorizza dipendente corrente
