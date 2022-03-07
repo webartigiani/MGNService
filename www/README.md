@@ -1,7 +1,19 @@
-
 # MGNService - WebSite
-# Laravel Vue Admin LTE
-# based on https://github.com/AnowarCST/laravel-vue-crud-starter
+    Based on template "Laravel Vue Admin LTE" https://github.com/AnowarCST/laravel-vue-crud-starter
+
+## Tech Specification
+- Laravel 8
+- Vue 2 + VueRouter + vue-progressbar + sweetalert2 + laravel-vue-pagination
+- Laravel Passport
+- Admin LTE 3 + Bootstrap 4 + Font Awesome 5
+- PHPUnit Test Case/Test Coverage
+
+## Features
+- Modal based Create+Edit, List with Pagination, Delete with Sweetalert
+- Simple Static Dashboard
+- Login, Forget+Reset Password as default auth
+- Profile, Update Profile, Change Password, Avatar
+- User Management
 
 ## Installation
 - `composer install`
@@ -18,24 +30,12 @@
         composer require beyondcode/laravel-masked-db-dump --ignore-platform-reqs
 
 ## RUN
-php artisan serve
-npm run watch
+    '''
+    php artisan serve
+    npm run watch
+    '''
 
 ## Ionic APP API
 - get   api/app/workers/list/
 - get   api/app/veichles/list/
 - post  api/app/devices/add/
-
-## Tech Specification
-- Laravel 8
-- Vue 2 + VueRouter + vue-progressbar + sweetalert2 + laravel-vue-pagination
-- Laravel Passport
-- Admin LTE 3 + Bootstrap 4 + Font Awesome 5
-- PHPUnit Test Case/Test Coverage
-
-## Features
-- Modal based Create+Edit, List with Pagination, Delete with Sweetalert
-- Simple Static Dashboard
-- Login, Forget+Reset Password as default auth
-- Profile, Update Profile, Change Password, Avatar
-- User Management
