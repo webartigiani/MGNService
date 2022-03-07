@@ -29,8 +29,9 @@
     > laravel-masked-db-dump
         composer require beyondcode/laravel-masked-db-dump --ignore-platform-reqs
 
-## RUN
+## Run
     '''
+    cd www
     php artisan serve
     npm run watch
     '''

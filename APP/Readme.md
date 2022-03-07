@@ -2,23 +2,32 @@
 
 ## Installation
   '''
+  cd APP
   npm install
   '''
 
 ## Add Android
+  '''
+  cd APP
   ionic cordova platform add android
+  '''
 
 ## Remove Android
+  '''
+  cd APP
   ionic cordova platform rm android
-
+  '''
+  
 ## Build
   '''
+  cd APP
   ionic cordova build android
   '''
 
 ## Run
   ### on Browser
   '''
+  cd APP
   ionic serve
   or
   npm run serve
@@ -28,6 +37,7 @@
   ### on phisycal Device
   > connect your Android Device via USB cable and execute
   '''
+  cd APP
   ionic cordova run android --device --verbose
   or
   npm run android

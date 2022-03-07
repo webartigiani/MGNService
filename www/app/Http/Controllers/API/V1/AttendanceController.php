@@ -248,10 +248,6 @@ public function export(Request $request) {
     // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
     $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'ref_date, nome, cognome');
 
-    // TEMP
-    // die($sql);               // to debug SQL
-    // TEMP
-
     $sql = "select
                 day_date, worker_id, nome, cognome, codice_fiscale, matricola,
                 entrance_date, entrance_ip, exit_date, exit_ip,
@@ -445,9 +441,16 @@ public function exportNotes(Request $request) {
         return $data[0];
     }
 
-    public function listGiustificativi() {
+    public function listGiustificativiAssenze() {
+        // lista giustificativi assenze
         $tableName = 'giustificativi';
-        $data = DB::table($tableName)->where('inclusion', 'Si') ->orderby('description')->get();
+        $data = DB::table($tableName)->where('inclusion', 'Si')->where('used_for', 'ABS')->orderby('description')->get();
+        return $data;
+    }
+    public function listGiustificativiStraordinari() {
+        // lista giustificativi straordinari
+        $tableName = 'giustificativi';
+        $data = DB::table($tableName)->where('inclusion', 'Si')->where('used_for', 'STR')->orderby('description')->get();
         return $data;
     }
 // #endregion Public Methods
@@ -496,6 +499,8 @@ public function exportNotes(Request $request) {
             25	total_m	bigint	NO
             26	total_h_int	bigint	YES
             27	total_minutes_int	bigint	YES
+            29  hours_per_week  int
+            30  hours_per_day float
         */
 
         $innerSQL = '';
@@ -571,7 +576,15 @@ public function exportNotes(Request $request) {
                         */
                         results.duration_m + results.abscence_m as total_m,
                         ((results.duration_m + results.abscence_m) DIV 60) total_h_int,
-                        ((results.duration_m + results.abscence_m) DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . ") - (60 * ((results.duration_m + results.abscence_m) DIV 60)) total_minutes_int
+                        ((results.duration_m + results.abscence_m) DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . ") - (60 * ((results.duration_m + results.abscence_m) DIV 60)) total_minutes_int,
+
+                        /* SIMONE 2022-03-07: minuti contabili: quelli validi ai fini della busta paga */
+                        (((results.duration_m + results.abscence_m) DIV 60) * 60) + ((results.duration_m + results.abscence_m) DIV 15 * 15) - (60 * ((results.duration_m + results.abscence_m) DIV 60)) cont_minutes,
+
+                        /* SIMONE 2022-03-07: ore settimanali, e media ore e minuti giornalieri */
+                        results.ore_settimanali hours_per_week,
+                        ROUND(results.ore_settimanali / 6, 2) hours_per_day,
+                        (ROUND(results.ore_settimanali / 6, 2) * 60) minutes_per_day
                     from
                         (
                             select presenze.*,
@@ -622,7 +635,10 @@ public function exportNotes(Request $request) {
                                             IFNULL(att.chk, -1) chk,
 
                                             /* SIMONE: data_cessazione, data_assunzione: ci servono solo per poterci filtrare */
-                                            w.data_cessazione, w.data_assunzione
+                                            w.data_cessazione, w.data_assunzione,
+
+                                            /* SIMONE 2022-03-07: ore_settimanali: necessarie per calcolare ore straordinarie giornaliere  */
+                                            w.ore_settimanali
                                         from
                                         (   /*
                                                 select days of period from calendar

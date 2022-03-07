@@ -19,7 +19,7 @@
                             <option value=50>50 per pagina</option>
                         </select>
                     </div>
-                    <!-- tools -->
+                    <!-- #region tools -->
                     <div class="card-tools col-3 text-right">
                         <button type="button"
                             class="btn btn-sm btn-primary btn-green"
@@ -56,9 +56,10 @@
                             <i class="fas fa-sort-up" v-show="filters.show"></i>
                         </button>
                     </div>
+                    <!-- #endregion tools -->
                 </div>
 
-                <!-- filters -->
+                <!-- #region filters -->
                 <transition name="slide">
                 <div class="card-header filters"
                     v-show="filters.show"
@@ -149,9 +150,12 @@
                     </div>
                 </div>
                 </transition>
+                <!-- #endregion filters -->
 
               <!-- body -->
               <div class="card-body table-responsive p-0">
+
+                <!-- #region DataTable -->
                 <table class="table table-hover">
                   <thead
                     v-show="items.data.length > 0"
@@ -207,6 +211,8 @@
                             >{{ item.abscence_justification_desc }}</span>
                         </td>
                         <td>{{ $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) }}</td>
+
+                        <!-- actions -->
                         <td>
                             <a href="#"
                                 class="action"
@@ -226,11 +232,21 @@
                             </a>
                             <a href="#"
                                 class="action"
-                                title="Gestisci Assenze"
+                                title="Giustifica Assenze"
                                 @click="addEditAbscence(item)"
                                 >
                                 <i class="fa fa-balance-scale"
                                     :class="(item.abscence_justification != '') ? `blue` : `gray`"
+                                ></i>
+                            </a>
+                            <a href="#"
+                                v-if="item.minutes_per_day > item.cont_minutes"
+                                class="action"
+                                title="Gestisci Straordinari"
+                                @click="addEditExtra(item)"
+                                >
+                                <i class="fa fa-clock"
+                                    :class="(item.abscence_justification != '') ? `blue` : `red`"
                                 ></i>
                             </a>
                             <a href="#"
@@ -246,6 +262,7 @@
                     </tr>
                   </tbody>
                 </table>
+                <!-- #endregion DataTable -->
               </div>
 
               <!-- footer -->
@@ -269,7 +286,7 @@
           </div>
         </div>
 
-    <!-- Editor Modal/Form -->
+        <!-- #region Editor Modal/Form -->
         <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="addNew" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -361,8 +378,9 @@
                 </div>
             </div>
         </div>
+        <!-- #endregion Editor Modal/Form -->
 
-    <!-- Abscence Editor -->
+        <!-- #region Abscence Editor -->
         <div class="modal fade" id="modalAbscences" tabindex="-1" role="dialog" aria-labelledby="modalAbscences" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -402,7 +420,7 @@
                                 >
                                 <option value="">-seleziona-</option>
                                 <option :value="item.code"
-                                    v-for="item in giustificativi" :key="item.code"
+                                    v-for="item in giustificativi_assenze" :key="item.code"
                                 >{{ item.description }}</option>
                             </select>
                         </div>
@@ -416,8 +434,9 @@
                 </div>
             </div>
         </div>
+        <!-- #endregion Abscence Editor -->
 
-    <!-- Notes Editor -->
+        <!-- #region Notes Editor -->
         <div class="modal fade" id="modalNotes" tabindex="-1" role="dialog" aria-labelledby="modalNotes" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -455,6 +474,7 @@
                 </div>
             </div>
         </div>
+        <!-- #endregion Notes Editor -->
     </div>
   </section>
 </template>
@@ -487,7 +507,8 @@ export default {
         return {
             editmode: false,
             items : {},
-            giustificativi: [],
+            giustificativi_assenze: [],
+
             form: new Form({
                 id : '',
                 nome: '',
@@ -566,6 +587,16 @@ export default {
         },
         addEditAbscence(item) {
             // Adds/Edits Abscence
+            this.editmode = false;
+            this.form.reset();
+            $('#modalAbscences').modal('show');
+            this.form.fill(item);
+
+            // calculates abscence_time
+            this.form.abscence_time = this.$root.utils.generic.padZero(item.abscence_h_int) + ':' + this.$root.utils.generic.padZero(item.abscence_minutes_int)
+        },
+        addEditExtra(item) {
+            // Adds/Edits Extra Works
             this.editmode = false;
             this.form.reset();
             $('#modalAbscences').modal('show');
@@ -821,9 +852,9 @@ export default {
         // #endregion CRUD Functions
 
         // #region Other Data Functions
-        listGiustificativi() {
-            axios.get('api/attendances/giustificativi', {}).then(({ data }) => {
-                this.giustificativi = data
+        listGiustificativiAssenze() {
+            axios.get('api/attendances/giustificativi-assenze', {}).then(({ data }) => {
+                this.giustificativi_assenze = data
             });
         },
         // #endregion other Data Functions
@@ -1085,7 +1116,7 @@ export default {
         this.filters.date_end = y + '-' + m + '-' + d;
 
         this.list();                    // lists presenze
-        this.listGiustificativi();       // lists giustificativi
+        this.listGiustificativiAssenze();   // lists giustificativi assenze
         this.$Progress.finish();
     },
     beforeMount() {
