@@ -6,7 +6,11 @@ _rsynch.command
 _migrate.command
 _backup/
 
+# APP
 APP/platforms/
 APP/node_modules/
+
+# WWW
 www/node_modules/
 www/tests/
+www/vendor/

@@ -13,6 +13,10 @@
 - `npm run dev`
 - `php artisan serve`
 
+## Requirements
+    > laravel-masked-db-dump
+        composer require beyondcode/laravel-masked-db-dump --ignore-platform-reqs
+
 ## RUN
 php artisan serve
 npm run watch

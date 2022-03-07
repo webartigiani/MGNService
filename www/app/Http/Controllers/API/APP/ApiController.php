@@ -239,11 +239,12 @@ public function autoUpdate(Request $request) {
     }
 
     public function backupTracking(Request $request) {
-        //$this->dumpController->listDumps();
+        //$x = $this->dumpController->listDumps();
+        //die(json_encode(($x)));
+
         $res = $this->dumpController->dumpTracking();
         die("backup eseguito su {$res}");
 
-        $trackingSessionID = '616e837b-21-8-12';        // DEMO
         $data = DB::table('tracking_data')
                 ->where('session_id', '=', $trackingSessionID)
                 ->whereNull('osrm_done')
