@@ -576,12 +576,12 @@ public function exportNotes(Request $request) {
                         ((results.duration_m + results.abscence_m) DIV 60) total_h_int,
                         ((results.duration_m + results.abscence_m) DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . ") - (60 * ((results.duration_m + results.abscence_m) DIV 60)) total_minutes_int,
 
-                        /* minuti contabili: quelli validi ai fini della busta paga */
-                        (((results.duration_m + results.abscence_m) DIV 60) * 60) + ((results.duration_m + results.abscence_m) DIV 15 * 15) - (60 * ((results.duration_m + results.abscence_m) DIV 60)) cont_m,
+                        /* minuti contabili: minuti lavorati contabili (arrotondati a 15'), senza eventuali assenze giustificate */
+                        (((results.duration_m) DIV 60) * 60) + ((results.duration_m) DIV 15 * 15) - (60 * ((results.duration_m) DIV 60)) cont_m,
 
                         /* media ore e minuti giornalieri, basati su ore_settimanali */
-                        ROUND(results.ore_settimanali / 6, 2) hours_per_day,
-                        (ROUND(results.ore_settimanali / 6, 2) * 60) minutes_per_day
+                        ROUND(results.ore_settimanali / 6, 2) avg_hours_per_day,
+                        (ROUND(results.ore_settimanali / 6, 2) * 60) avg_minutes_per_day
                     from
                         (
                             select presenze.*,

@@ -29,6 +29,7 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
     Route::put('profile', 'ProfileController@updateProfile');
     Route::post('change-password', 'ProfileController@changePassword');
 
+    // API
     Route::apiResources([
         'user' => 'UserController',
         'worker' => 'WorkerController',
@@ -37,6 +38,7 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
         'device' => 'DeviceController',
         'attendance' => 'AttendanceController',
         'abscence' => 'AbsenceController',
+        'extra-ordinary' => 'ExtraOrdinaryController',
         'note' => 'NoteController',
         'tracking' => 'TrackingController',
         'backup' => 'BackupController',

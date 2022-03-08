@@ -169,11 +169,13 @@
                       <th>Uscita</th>
                       <th>Rientro</th>
                       <th>Uscita</th>
-                      <th>Ore Presenza</th>
-                      <th>Ore Lavorate</th>
-                      <th>Ore Assenza</th>
-                      <th></th>
-                      <th>Ore Totali</th>
+                      <th>Presenza</th>
+                      <th>Lavorate</th>
+                      <th>Assenza</th>
+                      <th><!-- giustificativo assenza --></th>
+                      <th>Straordinario</th>
+                      <th><!-- giustificativo straordinario --></th>
+                      <th>Totali</th>
                       <th>Azioni</th>
                     </tr>
                   </thead>
@@ -189,25 +191,32 @@
                         <td>{{ item.day_date }}</td>
                         <td>{{ item.nome }}</td>
                         <td>{{ item.cognome }}</td>
-                        <td><!-- presenza -->
+                        <td><!-- stato presenza -->
                             <span class="badge"
                             :class="presenzaToClass(item)"
                             >{{ presenzaString(item) }}</span>
                         </td>
+                        <!-- 1* entrata, 1* uscita, 2* entrata, 2* uscita -->
                         <td>{{ attendanceTime(item.day_date, item.entrance_date) }}</td>
                         <td>{{ attendanceTime(item.day_date, item.exit_date) }}</td>
                         <td>{{ attendanceTime(item.day_date, item.entrance_date_2) }}</td>
                         <td>{{ attendanceTime(item.day_date, item.exit_date_2) }}</td>
-                        <td>{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) }}</td>
-                        <td>{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) }}</td>
-                        <td>{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}</td>
+
+                        <td class="ore">{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) }}</td>
+                        <td class="ore">{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) }}</td>
+                        <!-- ore Assenza (giustificata) + giustificativo -->
+                        <td class="ore">{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}</td>
                         <td>
                             <span class="badge"
                             :class="assenzaToClass(item)"
                             v-if="item.abscence_justification != '' && item.abscence_justification != '_R'"
-                            >{{ item.abscence_justification_desc }}</span>
+                            >{{ item.abscence_justification_desc.replace('* ', '') }}</span>
                         </td>
-                        <td>{{ $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) }}</td>
+                        <!-- ore Straordinario (giustificato) + giustificativo -->
+                        <td></td>
+                        <td></td>
+                        <!-- ore totali -->
+                        <td class="ore">{{ $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) }}</td>
 
                         <!-- actions -->
                         <td>
@@ -229,7 +238,7 @@
                             </a>
                             <a href="#"
                                 class="action"
-                                title="Giustifica Assenze"
+                                title="Giustifica Assenza"
                                 @click="addEditAbscence(item)"
                                 >
                                 <i class="fa fa-balance-scale"
@@ -239,7 +248,7 @@
                             <!-- gestione straordinari: mostra se i minuti contabili
                             eccedono i minuti medi giornalieri ordinari -->
                             <a href="#"
-                                v-if="item.cont_m > item.minutes_per_day"
+                                v-if="item.cont_m > item.avg_minutes_per_day"
                                 class="action"
                                 title="Gestisci Straordinari"
                                 @click="addEditExtra(item)"
@@ -411,7 +420,7 @@
                             <has-error :form="form" field="abscence_time"></has-error>
                         </div>
                         <div class="form-group">
-                            <label for="abscence_justification">Motivazione</label>
+                            <label for="abscence_justification">Giustificativo Assenza</label>
                             <select name="abscence_justification" id="abscence_justification"
                                 class="form-control"
                                 required
@@ -446,7 +455,7 @@
                     </button>
                 </div>
 
-                <form @submit.prevent="upsertAbscence()">
+                <form @submit.prevent="upsertExtraordinary()">
                     <div class="modal-body">
                         <div class="form-group">
                             <b>
@@ -456,26 +465,26 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="abscence_time">Ore di Assenza</label>
-                            <input type="time" name="abscence_time"
+                            <label for="extraordinary_time">Ore di Straordinario</label>
+                            <input type="time" name="extraordinary_time"
                                 class="form-control"
-                                :class="{ 'is-invalid': form.errors.has('abscence_time') }"
+                                :class="{ 'is-invalid': form.errors.has('extraordinary_time') }"
                                 step="900"
-                                v-model="form.abscence_time"
+                                v-model="form.extraordinary_time"
                                 required
                                 >
-                            <has-error :form="form" field="abscence_time"></has-error>
+                            <has-error :form="form" field="extraordinary_time"></has-error>
                         </div>
                         <div class="form-group">
-                            <label for="abscence_justification">Motivazione</label>
-                            <select name="abscence_justification" id="abscence_justification"
+                            <label for="extraordinary_justification">Giustificativo Straordinari</label>
+                            <select name="extraordinary_justification" id="extraordinary_justification"
                                 class="form-control"
                                 required
-                                v-model="form.abscence_justification"
+                                v-model="form.extraordinary_justification"
                                 >
                                 <option value="">-seleziona-</option>
                                 <option :value="item.code"
-                                    v-for="item in giustificativi_assenze" :key="item.code"
+                                    v-for="item in giustiticativi_straordinari" :key="item.code"
                                 >{{ item.description }}</option>
                             </select>
                         </div>
@@ -538,6 +547,13 @@
 a.action {
     margin-right:5px!important;
 }
+.badge {
+  padding: 0.4em 0.8em;
+}
+td.ore {
+    background-color:rgba(0, 0, 0, 0.035);
+    text-align: center;
+}
 .btn-green, .btn-green:focus, .btn-green:active {
     /* overwrite some styles */
     background-color: #38c172!important;
@@ -589,6 +605,10 @@ export default {
                 abscence_minutes: '',
                 abscence_justification: '',
                 abscence_time: '00:00',
+
+                extraordinary_minutes: '',
+                extraordinary_justification: '',
+                extraordinary_time: '00:00',
                 notes: ''
             }),
 
@@ -643,7 +663,7 @@ export default {
             this.form.pausa_orario = (item.pausa_orario === 1)
         },
         addEditAbscence(item) {
-            // Adds/Edits Abscence
+            // Adds/Edits Abscence minutes
             this.editmode = false;
             this.form.reset();
             $('#modalAbscences').modal('show');
@@ -653,14 +673,26 @@ export default {
             this.form.abscence_time = this.$root.utils.generic.padZero(item.abscence_h_int) + ':' + this.$root.utils.generic.padZero(item.abscence_minutes_int)
         },
         addEditExtra(item) {
-            // Adds/Edits Extra (Straordinari) hourse
+            // Adds/Edits Extra (Straordinari) minutes
             this.editmode = false;
             this.form.reset();
             $('#modalExtra').modal('show');
             this.form.fill(item);
 
-            // calculates abscence_time
-            //this.form.abscence_time = this.$root.utils.generic.padZero(item.abscence_h_int) + ':' + this.$root.utils.generic.padZero(item.abscence_minutes_int)
+            // calculates extraordinary_time
+            let extra_time = '00:00'                    // extra time predefinito
+
+            // calcola ore e minuti straordinari da rilevamento ore
+            let extra = parseInt(item.cont_m - item.avg_minutes_per_day)
+            if (extra > 0) {
+                const extra_h = Math.floor(extra / 60)
+                const extra_m = extra % 60
+                extra_time = this.$root.utils.generic.padZero(extra_h) + ':' + this.$root.utils.generic.padZero(extra_m)
+            } else {
+                // calcola ore e minuti straordinari, da giustificativo
+            }
+
+            this.form.extraordinary_time = extra_time
         },
         addEditNotes(item) {
             // Adds/Edits Notes
@@ -850,6 +882,35 @@ export default {
                 .then((response)=>{
                     if(response.data.success) {
                         $('#modalAbscences').modal('hide');
+                        this.$Progress.finish();
+                        this.list();
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.data.message
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Si è verificato un errore! Prego, riprova'
+                        });
+                        this.$Progress.failed();
+                    }
+                })
+                .catch(()=>{
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Si è verificato un errore! Prego, riprova'
+                    });
+                })
+        },
+        upsertExtraordinary() {
+            // inserts/updates extra-orinary
+            this.$Progress.start();
+
+            this.form.post('api/extra-ordinary')
+                .then((response)=>{
+                    if(response.data.success) {
+                        $('#modalExtra').modal('hide');
                         this.$Progress.finish();
                         this.list();
                         Toast.fire({
@@ -1143,7 +1204,7 @@ export default {
                     // assenza con giustificativo o giornata di riposo
                     switch (item.abscence_justification) {
                         case '': return 'badge-danger';
-                        case '_R': return 'badge-info';
+                        case '_R': return 'badge-success';      // non viene mostrato badge
                     }
                 case 0: return 'badge-warning';
                 case 1: return 'badge-warning';
@@ -1157,7 +1218,7 @@ export default {
         }
         // #endregion utils
     },
-    // #region Methods
+    // #endregion Methods
 
     // #region Component Life Cycle
     beforeCreate() {
@@ -1177,6 +1238,7 @@ export default {
         this.list();                            // lists presenze
         this.listGiustificativiAssenze();       // lists giustificativi assenze
         this.listGiustificativiStraordinari();  // lista giustificativi straordinari
+        this.setLastWeek()          // TEMP: TODO Rimuovere questa chiamata
         this.$Progress.finish();
     },
     beforeMount() {

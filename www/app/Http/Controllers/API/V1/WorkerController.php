@@ -579,6 +579,50 @@ public function exportCodes(Request $request) {
     }
 
     /**
+     * Removes an extra-ordinary work for the specified worker in the specified date
+     * Returns true if succeedes
+     */
+    public function deleteExtraOrdinary($id, $date) {
+        if (!$this->exists($id)) return false;          // worker not found!
+
+        DB::table('extraordinaries')
+            ->where('worker_id', $id)
+            ->where('ref_date', $date)
+            ->delete();
+        return true;
+    }
+    /**
+     * Register an extra-ordinary work time for the specified worker in the specified date
+     * Returns true if succeedes
+     */
+    public function addExtraOrdinary($id, $date, $minutes, $justification) {
+
+        // normalizes arguments
+        $justification = trim(strtoupper($justification));
+
+        // validates arguments
+        if (!$this->exists($id)) return false;          // worker not found!
+        if ($minutes < 0) return false;                 // minutes not valid
+        if ($justification == '') return false;         // justification code missing
+
+        $this->deleteExtraOrdinary($id, $date);         // deletes previous extra-ordinary work for the specified worker in the specified date
+        if ($minutes == 0) return true;                 // nothing else to do: return true
+
+        // registers abscence
+        $thisID = DB::table('extraordinaries')->insertGetId(
+            array(
+                'worker_id' => $id,
+                'ref_date' => $date,
+                'extraordinary_minutes' => $minutes,
+                'extraordinary_justification' => $justification,
+                'created_at' =>  $this->utils->OraItaliana(),
+                'updated_at' => $this->utils->OraItaliana()
+            )
+        );
+        return ($thisID > 0);
+    }
+
+    /**
      * Removes a note for the specified worker in the specified date
      * Returns true if succeedes
      */
@@ -591,7 +635,6 @@ public function exportCodes(Request $request) {
             ->delete();
         return true;
     }
-
     /**
      * Register a note for the specified worker in the specified date
      * Returns true if succeedes

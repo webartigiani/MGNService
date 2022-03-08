@@ -1,7 +1,7 @@
 <?php
 /**
  * AbscenceController
- * controller presenze
+ * controller assenze
  */
 namespace App\Http\Controllers\API\V1;
 
@@ -126,11 +126,11 @@ class AbsenceController extends BaseController
 
 // #region Public Methods
     /**
-     * Returns true if the specified justification code
+     * Returns true if the specified justification code for abscence
      */
     public function justificationExists($code) {
         $tableName = 'giustificativi';
-        $data = DB::table($tableName)->where('code', $code)->take(1)->get();
+        $data = DB::table($tableName)->where('used_for', 'ABS')->where('code', $code)->take(1)->get();
         if (isset($data)) return isset($data[0]);
         return false;
     }
