@@ -220,7 +220,6 @@ class AttendanceController extends BaseController
      */
     public function destroy($id)
     {
-        //$this->authorize('isAdmin');              // NOTE: it doesn't work!!!!
         $attendance = $this->attendance->findOrFail($id);
 
         DB::table('attendances')

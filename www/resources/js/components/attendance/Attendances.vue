@@ -42,7 +42,7 @@
                             class="btn btn-sm btn-primary btn-green"
                             title="Esporta Presenze in formato XML per Zucchetti"
                             :disabled="items.data.length == 0"
-                            @click="exportDataXML()">
+                            @click="exportXML()">
                             <i class="fa fa-file-alt"></i>
                             Esporta XML
                         </button>
@@ -172,9 +172,8 @@
                       <th>Presenza</th>
                       <th>Lavorate</th>
                       <th>Assenza</th>
-                      <th><!-- giustificativo assenza --></th>
                       <th>Straordinario</th>
-                      <th><!-- giustificativo straordinario --></th>
+                      <th><!-- giustificativo assenza/straordinari --></th>
                       <th>Totali</th>
                       <th>Azioni</th>
                     </tr>
@@ -204,17 +203,32 @@
 
                         <td class="ore">{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) }}</td>
                         <td class="ore">{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) }}</td>
-                        <!-- ore Assenza (giustificata) + giustificativo -->
-                        <td class="ore">{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}</td>
+                        <!-- ore Assenza (giustificata) -->
+                        <td class="ore">
+                            <span
+                            v-if="item.abscence_justification != ''"
+                            >{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}
+                            </span>
+                        </td>
+                        <!-- ore Straordinario (giustificato) -->
+                        <td class="ore">
+                            <span
+                            v-if="item.extraordinary_justification != ''"
+                            :title="item.extraordinary_justification_desc"
+                            >{{ $root.utils.generic.padZero(item.extraordinary_h_int) + ':' + $root.utils.generic.padZero(item.extraordinary_minutes_int) }}
+                            </span>
+                        </td>
+                        <!-- giustificativo assenz/straordinario -->
                         <td>
                             <span class="badge"
-                            :class="assenzaToClass(item)"
-                            v-if="item.abscence_justification != '' && item.abscence_justification != '_R'"
+                                v-if="item.abscence_justification != '' && item.abscence_justification != '_R'"
+                                :class="assenzaToClass(item)"
                             >{{ item.abscence_justification_desc.replace('* ', '') }}</span>
+                            <span class="badge"
+                                v-if="item.extraordinary_justification != ''"
+                                :class="straordinarioToClass(item)"
+                            >{{ item.extraordinary_justification_desc }}</span>
                         </td>
-                        <!-- ore Straordinario (giustificato) + giustificativo -->
-                        <td></td>
-                        <td></td>
                         <!-- ore totali -->
                         <td class="ore">{{ $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) }}</td>
 
@@ -254,7 +268,7 @@
                                 @click="addEditExtra(item)"
                                 >
                                 <i class="fa fa-clock"
-                                    :class="(item.abscence_justification != '') ? `blue` : `red`"
+                                    :class="(item.extraordinary_justification != '') ? `blue` : `red`"
                                 ></i>
                             </a>
                             <a href="#"
@@ -713,6 +727,12 @@ export default {
                 params: params
             }).then(({ data }) => (this.items = data.data, this.$Progress.finish()));
         },
+        hasToJustifyExtraOrdinaries() {
+            const r = this.items.data.filter((item) => {
+                return ((item.cont_m > item.avg_minutes_per_day) && (item.extraordinary_justification))
+            })
+            return (r.length > 0)
+        },
         createItem(){
             /*
             NOTE: attendance store/create functions is disabled
@@ -1000,8 +1020,31 @@ export default {
             this.$root.download.saveFile(response, fileName + '.csv', 'text/csv')   // exports CSV
             this.$Progress.finish();
         },
+        exportXML() {
+            if (this.hasToJustifyExtraOrdinaries()) {
+                const msg = "Risultano ore di lavoro straordinarie nell'\intervallo di date selezionato, per le quali è necessario inserire i giustificativi.";
+
+                Swal.fire({
+                    title: 'Attenzione',
+                    icon:'warning',
+                    html: msg,
+                    showCancelButton: true,
+                    confirmButtonText: 'Procedi comunque',
+                    cancelButtonText: 'Annulla'
+                    }).then((result) => {
+                        // Exports XML
+                        if (result.value) this.exportDataXML()
+                    })
+            } else {
+                this.exportDataXML()
+            }
+        },
         exportDataXML: async function() {
             // see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
+
+            alert('qui')
+            return
+
             this.$Progress.start();
             const response = await axios({
                 method: 'get',
@@ -1209,6 +1252,10 @@ export default {
                 case 0: return 'badge-warning';
                 case 1: return 'badge-warning';
             }
+        },
+        straordinarioToClass(item) {
+            // returns straordinario class
+            return 'badge-success';
         },
         attendanceTime(dayDate, t) {
             if (t == null) return ''
