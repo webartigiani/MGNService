@@ -571,29 +571,26 @@ public function exportNotes(Request $request) {
         */
                 $sql = "
                     select results.*,
-                        /*
-                            calculates minutes total, and total hours and minutes (ready for format HH:mm)
-                        */
+                        /* Calcola i minuti lavorati totali dal dipendente nella giornata ore e minuti (per formato HH:mm) */
                         results.duration_m + results.abscence_m as total_m,
                         ((results.duration_m + results.abscence_m) DIV 60) total_h_int,
                         ((results.duration_m + results.abscence_m) DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . ") - (60 * ((results.duration_m + results.abscence_m) DIV 60)) total_minutes_int,
 
-                        /* SIMONE 2022-03-07: minuti contabili: quelli validi ai fini della busta paga */
-                        (((results.duration_m + results.abscence_m) DIV 60) * 60) + ((results.duration_m + results.abscence_m) DIV 15 * 15) - (60 * ((results.duration_m + results.abscence_m) DIV 60)) cont_minutes,
+                        /* minuti contabili: quelli validi ai fini della busta paga */
+                        (((results.duration_m + results.abscence_m) DIV 60) * 60) + ((results.duration_m + results.abscence_m) DIV 15 * 15) - (60 * ((results.duration_m + results.abscence_m) DIV 60)) cont_m,
 
-                        /* SIMONE 2022-03-07: ore settimanali, e media ore e minuti giornalieri */
-                        results.ore_settimanali hours_per_week,
+                        /* media ore e minuti giornalieri, basati su ore_settimanali */
                         ROUND(results.ore_settimanali / 6, 2) hours_per_day,
                         (ROUND(results.ore_settimanali / 6, 2) * 60) minutes_per_day
                     from
                         (
                             select presenze.*,
-                                /* also exports notes */
+                                /* esporta anche le note per il dipendente nella data di riferimento, se inserite dallo staff */
                                 IFNULL(wn.notes, '') notes,
                                 /*
-                                    gets user abscence for the day
-                                    and calculates abscence minutes and abscence hours and minutes (ready for format HH:mm)
-                                    joins giustificativi to get justification description
+                                    recupera l'assenza del dipendente per il giorno corrente
+                                    e calcola minuti di assenza, ore e minuti (per formato HH:mm).
+                                    joina con table justificativi per ottenere descrizione giustificativo assenza
                                 */
                                 IFNULL(assenze.abscence_minutes, 0) abscence_m,
                                 IFNULL(assenze.abscence_minutes DIV 60, 0) abscence_h_int,
@@ -606,14 +603,13 @@ public function exportNotes(Request $request) {
                                     from (
                                         select
                                             /*
-                                                selects workers data, attendance data,
-                                                and calculates worked minutes by day and also worked hours and minutes (ready for format HH:mm)
+                                                seleziona i dati del dipendente e le sue presenze.
+                                                calcola i minuti lavorati per giornata, le ore e i minuti (per formato HH:mm)
 
-                                                FIX DI SIMONE 2021-07-13:
+                                                FIX:
                                                 id=0 generato in caso di assenza potrebbe essere la causa di problemi
                                                 di visualizzazione e filtri nelle presenze.
-                                                Proviamo sostituendo id=0 in caso di assenza con un valore generato dalla data di riferimento
-                                                + l'id del dipendente
+                                                Proviamo sostituendo id=0 in caso di assenza con un valore generato dalla data di riferimento + l'id del dipendente
 
                                                 era     IFNULL(att.id, 0) id, calendar.ref_date,
                                                 diventa IFNULL(att.id, concat(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
@@ -623,35 +619,27 @@ public function exportNotes(Request $request) {
                                             calendar.day_date,
                                             att.entrance_date, att.entrance_ip,
                                             att.exit_date, att.exit_ip,
-                                            /* 2021-09-07 Considera anche seconda timbrata giornaliera */
+                                            /* Considera anche seconda timbrata giornaliera */
                                             att.entrance_date_2, att.entrance_ip_2,
                                             att.exit_date_2, att.exit_ip_2,
-                                            /* NOTA: minuti lavorati, ore (float e int), minuti residui, sono calcolati dalla view export_v_attendances */
+                                            /* minuti lavorati, ore (float e int), minuti residui, sono calcolati dalla view export_v_attendances */
                                             IFNULL(att.duration_m, 0) duration_m,
                                             IFNULL(att.duration_h, 0) duration_h,
                                             IFNULL(att.duration_h_int, 0) duration_h_int,
                                             IFNULL(att.residual_m, 0) residual_m,
                                             IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
                                             IFNULL(att.chk, -1) chk,
-
-                                            /* SIMONE: data_cessazione, data_assunzione: ci servono solo per poterci filtrare */
+                                            /* data_cessazione e data_assunzione: non vengono esportati. Ci servono per poterci filtrare */
                                             w.data_cessazione, w.data_assunzione,
-
-                                            /* SIMONE 2022-03-07: ore_settimanali: necessarie per calcolare ore straordinarie giornaliere  */
+                                            /* ore_settimanali: necessarie per calcolare ore straordinarie giornaliere */
                                             w.ore_settimanali
                                         from
-                                        (   /*
-                                                select days of period from calendar
-                                            */
+                                        (   /* seleziona i giorni del periodo dal calendario */
                                             {$innerSQL}
                                         ) calendar
-                                        /*
-                                            cross join workers to multiply results on all workers
-                                        */
+                                        /* CROSS join con table workers per moltiplicare i record del calendario su ogni lavoratore */
                                         cross join workers w
-                                        /*
-                                            left join attendances to get attendances, or empty records in case of abscence
-                                        */
+                                        /* LEFT join con attendances per ottenere presenze o un record vuoto in caso di assenza */
                                         left outer join export_v_attendances att
                                             on att.day_date = calendar.day_date
                                             and att.worker_id = w.id
@@ -665,14 +653,14 @@ public function exportNotes(Request $request) {
                                     and data_assunzione <= ref_date
                                     ";
         $sql .= " ) presenze
-                    /* join absences to get abscence if present */
+                    /* join con absences per ottenere dati presenza se esistenti */
                     left outer join absences assenze
                         on presenze.worker_id = assenze.worker_id
                         and presenze.ref_date = assenze.ref_date
-                    /* join giustificativi to get its description if present */
+                    /* join con giustificativi per ottenere giustificativi assenze se assegnati */
                     left outer join giustificativi
                         on assenze.abscence_justification = giustificativi.code
-                    /* join worker_notes to get notes if present */
+                    /* join con worker_notes per ottenere le note della giornata per il dipendente, se inserite */
                     left outer join workers_notes wn
                         on  presenze.worker_id = wn.worker_id
                         and presenze.ref_date = wn.ref_date
@@ -685,9 +673,7 @@ public function exportNotes(Request $request) {
         ";
         if ($searchQuery != '') {
             $sql .= " and
-                /*
-                    do search...
-                */
+                /* search query */
                 (nome like '%" . $searchQuery . "%'
                 or cognome like '%" . $searchQuery . "%'
                 or codice_fiscale like '%" . $searchQuery . "%'

@@ -154,7 +154,6 @@
 
               <!-- body -->
               <div class="card-body table-responsive p-0">
-
                 <!-- #region DataTable -->
                 <table class="table table-hover">
                   <thead
@@ -162,7 +161,6 @@
                     >
                     <tr>
                       <th></th>
-                      <!-- <th>ID</th> -->
                       <th>Data</th>
                       <th>Nome</th>
                       <th>Cognome</th>
@@ -188,11 +186,10 @@
                                 :title="(item.worker_status==1 ? 'attualmente presente' : 'attualmente assente')"
                                 :class="(item.worker_status==1 ? 'green' : 'orange')"></i>
                         </td>
-                        <!-- <td>{{ item.id }}</td> -->
                         <td>{{ item.day_date }}</td>
                         <td>{{ item.nome }}</td>
                         <td>{{ item.cognome }}</td>
-                        <td>
+                        <td><!-- presenza -->
                             <span class="badge"
                             :class="presenzaToClass(item)"
                             >{{ presenzaString(item) }}</span>
@@ -239,8 +236,10 @@
                                     :class="(item.abscence_justification != '') ? `blue` : `gray`"
                                 ></i>
                             </a>
+                            <!-- gestione straordinari: mostra se i minuti contabili
+                            eccedono i minuti medi giornalieri ordinari -->
                             <a href="#"
-                                v-if="item.minutes_per_day > item.cont_minutes"
+                                v-if="item.cont_m > item.minutes_per_day"
                                 class="action"
                                 title="Gestisci Straordinari"
                                 @click="addEditExtra(item)"
@@ -436,6 +435,62 @@
         </div>
         <!-- #endregion Abscence Editor -->
 
+        <!-- #region Extra (Straordinari) Editor -->
+        <div class="modal fade" id="modalExtra" tabindex="-1" role="dialog" aria-labelledby="modalExtra" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestisci Straordinari</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form @submit.prevent="upsertAbscence()">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <b>
+                            {{ form.nome }} {{ form.cognome }}<br>
+                            {{ form.day_date }}
+                            </b>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="abscence_time">Ore di Assenza</label>
+                            <input type="time" name="abscence_time"
+                                class="form-control"
+                                :class="{ 'is-invalid': form.errors.has('abscence_time') }"
+                                step="900"
+                                v-model="form.abscence_time"
+                                required
+                                >
+                            <has-error :form="form" field="abscence_time"></has-error>
+                        </div>
+                        <div class="form-group">
+                            <label for="abscence_justification">Motivazione</label>
+                            <select name="abscence_justification" id="abscence_justification"
+                                class="form-control"
+                                required
+                                v-model="form.abscence_justification"
+                                >
+                                <option value="">-seleziona-</option>
+                                <option :value="item.code"
+                                    v-for="item in giustificativi_assenze" :key="item.code"
+                                >{{ item.description }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">Salva</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Salva</button>
+                    </div>
+                  </form>
+                </div>
+            </div>
+        </div>
+        <!-- #endregion Extra (Straordinari) Editor -->
+
         <!-- #region Notes Editor -->
         <div class="modal fade" id="modalNotes" tabindex="-1" role="dialog" aria-labelledby="modalNotes" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -508,6 +563,7 @@ export default {
             editmode: false,
             items : {},
             giustificativi_assenze: [],
+            giustiticativi_straordinari: [],
 
             form: new Form({
                 id : '',
@@ -535,6 +591,7 @@ export default {
                 abscence_time: '00:00',
                 notes: ''
             }),
+
             // filters
             filters: {
                 show: false,
@@ -596,14 +653,14 @@ export default {
             this.form.abscence_time = this.$root.utils.generic.padZero(item.abscence_h_int) + ':' + this.$root.utils.generic.padZero(item.abscence_minutes_int)
         },
         addEditExtra(item) {
-            // Adds/Edits Extra Works
+            // Adds/Edits Extra (Straordinari) hourse
             this.editmode = false;
             this.form.reset();
-            $('#modalAbscences').modal('show');
+            $('#modalExtra').modal('show');
             this.form.fill(item);
 
             // calculates abscence_time
-            this.form.abscence_time = this.$root.utils.generic.padZero(item.abscence_h_int) + ':' + this.$root.utils.generic.padZero(item.abscence_minutes_int)
+            //this.form.abscence_time = this.$root.utils.generic.padZero(item.abscence_h_int) + ':' + this.$root.utils.generic.padZero(item.abscence_minutes_int)
         },
         addEditNotes(item) {
             // Adds/Edits Notes
@@ -660,10 +717,6 @@ export default {
         updateItem(){
             // validates data
             if (!this.validateForm()) return
-
-
-            console.log(this.form)
-
             this.$Progress.start();
 
             this.form.put('api/attendance/' + this.form.id)
@@ -710,7 +763,6 @@ export default {
                 })
         },
         validateForm() {
-
             // validates required data
             if (this.form.pausa_orario) {
                 // dipendente con pausa
@@ -789,13 +841,13 @@ export default {
             return true
         },
 
+        // #region CRUD Assenze, Straordinari, Note
         upsertAbscence() {
             // inserts/updates abscence
             this.$Progress.start();
 
             this.form.post('api/abscence')
                 .then((response)=>{
-                    console.log(response.data)
                     if(response.data.success) {
                         $('#modalAbscences').modal('hide');
                         this.$Progress.finish();
@@ -825,7 +877,6 @@ export default {
 
             this.form.post('api/note')
                 .then((response)=>{
-                    console.log(response.data)
                     if(response.data.success) {
                         $('#modalNotes').modal('hide');
                         this.$Progress.finish();
@@ -849,12 +900,19 @@ export default {
                     });
                 })
         },
+        // #endregion CRUD Assenze, Straordinari, Note
+
         // #endregion CRUD Functions
 
         // #region Other Data Functions
         listGiustificativiAssenze() {
             axios.get('api/attendances/giustificativi-assenze', {}).then(({ data }) => {
                 this.giustificativi_assenze = data
+            });
+        },
+        listGiustificativiStraordinari() {
+            axios.get('api/attendances/giustificativi-straordinari', {}).then(({ data }) => {
+                this.giustiticativi_straordinari = data
             });
         },
         // #endregion other Data Functions
@@ -1094,6 +1152,7 @@ export default {
         attendanceTime(dayDate, t) {
             if (t == null) return ''
             if (dayDate == '') return ''
+            //console.log(t, '|', dayDate, '|', t.replace(dayDate, '').trim())
             return t.replace(dayDate, '').trim()
         }
         // #endregion utils
@@ -1115,8 +1174,9 @@ export default {
         this.filters.date_start = y + '-' + m + '-' + d;
         this.filters.date_end = y + '-' + m + '-' + d;
 
-        this.list();                    // lists presenze
-        this.listGiustificativiAssenze();   // lists giustificativi assenze
+        this.list();                            // lists presenze
+        this.listGiustificativiAssenze();       // lists giustificativi assenze
+        this.listGiustificativiStraordinari();  // lista giustificativi straordinari
         this.$Progress.finish();
     },
     beforeMount() {
