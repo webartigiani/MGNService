@@ -588,15 +588,26 @@ public function exportNotes(Request $request) {
                                 /* esporta anche le note per il dipendente nella data di riferimento, se inserite dallo staff */
                                 IFNULL(wn.notes, '') notes,
                                 /*
-                                    recupera l'assenza del dipendente per il giorno corrente
+                                    recupera l'assenza del dipendente - se giustificata - per il giorno corrente
                                     e calcola minuti di assenza, ore e minuti (per formato HH:mm).
-                                    joina con table justificativi per ottenere descrizione giustificativo assenza
+                                    joina con table giustificativi per ottenere descrizione giustificativo assenza
                                 */
                                 IFNULL(assenze.abscence_minutes, 0) abscence_m,
                                 IFNULL(assenze.abscence_minutes DIV 60, 0) abscence_h_int,
                                 IFNULL((assenze.abscence_minutes DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) - (60 * IFNULL(assenze.abscence_minutes DIV 60, 0)) abscence_minutes_int,
                                 IFNULL(assenze.abscence_justification, '') abscence_justification,
-                                IFNULL(giustificativi.description, '') abscence_justification_desc
+                                IFNULL(giustificativi_assenze.description, '') abscence_justification_desc,
+
+                                /*
+                                    recupera lo straordinario del dipendente - se inserito - per il giorno corrente
+                                    e calcola minuti di straordinarig, ore e minuti (per formato HH:mm).
+                                    joina con table giustificativi per ottenere descrizione giustificativo straordinario
+                                */
+                                IFNULL(straordinari.extraordinary_minutes, 0) extraordinary_m,
+                                IFNULL(straordinari.extraordinary_minutes DIV 60, 0) extraordinary_h_int,
+                                IFNULL((straordinari.extraordinary_minutes DIV 15 * 15), 0) - (60 * IFNULL(straordinari.extraordinary_minutes DIV 60, 0)) extraordinary_minutes_int,
+                                IFNULL(straordinari.extraordinary_justification, '') extraordinary_justification,
+                                IFNULL(giustificativi_straordinari.description, '') extraordinary_justification_desc
                             from
                                 (
                                 select *
@@ -658,8 +669,17 @@ public function exportNotes(Request $request) {
                         on presenze.worker_id = assenze.worker_id
                         and presenze.ref_date = assenze.ref_date
                     /* join con giustificativi per ottenere giustificativi assenze se assegnati */
-                    left outer join giustificativi
-                        on assenze.abscence_justification = giustificativi.code
+                    left outer join giustificativi giustificativi_assenze
+                        on assenze.abscence_justification = giustificativi_assenze.code
+
+                    /* join con extraordinaries per ottenere dati straordinari se esistenti */
+                    left outer join extraordinaries straordinari
+                        on presenze.worker_id = straordinari.worker_id
+                        and presenze.ref_date = straordinari.ref_date
+                    /* join con giustificativi per ottenere giustificativi straordinari se assegnati */
+                    left outer join giustificativi giustificativi_straordinari
+                        on straordinari.extraordinary_justification = giustificativi_straordinari.code
+
                     /* join con worker_notes per ottenere le note della giornata per il dipendente, se inserite */
                     left outer join workers_notes wn
                         on  presenze.worker_id = wn.worker_id
