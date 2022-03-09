@@ -1042,9 +1042,6 @@ export default {
         exportDataXML: async function() {
             // see: https://edionme.com/blogs/exportdownload-data-to-csv-with-laravel-and-vue
 
-            alert('qui')
-            return
-
             this.$Progress.start();
             const response = await axios({
                 method: 'get',
@@ -1285,7 +1282,6 @@ export default {
         this.list();                            // lists presenze
         this.listGiustificativiAssenze();       // lists giustificativi assenze
         this.listGiustificativiStraordinari();  // lista giustificativi straordinari
-        this.setLastWeek()          // TEMP: TODO Rimuovere questa chiamata
         this.$Progress.finish();
     },
     beforeMount() {

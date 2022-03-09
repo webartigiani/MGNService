@@ -286,19 +286,21 @@ public function exportXML(Request $request) {
 
     // gets the base-SQL to list attendances, then incapsulate it into a dedicate-SQL-query
     $sql = $this->listAttendancesQuery($s, $e, $search, $notatwork, 'worker_id, ref_date');
+
     $sql = "select
         worker_id,
         matricola,
         ref_date,
         duration_h_int hours, residual_m_int minutes,
         abscence_h_int absence_hours, abscence_minutes_int abscence_minutes, abscence_justification,
+        extraordinary_h_int extraordinary_hours, extraordinary_minutes_int extraordinary_minutes, extraordinary_justification,
         chk
     from (
         {$sql}
     ) tbl";
 
     // TEMP
-    //echo $sql;
+    //die($sql);
     //return;
 
     $dbdata = DB::select(DB::raw($sql));
@@ -320,6 +322,10 @@ public function exportXML(Request $request) {
         $absence_hours = $row->absence_hours;       // ore assenza giustificate
         $abscence_minutes = $row->abscence_minutes; // minuti assenza aggiuntivi
         $abscence_justification = $row->abscence_justification; // giustificativo assenza
+
+        $extraordinary_hours = $row->extraordinary_hours;
+        $extraordinary_minutes = $row->extraordinary_minutes;
+        $extraordinary_justification = $row->extraordinary_justification;
         $giornodiriposo = 'N';
         //NO!!! if ($row->chk <= 0) $giornodiriposo = 'S';  // giorno di riposo se assente o incompleto
 
@@ -362,11 +368,22 @@ public function exportXML(Request $request) {
                 $output .= "\t\t\t<Movimento>";
                 $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$abscence_justification}</CodGiustificativoUfficiale>";
                 $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
-                if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$absence_hours}</NumOre>\r\n";             // ore e minuti giustificati
+                if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$absence_hours}</NumOre>\r\n";             // ore e minuti assenza giustificata
                 if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumMinuti>{$abscence_minutes}</NumMinuti>\r\n";
                 $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
                 $output .= "\t\t\t</Movimento>\r\n";
             }
+        }
+
+        // se c'è straordinario esportiamo un ulteriore movimento
+        if ($extraordinary_justification != '') {
+            $output .= "\t\t\t<Movimento>";
+            $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$extraordinary_justification}</CodGiustificativoUfficiale>";
+            $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
+            if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumOre>{$extraordinary_hours}</NumOre>\r\n";             // ore e minuti straordinario
+            if ($giornodiriposo == 'N') $output .= "\t\t\t\t<NumMinuti>{$extraordinary_minutes}</NumMinuti>\r\n";
+            $output .= "\t\t\t\t<GiornoDiRiposo>{$giornodiriposo}</GiornoDiRiposo>";
+            $output .= "\t\t\t</Movimento>\r\n";
         }
     }   // /foreach...
 
@@ -695,6 +712,7 @@ public function exportNotes(Request $request) {
                 /* search query */
                 (nome like '%" . $searchQuery . "%'
                 or cognome like '%" . $searchQuery . "%'
+                or nome + ' ' + cognome like '%" . $searchQuery . "%'
                 or codice_fiscale like '%" . $searchQuery . "%'
                 )
             ";
