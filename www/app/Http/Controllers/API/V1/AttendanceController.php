@@ -294,6 +294,7 @@ public function exportXML(Request $request) {
         duration_h_int hours, residual_m_int minutes,
         abscence_h_int absence_hours, abscence_minutes_int abscence_minutes, abscence_justification,
         extraordinary_h_int extraordinary_hours, extraordinary_minutes_int extraordinary_minutes, extraordinary_justification,
+        ordinary_m, ordinary_h_int, ordinary_minutes_int,
         chk
     from (
         {$sql}
@@ -322,6 +323,9 @@ public function exportXML(Request $request) {
         $absence_hours = $row->absence_hours;       // ore assenza giustificate
         $abscence_minutes = $row->abscence_minutes; // minuti assenza aggiuntivi
         $abscence_justification = $row->abscence_justification; // giustificativo assenza
+        $ordinary_m = $row->ordinary_m;             // ore e minuti lavoro ordinario
+        $ordinary_h_int = $row->ordinary_h_int;
+        $ordinary_minutes_int = $row->ordinary_minutes_int;
 
         $extraordinary_hours = $row->extraordinary_hours;
         $extraordinary_minutes = $row->extraordinary_minutes;
@@ -346,7 +350,11 @@ public function exportXML(Request $request) {
         }   // /se cambia il dipendente...
         $lastWorkerID = $workerID;              // memorizza dipendente corrente
 
-        // esporta dati presenze (del dipendente corrente)
+        // esporta dati presenza del dipendente corrente: ore totali o ore ordinarie se è presente straordinario
+        if ($extraordinary_justification != '') {
+            $hours = $ordinary_h_int;
+            $minutes = $ordinary_minutes_int;
+        }
         $output .= "\t\t\t<Movimento>\r\n";
         $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$giustificativo}</CodGiustificativoUfficiale>\r\n";
         $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
@@ -586,127 +594,134 @@ public function exportNotes(Request $request) {
             > rounds worked minutes and abscence minutes by env('MINUTE_ROUND')
         */
                 $sql = "
-                    select results.*,
-                        /* Calcola i minuti lavorati totali dal dipendente nella giornata ore e minuti (per formato HH:mm) */
-                        results.duration_m + results.abscence_m as total_m,
-                        ((results.duration_m + results.abscence_m) DIV 60) total_h_int,
-                        ((results.duration_m + results.abscence_m) DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . ") - (60 * ((results.duration_m + results.abscence_m) DIV 60)) total_minutes_int,
-
-                        /* minuti contabili: minuti lavorati contabili (arrotondati a 15'), senza eventuali assenze giustificate */
-                        (((results.duration_m) DIV 60) * 60) + ((results.duration_m) DIV 15 * 15) - (60 * ((results.duration_m) DIV 60)) cont_m,
-
-                        /* media ore e minuti giornalieri, basati su ore_settimanali */
-                        ROUND(results.ore_settimanali / 6, 2) avg_hours_per_day,
-                        (ROUND(results.ore_settimanali / 6, 2) * 60) avg_minutes_per_day
+                    select finalResults.*,
+                        /* Calcola ore e minuti di lavoro ordinario */
+                        finalResults.cont_m - finalResults.extraordinary_m ordinary_m,
+                        ((finalResults.cont_m - finalResults.extraordinary_m) DIV 60) ordinary_h_int,
+                        ((finalResults.cont_m - finalResults.extraordinary_m)) - (60 * ((finalResults.cont_m - finalResults.extraordinary_m) DIV 60)) ordinary_minutes_int
                     from
                         (
-                            select presenze.*,
-                                /* esporta anche le note per il dipendente nella data di riferimento, se inserite dallo staff */
-                                IFNULL(wn.notes, '') notes,
-                                /*
-                                    recupera l'assenza del dipendente - se giustificata - per il giorno corrente
-                                    e calcola minuti di assenza, ore e minuti (per formato HH:mm).
-                                    joina con table giustificativi per ottenere descrizione giustificativo assenza
-                                */
-                                IFNULL(assenze.abscence_minutes, 0) abscence_m,
-                                IFNULL(assenze.abscence_minutes DIV 60, 0) abscence_h_int,
-                                IFNULL((assenze.abscence_minutes DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) - (60 * IFNULL(assenze.abscence_minutes DIV 60, 0)) abscence_minutes_int,
-                                IFNULL(assenze.abscence_justification, '') abscence_justification,
-                                IFNULL(giustificativi_assenze.description, '') abscence_justification_desc,
+                        select results.*,
+                            /* Calcola i minuti lavorati totali dal dipendente nella giornata ore e minuti (per formato HH:mm) */
+                            results.duration_m + results.abscence_m as total_m,
+                            ((results.duration_m + results.abscence_m) DIV 60) total_h_int,
+                            ((results.duration_m + results.abscence_m) DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . ") - (60 * ((results.duration_m + results.abscence_m) DIV 60)) total_minutes_int,
 
-                                /*
-                                    recupera lo straordinario del dipendente - se inserito - per il giorno corrente
-                                    e calcola minuti di straordinarig, ore e minuti (per formato HH:mm).
-                                    joina con table giustificativi per ottenere descrizione giustificativo straordinario
-                                */
-                                IFNULL(straordinari.extraordinary_minutes, 0) extraordinary_m,
-                                IFNULL(straordinari.extraordinary_minutes DIV 60, 0) extraordinary_h_int,
-                                IFNULL((straordinari.extraordinary_minutes DIV 15 * 15), 0) - (60 * IFNULL(straordinari.extraordinary_minutes DIV 60, 0)) extraordinary_minutes_int,
-                                IFNULL(straordinari.extraordinary_justification, '') extraordinary_justification,
-                                IFNULL(giustificativi_straordinari.description, '') extraordinary_justification_desc
-                            from
-                                (
-                                select *
-                                    from (
-                                        select
-                                            /*
-                                                seleziona i dati del dipendente e le sue presenze.
-                                                calcola i minuti lavorati per giornata, le ore e i minuti (per formato HH:mm)
+                            /* minuti contabili: minuti lavorati contabili (arrotondati a 15'), senza eventuali assenze giustificate */
+                            (((results.duration_m) DIV 60) * 60) + ((results.duration_m) DIV 15 * 15) - (60 * ((results.duration_m) DIV 60)) cont_m,
 
-                                                FIX:
-                                                id=0 generato in caso di assenza potrebbe essere la causa di problemi
-                                                di visualizzazione e filtri nelle presenze.
-                                                Proviamo sostituendo id=0 in caso di assenza con un valore generato dalla data di riferimento + l'id del dipendente
-
-                                                era     IFNULL(att.id, 0) id, calendar.ref_date,
-                                                diventa IFNULL(att.id, concat(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
-                                            */
-                                            IFNULL(att.id, CONCAT(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
-                                            w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status, w.pausa_orario,
-                                            calendar.day_date,
-                                            att.entrance_date, att.entrance_ip,
-                                            att.exit_date, att.exit_ip,
-                                            /* Considera anche seconda timbrata giornaliera */
-                                            att.entrance_date_2, att.entrance_ip_2,
-                                            att.exit_date_2, att.exit_ip_2,
-                                            /* minuti lavorati, ore (float e int), minuti residui, sono calcolati dalla view export_v_attendances */
-                                            IFNULL(att.duration_m, 0) duration_m,
-                                            IFNULL(att.duration_h, 0) duration_h,
-                                            IFNULL(att.duration_h_int, 0) duration_h_int,
-                                            IFNULL(att.residual_m, 0) residual_m,
-                                            IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
-                                            IFNULL(att.chk, -1) chk,
-                                            /* data_cessazione e data_assunzione: non vengono esportati. Ci servono per poterci filtrare */
-                                            w.data_cessazione, w.data_assunzione,
-                                            /* ore_settimanali: necessarie per calcolare ore straordinarie giornaliere */
-                                            w.ore_settimanali
-                                        from
-                                        (   /* seleziona i giorni del periodo dal calendario */
-                                            {$innerSQL}
-                                        ) calendar
-                                        /* CROSS join con table workers per moltiplicare i record del calendario su ogni lavoratore */
-                                        cross join workers w
-                                        /* LEFT join con attendances per ottenere presenze o un record vuoto in caso di assenza */
-                                        left outer join export_v_attendances att
-                                            on att.day_date = calendar.day_date
-                                            and att.worker_id = w.id
-                                    ) presenze
-                                where
-                                    /*  a) 	include i soli dipendenti il cui rapporto di lavoro è ancora in corso, o è cessato DOPO della data di riferimento:
-                                            >= ref_date, fasi che venga fornita la presenza anche per il giorno di cessazione rapporto
-                                        b)	include i soli dipendenti la cui data di assunzione è >= alla data di riferimento: escludendo quelli non ancora in forza
+                            /* media ore e minuti giornalieri, basati su ore_settimanali */
+                            ROUND(results.ore_settimanali / 6, 2) avg_hours_per_day,
+                            (ROUND(results.ore_settimanali / 6, 2) * 60) avg_minutes_per_day
+                        from
+                            (
+                                select presenze.*,
+                                    /* esporta anche le note per il dipendente nella data di riferimento, se inserite dallo staff */
+                                    IFNULL(wn.notes, '') notes,
+                                    /*
+                                        recupera l'assenza del dipendente - se giustificata - per il giorno corrente
+                                        e calcola minuti di assenza, ore e minuti (per formato HH:mm).
+                                        joina con table giustificativi per ottenere descrizione giustificativo assenza
                                     */
-                                    (data_cessazione IS NULL OR data_cessazione >= ref_date)
-                                    and data_assunzione <= ref_date
-                                    ";
-        $sql .= " ) presenze
-                    /* join con absences per ottenere dati presenza se esistenti */
-                    left outer join absences assenze
-                        on presenze.worker_id = assenze.worker_id
-                        and presenze.ref_date = assenze.ref_date
-                    /* join con giustificativi per ottenere giustificativi assenze se assegnati */
-                    left outer join giustificativi giustificativi_assenze
-                        on assenze.abscence_justification = giustificativi_assenze.code
+                                    IFNULL(assenze.abscence_minutes, 0) abscence_m,
+                                    IFNULL(assenze.abscence_minutes DIV 60, 0) abscence_h_int,
+                                    IFNULL((assenze.abscence_minutes DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) - (60 * IFNULL(assenze.abscence_minutes DIV 60, 0)) abscence_minutes_int,
+                                    IFNULL(assenze.abscence_justification, '') abscence_justification,
+                                    IFNULL(giustificativi_assenze.description, '') abscence_justification_desc,
 
-                    /* join con extraordinaries per ottenere dati straordinari se esistenti */
-                    left outer join extraordinaries straordinari
-                        on presenze.worker_id = straordinari.worker_id
-                        and presenze.ref_date = straordinari.ref_date
-                    /* join con giustificativi per ottenere giustificativi straordinari se assegnati */
-                    left outer join giustificativi giustificativi_straordinari
-                        on straordinari.extraordinary_justification = giustificativi_straordinari.code
+                                    /*
+                                        recupera lo straordinario del dipendente - se inserito - per il giorno corrente
+                                        e calcola minuti di straordinarig, ore e minuti (per formato HH:mm).
+                                        joina con table giustificativi per ottenere descrizione giustificativo straordinario
+                                    */
+                                    IFNULL(straordinari.extraordinary_minutes, 0) extraordinary_m,
+                                    IFNULL(straordinari.extraordinary_minutes DIV 60, 0) extraordinary_h_int,
+                                    IFNULL((straordinari.extraordinary_minutes), 0) - (60 * IFNULL(straordinari.extraordinary_minutes DIV 60, 0)) extraordinary_minutes_int,
+                                    IFNULL(straordinari.extraordinary_justification, '') extraordinary_justification,
+                                    IFNULL(giustificativi_straordinari.description, '') extraordinary_justification_desc
+                                from
+                                    (
+                                    select *
+                                        from (
+                                            select
+                                                /*
+                                                    seleziona i dati del dipendente e le sue presenze.
+                                                    calcola i minuti lavorati per giornata, le ore e i minuti (per formato HH:mm)
 
-                    /* join con worker_notes per ottenere le note della giornata per il dipendente, se inserite */
-                    left outer join workers_notes wn
-                        on  presenze.worker_id = wn.worker_id
-                        and presenze.ref_date = wn.ref_date
-            ) results
-        /*
-            Apply filters
-        */
-        where
-            1=1
-        ";
+                                                    FIX:
+                                                    id=0 generato in caso di assenza potrebbe essere la causa di problemi
+                                                    di visualizzazione e filtri nelle presenze.
+                                                    Proviamo sostituendo id=0 in caso di assenza con un valore generato dalla data di riferimento + l'id del dipendente
+
+                                                    era     IFNULL(att.id, 0) id, calendar.ref_date,
+                                                    diventa IFNULL(att.id, concat(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
+                                                */
+                                                IFNULL(att.id, CONCAT(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
+                                                w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status, w.pausa_orario,
+                                                calendar.day_date,
+                                                att.entrance_date, att.entrance_ip,
+                                                att.exit_date, att.exit_ip,
+                                                /* Considera anche seconda timbrata giornaliera */
+                                                att.entrance_date_2, att.entrance_ip_2,
+                                                att.exit_date_2, att.exit_ip_2,
+                                                /* minuti lavorati, ore (float e int), minuti residui, sono calcolati dalla view export_v_attendances */
+                                                IFNULL(att.duration_m, 0) duration_m,
+                                                IFNULL(att.duration_h, 0) duration_h,
+                                                IFNULL(att.duration_h_int, 0) duration_h_int,
+                                                IFNULL(att.residual_m, 0) residual_m,
+                                                IFNULL((att.residual_m DIV " . env('MINUTE_ROUND') . " * " . env('MINUTE_ROUND') . "), 0) residual_m_int,
+                                                IFNULL(att.chk, -1) chk,
+                                                /* data_cessazione e data_assunzione: non vengono esportati. Ci servono per poterci filtrare */
+                                                w.data_cessazione, w.data_assunzione,
+                                                /* ore_settimanali: necessarie per calcolare ore straordinarie giornaliere */
+                                                w.ore_settimanali
+                                            from
+                                            (   /* seleziona i giorni del periodo dal calendario */
+                                                {$innerSQL}
+                                            ) calendar
+                                            /* CROSS join con table workers per moltiplicare i record del calendario su ogni lavoratore */
+                                            cross join workers w
+                                            /* LEFT join con attendances per ottenere presenze o un record vuoto in caso di assenza */
+                                            left outer join export_v_attendances att
+                                                on att.day_date = calendar.day_date
+                                                and att.worker_id = w.id
+                                        ) presenze
+                                    where
+                                        /*  a) 	include i soli dipendenti il cui rapporto di lavoro è ancora in corso, o è cessato DOPO della data di riferimento:
+                                                >= ref_date, fasi che venga fornita la presenza anche per il giorno di cessazione rapporto
+                                            b)	include i soli dipendenti la cui data di assunzione è >= alla data di riferimento: escludendo quelli non ancora in forza
+                                        */
+                                        (data_cessazione IS NULL OR data_cessazione >= ref_date)
+                                        and data_assunzione <= ref_date
+                                        ";
+            $sql .= " ) presenze
+                        /* join con absences per ottenere dati presenza se esistenti */
+                        left outer join absences assenze
+                            on presenze.worker_id = assenze.worker_id
+                            and presenze.ref_date = assenze.ref_date
+                        /* join con giustificativi per ottenere giustificativi assenze se assegnati */
+                        left outer join giustificativi giustificativi_assenze
+                            on assenze.abscence_justification = giustificativi_assenze.code
+
+                        /* join con extraordinaries per ottenere dati straordinari se esistenti */
+                        left outer join extraordinaries straordinari
+                            on presenze.worker_id = straordinari.worker_id
+                            and presenze.ref_date = straordinari.ref_date
+                        /* join con giustificativi per ottenere giustificativi straordinari se assegnati */
+                        left outer join giustificativi giustificativi_straordinari
+                            on straordinari.extraordinary_justification = giustificativi_straordinari.code
+
+                        /* join con worker_notes per ottenere le note della giornata per il dipendente, se inserite */
+                        left outer join workers_notes wn
+                            on  presenze.worker_id = wn.worker_id
+                            and presenze.ref_date = wn.ref_date
+                ) results
+            /*
+                Apply filters
+            */
+            where
+                1=1
+            ";
         if ($searchQuery != '') {
             $sql .= " and
                 /* search query */
@@ -718,6 +733,7 @@ public function exportNotes(Request $request) {
             ";
         }
         if ($notAtWork) $sql .= " and chk <= 0";        // show only not at work?
+        $sql .= ') finalResults ';
 
         // order by
         if ($orderBy != '') $sql .= " order by " . $orderBy;

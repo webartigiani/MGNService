@@ -172,7 +172,8 @@
                       <th>Presenza</th>
                       <th>Lavorate</th>
                       <th>Assenza</th>
-                      <th>Straordinario</th>
+                      <th>Ordinarie</th>
+                      <th>Straordinarie</th>
                       <th><!-- giustificativo assenza/straordinari --></th>
                       <th>Totali</th>
                       <th>Azioni</th>
@@ -210,6 +211,10 @@
                             >{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}
                             </span>
                         </td>
+                        <!-- ore Ordinarie -->
+                        <td class="ore">
+                            <span>{{ $root.utils.generic.padZero(item.ordinary_h_int) + ':' + $root.utils.generic.padZero(item.ordinary_minutes_int) }}</span>
+                        </td>
                         <!-- ore Straordinario (giustificato) -->
                         <td class="ore">
                             <span
@@ -217,6 +222,15 @@
                             :title="item.extraordinary_justification_desc"
                             >{{ $root.utils.generic.padZero(item.extraordinary_h_int) + ':' + $root.utils.generic.padZero(item.extraordinary_minutes_int) }}
                             </span>
+
+                            <a href="#"
+                                v-if="item.cont_m > parseFloat(item.avg_minutes_per_day) && item.extraordinary_justification === ''"
+                                class="action"
+                                title="Gestisci Straordinari"
+                                @click="addEditExtra(item)"
+                                >
+                                <i class="fa fa-clock red big"></i>
+                            </a>
                         </td>
                         <!-- giustificativo assenz/straordinario -->
                         <td>
@@ -262,7 +276,7 @@
                             <!-- gestione straordinari: mostra se i minuti contabili
                             eccedono i minuti medi giornalieri ordinari -->
                             <a href="#"
-                                v-if="item.cont_m > item.avg_minutes_per_day"
+                                v-if="item.cont_m > parseFloat(item.avg_minutes_per_day)"
                                 class="action"
                                 title="Gestisci Straordinari"
                                 @click="addEditExtra(item)"
@@ -561,6 +575,9 @@
 a.action {
     margin-right:5px!important;
 }
+i.big {
+    font-size: 2em;
+}
 .badge {
   padding: 0.4em 0.8em;
 }
@@ -729,8 +746,9 @@ export default {
         },
         hasToJustifyExtraOrdinaries() {
             const r = this.items.data.filter((item) => {
-                return ((item.cont_m > item.avg_minutes_per_day) && (item.extraordinary_justification))
+                return ((item.cont_m > parseFloat(item.avg_minutes_per_day)) && (item.extraordinary_justification === ''))
             })
+            console.log(r)
             return (r.length > 0)
         },
         createItem(){
@@ -1257,8 +1275,7 @@ export default {
         attendanceTime(dayDate, t) {
             if (t == null) return ''
             if (dayDate == '') return ''
-            //console.log(t, '|', dayDate, '|', t.replace(dayDate, '').trim())
-            return t.replace(dayDate, '').trim()
+            return t.replace(dayDate, '')   //.trim().substr(0, 5)
         }
         // #endregion utils
     },
@@ -1282,6 +1299,7 @@ export default {
         this.list();                            // lists presenze
         this.listGiustificativiAssenze();       // lists giustificativi assenze
         this.listGiustificativiStraordinari();  // lista giustificativi straordinari
+        this.setLastWeek();         // TEMP: filtra su settimana scorsa
         this.$Progress.finish();
     },
     beforeMount() {
