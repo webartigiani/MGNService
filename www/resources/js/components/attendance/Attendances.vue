@@ -1299,7 +1299,6 @@ export default {
         this.list();                            // lists presenze
         this.listGiustificativiAssenze();       // lists giustificativi assenze
         this.listGiustificativiStraordinari();  // lista giustificativi straordinari
-        this.setLastWeek();         // TEMP: filtra su settimana scorsa
         this.$Progress.finish();
     },
     beforeMount() {

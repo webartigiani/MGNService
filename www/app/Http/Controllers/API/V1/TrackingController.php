@@ -240,8 +240,6 @@ class TrackingController extends BaseController
                         ts.id, ts.session_id, ts.start_date_time, ts.end_date_time,
                         /* calculates timediff */
                         timediff(ts.end_date_time, ts.start_date_time) duration,
-                        /* calculates tracking-session points */
-                        ta.points,
                         /* get worker data */
                         ts.worker worker_id, w.nome, w.cognome, w.stato worker_status,
                         /* get veichle data */
@@ -256,13 +254,6 @@ class TrackingController extends BaseController
                         on ts.veichle = v.id
                     inner join devices d
                         on ts.device = d.id
-                    left outer join  (
-                        select
-                            session_id, count(*) points
-                        from tracking_data
-                        group by session_id
-                        ) ta
-                        on ts.session_id = ta.session_id
                 ) results
                 where
                     /* filters on dates */

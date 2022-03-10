@@ -146,7 +146,6 @@
                       <th>Dipendente</th>
                       <th>Veicolo</th>
                       <th>Dispositivo</th>
-                      <th v-if="user_type === 'webmaster'">Punti</th>
                       <th>Azioni</th>
                     </tr>
                   </thead>
@@ -180,9 +179,6 @@
                                 :title="(item.device_online==1 ? 'attualmente online' : 'attualmente offline')"
                                 :class="(item.device_online==1 ? 'green' : 'orange')"></i>
                             {{ item.device_manufacter }} {{ item.device_model }} ({{ item.device_platform }} {{ item.device_version }})
-                        </td>
-                        <td v-if="user_type === 'webmaster'">
-                            {{ item.points }}
                         </td>
                         <td>
                             <a href="#"
@@ -395,7 +391,6 @@ export default {
             }).then(({ data }) => {
 
                 this.items = data.data
-                console.log(this.items)
                 this.$Progress.finish()
 
                 // Checks if there's device to upgrade
@@ -433,7 +428,6 @@ export default {
                             // Fire.$emit('AfterCreate');
                             this.list();
                         }).catch((data)=> {
-                            console.log('data', data)
                             Swal.fire("Failed!", data.message, "warning");
                         });
                     }
