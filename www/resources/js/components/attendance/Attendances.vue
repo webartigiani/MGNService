@@ -202,6 +202,7 @@
                         <td>{{ attendanceTime(item.day_date, item.entrance_date_2) }}</td>
                         <td>{{ attendanceTime(item.day_date, item.exit_date_2) }}</td>
 
+                        <!-- ore presenza, lavorate -->
                         <td class="ore">{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) }}</td>
                         <td class="ore">{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) }}</td>
                         <!-- ore Assenza (giustificata) -->
@@ -580,6 +581,9 @@ i.big {
 }
 .badge {
   padding: 0.4em 0.8em;
+}
+table {
+    font-size: .9em;
 }
 td.ore {
     background-color:rgba(0, 0, 0, 0.035);

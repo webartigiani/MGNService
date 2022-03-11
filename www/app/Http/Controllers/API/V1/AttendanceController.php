@@ -294,15 +294,17 @@ public function exportXML(Request $request) {
         duration_h_int hours, residual_m_int minutes,
         abscence_h_int absence_hours, abscence_minutes_int abscence_minutes, abscence_justification,
         extraordinary_h_int extraordinary_hours, extraordinary_minutes_int extraordinary_minutes, extraordinary_justification,
-        ordinary_m, ordinary_h_int, ordinary_minutes_int,
+        ordinary_m, ordinary_h_int, ordinary_minutes_int, avg_hours_per_day,
         chk
     from (
         {$sql}
     ) tbl";
 
-    // TEMP
-    //die($sql);
-    //return;
+    // NOTE: to debug SQL query, use param "debug-query=y"
+    if (isset($params['debug-query'])) {
+        echo $sql;
+        return;
+    }
 
     $dbdata = DB::select(DB::raw($sql));
 
@@ -316,25 +318,43 @@ public function exportXML(Request $request) {
         $giustificativo = "01";                     // giustificativo ufficiale
         $codiceazienda = trim(env("CODICE_AZIENDA"));
         $workerID = $row->worker_id;                // ID dipendente corrente
-        $matr = $row->matricola;               // Numero matricola
-        $refdate = $row->ref_date;                  // data riferimento YYYY-MM-DD
-        $hours = $row->hours;                       // ore eff. lavorate
-        $minutes = $row->minutes;                   // minuti lavorati aggiuntivi, orario effettivo
-        $absence_hours = $row->absence_hours;       // ore assenza giustificate
-        $abscence_minutes = $row->abscence_minutes; // minuti assenza aggiuntivi
-        $abscence_justification = $row->abscence_justification; // giustificativo assenza
-        $ordinary_m = $row->ordinary_m;             // ore e minuti lavoro ordinario
-        $ordinary_h_int = $row->ordinary_h_int;
-        $ordinary_minutes_int = $row->ordinary_minutes_int;
-
-        $extraordinary_hours = $row->extraordinary_hours;
+        $matr = $row->matricola;                    // Numero matricola
+        $refdate = $row->ref_date;                  // data riferimento giornata di lavoro (YYYY-MM-DD)
+        $hours = $row->hours;                       // ore e minuti orario di lavoro effettivo
+        $minutes = $row->minutes;
+        $absence_hours = $row->absence_hours;                   // ore e minuti assenza + giustif. assenza
+        $abscence_minutes = $row->abscence_minutes;
+        $abscence_justification = $row->abscence_justification;
+        $extraordinary_hours = $row->extraordinary_hours;       // ore e minuti lavoro straordinario + giustif. straordinario
         $extraordinary_minutes = $row->extraordinary_minutes;
         $extraordinary_justification = $row->extraordinary_justification;
+        $ordinary_m = $row->ordinary_m;                         // ore e minuti lavoro ordinario
+        $ordinary_h_int = $row->ordinary_h_int;
+        $ordinary_minutes_int = $row->ordinary_minutes_int;
+        $avg_hours_per_day = $row->avg_hours_per_day;           // media ore giornaliere di lavoro
+        /*  NOTA: avg_hours_per_day è il numero di ore settimanali del dipendente (da anagrafica) diviso 6gg lavorativi settimanali
+            Questo dato ci serve, nel caso di straordinari NON giustificati, per esportare un numero massimo di ore ordinarie
+            non superiore a quello previsto da contratto.
+            NOTA: avg_hours_per_day è in decimali. Quindi: 6.67 sono 06:40
+        **/
         $giornodiriposo = 'N';
-        //NO!!! if ($row->chk <= 0) $giornodiriposo = 'S';  // giorno di riposo se assente o incompleto
 
         $codiceazienda = str_pad($codiceazienda, 6, "0", STR_PAD_LEFT);     // codice azienda con zero-padding-left 6 cifre
-        $matr = str_pad($matr, 7, "0", STR_PAD_LEFT);             // matricola (SIMONE, fix. 2021-12-06, era id dipendente)
+        $matr = str_pad($matr, 7, "0", STR_PAD_LEFT);                       // matricola
+
+        // calcola ore e minuti della giornata di lavoro ordinario del dipendente, basata sulla media ore giornaliere
+        /* ES:
+                40      ore settimanali da contratto
+                6       giorni lavorativi a settimana (da lun. a sab), per ogni dipendente
+                6.67    media ore giornaliere
+                06:40   corrispondente in 6 ore e 40 minuti
+                400     corrispondente a 400 minuti
+        **/
+        $avg_hpd_hours_int = intval($avg_hours_per_day);
+        $avg_hpd_mins_int = intval((60 / 100) * (($avg_hours_per_day - $avg_hpd_hours_int) * 100));
+        $avg_hpd_minutes = ($avg_hpd_hours_int * 60) + $avg_hpd_mins_int;
+
+        //echo "<br>Media ore giornaliere: {$avg_hours_per_day} =&gt; {$avg_hpd_hours_int}:{$avg_hpd_mins_int} ({$avg_hpd_minutes}')";
 
         // se cambia il dipendente...
         if ($workerID != $lastWorkerID) {
@@ -355,6 +375,23 @@ public function exportXML(Request $request) {
             $hours = $ordinary_h_int;
             $minutes = $ordinary_minutes_int;
         }
+
+        //echo "<br>Ore Ordinarie: {$hours}:{$minutes}";
+
+        // se il dipendente ha lavorato - sia che abbia assenze giustificate, sia che abbia straordinari giustificati,
+        // sia che abbia straordinari NON giustificati - nelle ore ordinarie esportiamo sempre NON PIU' della media
+        // ore di lavoro giornaliero
+        if ($ordinary_h_int > 0 || $ordinary_minutes_int > 0) {
+            if ($ordinary_m > $avg_hpd_minutes) {
+                // le ore di lavoro ordinario eccedono la media ore giornaliere:
+                // modifichiamo ore ordinarie, allineandole a quelle da contratto
+                $hours = $avg_hpd_hours_int;
+                $minutes = $avg_hpd_mins_int;
+            }
+        }
+
+        //echo "<br>Ore Ordinarie: {$hours}:{$minutes}<br>";
+
         $output .= "\t\t\t<Movimento>\r\n";
         $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$giustificativo}</CodGiustificativoUfficiale>\r\n";
         $output .= "\t\t\t\t<Data>{$refdate}</Data>\r\n";
@@ -383,7 +420,7 @@ public function exportXML(Request $request) {
             }
         }
 
-        // se c'è straordinario esportiamo un ulteriore movimento
+        // se c'è straordinario (es è giustificato) esportiamo un ulteriore movimento
         if ($extraordinary_justification != '') {
             $output .= "\t\t\t<Movimento>";
             $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$extraordinary_justification}</CodGiustificativoUfficiale>";
@@ -612,7 +649,7 @@ public function exportNotes(Request $request) {
 
                             /* media ore e minuti giornalieri, basati su ore_settimanali */
                             ROUND(results.ore_settimanali / 6, 2) avg_hours_per_day,
-                            (ROUND(results.ore_settimanali / 6, 2) * 60) avg_minutes_per_day
+                            ROUND((results.ore_settimanali / 6) * 60, 0) avg_minutes_per_day
                         from
                             (
                                 select presenze.*,
