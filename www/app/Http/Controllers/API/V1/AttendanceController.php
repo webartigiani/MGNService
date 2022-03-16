@@ -107,14 +107,10 @@ class AttendanceController extends BaseController
             return $this->sendResponse($result_p, 'Empty Attendances List');
         }
 
-        // TEMP
-        // die($sql);               // to debug SQL
-        // TEMP
-
         // if we have days to export
         $dbdata = DB::select(DB::raw($sql));
 
-        /** IMPORTANT: to paginate RAW Data for LaravelPaginator
+        /** IMPORTANT: to paginate RAW Data with LaravelPaginator
          * *****************************************
          * - turn array into a collection
          * - count records
@@ -207,7 +203,6 @@ class AttendanceController extends BaseController
             $data['exit_ip_2'] = '0.0.0.0';
         }
 
-
         // Updates data
         $attendance->update($data);
         return $this->sendResponse($attendance, 'Presenza aggiornata');
@@ -295,6 +290,7 @@ public function exportXML(Request $request) {
         abscence_h_int absence_hours, abscence_minutes_int abscence_minutes, abscence_justification,
         extraordinary_h_int extraordinary_hours, extraordinary_minutes_int extraordinary_minutes, extraordinary_justification,
         ordinary_m, ordinary_h_int, ordinary_minutes_int, avg_hours_per_day,
+        worker_day_hours,
         chk
     from (
         {$sql}
@@ -314,7 +310,6 @@ public function exportXML(Request $request) {
 
     // creates data
     foreach ($dbdata as $row) {
-
         $giustificativo = "01";                     // giustificativo ufficiale
         $codiceazienda = trim(env("CODICE_AZIENDA"));
         $workerID = $row->worker_id;                // ID dipendente corrente
@@ -331,30 +326,11 @@ public function exportXML(Request $request) {
         $ordinary_m = $row->ordinary_m;                         // ore e minuti lavoro ordinario
         $ordinary_h_int = $row->ordinary_h_int;
         $ordinary_minutes_int = $row->ordinary_minutes_int;
-        $avg_hours_per_day = $row->avg_hours_per_day;           // media ore giornaliere di lavoro
-        /*  NOTA: avg_hours_per_day è il numero di ore settimanali del dipendente (da anagrafica) diviso 6gg lavorativi settimanali
-            Questo dato ci serve, nel caso di straordinari NON giustificati, per esportare un numero massimo di ore ordinarie
-            non superiore a quello previsto da contratto.
-            NOTA: avg_hours_per_day è in decimali. Quindi: 6.67 sono 06:40
-        **/
+        $worker_day_hours = $row->worker_day_hours;             // ore di lavoro da calendario
         $giornodiriposo = 'N';
 
         $codiceazienda = str_pad($codiceazienda, 6, "0", STR_PAD_LEFT);     // codice azienda con zero-padding-left 6 cifre
         $matr = str_pad($matr, 7, "0", STR_PAD_LEFT);                       // matricola
-
-        // calcola ore e minuti della giornata di lavoro ordinario del dipendente, basata sulla media ore giornaliere
-        /* ES:
-                40      ore settimanali da contratto
-                6       giorni lavorativi a settimana (da lun. a sab), per ogni dipendente
-                6.67    media ore giornaliere
-                06:40   corrispondente in 6 ore e 40 minuti
-                400     corrispondente a 400 minuti
-        **/
-        $avg_hpd_hours_int = intval($avg_hours_per_day);
-        $avg_hpd_mins_int = intval((60 / 100) * (($avg_hours_per_day - $avg_hpd_hours_int) * 100));
-        $avg_hpd_minutes = ($avg_hpd_hours_int * 60) + $avg_hpd_mins_int;
-
-        //echo "<br>Media ore giornaliere: {$avg_hours_per_day} =&gt; {$avg_hpd_hours_int}:{$avg_hpd_mins_int} ({$avg_hpd_minutes}')";
 
         // se cambia il dipendente...
         if ($workerID != $lastWorkerID) {
@@ -375,22 +351,6 @@ public function exportXML(Request $request) {
             $hours = $ordinary_h_int;
             $minutes = $ordinary_minutes_int;
         }
-
-        //echo "<br>Ore Ordinarie: {$hours}:{$minutes}";
-
-        // se il dipendente ha lavorato - sia che abbia assenze giustificate, sia che abbia straordinari giustificati,
-        // sia che abbia straordinari NON giustificati - nelle ore ordinarie esportiamo sempre NON PIU' della media
-        // ore di lavoro giornaliero
-        if ($ordinary_h_int > 0 || $ordinary_minutes_int > 0) {
-            if ($ordinary_m > $avg_hpd_minutes) {
-                // le ore di lavoro ordinario eccedono la media ore giornaliere:
-                // modifichiamo ore ordinarie, allineandole a quelle da contratto
-                $hours = $avg_hpd_hours_int;
-                $minutes = $avg_hpd_mins_int;
-            }
-        }
-
-        //echo "<br>Ore Ordinarie: {$hours}:{$minutes}<br>";
 
         $output .= "\t\t\t<Movimento>\r\n";
         $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$giustificativo}</CodGiustificativoUfficiale>\r\n";
@@ -420,7 +380,7 @@ public function exportXML(Request $request) {
             }
         }
 
-        // se c'è straordinario (es è giustificato) esportiamo un ulteriore movimento
+        // se c'è straordinario (ed è giustificato) esportiamo un ulteriore movimento
         if ($extraordinary_justification != '') {
             $output .= "\t\t\t<Movimento>";
             $output .= "\t\t\t\t<CodGiustificativoUfficiale>{$extraordinary_justification}</CodGiustificativoUfficiale>";
@@ -471,9 +431,6 @@ public function exportNotes(Request $request) {
             ) tbl
             where IFNULL(notes, '') <> ''
             ";
-    // TEMP:
-    //echo $sql;
-    //return;
 
     $header = "Giorno;Dipendente;Nome;Cognome;Note";
     $dbdata = DB::select(DB::raw($sql));
@@ -532,38 +489,7 @@ public function exportNotes(Request $request) {
      * only not-at-work if $notAtWork
      */
     private function listAttendancesQuery($startDate, $endDate, $searchQuery, $notAtWork, $orderBy) {
-        /*  Returns an SQL Query to select attendances
-            1	id	decimal	NO
-            2	ref_date	varchar	NO
-            3	worker_id	bigint	NO
-            4	nome	varchar	NO
-            5	cognome	varchar	NO
-            6	codice_fiscale	varchar	NO
-            7	matricola	varchar	NO
-            8	worker_status	int	NO
-            9	day_date	varchar	NO
-            10	entrance_date	varchar	YES
-            11	entrance_ip	varchar	YES
-            12	exit_date	varchar	YES
-            13	exit_ip	varchar	YES
-            14	duration_m	bigint	NO
-            15	duration_h	decimal	NO
-            16	duration_h_int	bigint	NO
-            17	residual_m	bigint	NO
-            18	residual_m_int	bigint	NO
-            19	chk	bigint	NO
-            20	abscence_m	bigint	NO
-            21	abscence_h_int	bigint	NO
-            22	abscence_minutes_int	bigint	NO
-            23	abscence_justification	varchar	NO
-            24	abscence_justification_desc	varchar	NO
-            25	total_m	bigint	NO
-            26	total_h_int	bigint	YES
-            27	total_minutes_int	bigint	YES
-            29  hours_per_week  int
-            30  hours_per_day float
-        */
-
+        //  Returns an SQL Query to select attendances
         $innerSQL = '';
         $sql = '';
 
@@ -576,7 +502,7 @@ public function exportNotes(Request $request) {
 // #region Calendar
         /*
         1st of all:
-        creates an inner SQL query to select all days in calendar between start/end date
+        creates an inner SQL query to select all the days in the calendar, between start/end date
         this will result in something like this
             select '28/05/2021' as day_date, '2021-05-28' as ref_date
             union
@@ -593,13 +519,14 @@ public function exportNotes(Request $request) {
                     // from monday(1) to saturday(6)
                     if ($innerSQL != '') $innerSQL .= "union\n";
                     $innerSQL .= "select '" . $dt->format("d/m/Y") . "' as day_date, ";
-                    $innerSQL .= "'" . $dt->format("Y-m-d") . "' as ref_date\n";
+                    $innerSQL .= "'" . $dt->format("Y-m-d") . "' as ref_date\n,";
+                    $innerSQL .= "DAYOFWEEK('" . $dt->format("Y-m-d") . "') as day_of_week\n";
                 } else {
-                    // Sunday...
+                    // Sunday(0) is ignored!
                 }
             }
         } else {
-            // just one day interval
+            // just one-day interval
         }
 
         // Add or Use last day (if itsn't sunday)
@@ -607,27 +534,32 @@ public function exportNotes(Request $request) {
         if ($dow > 0) {
             // from monday(1) to saturday(6)
             if ($innerSQL != '') $innerSQL .= "union\n";
-            $innerSQL .= "select '" . $endDate->format("d/m/Y") . "' as day_date, ";
-            $innerSQL .= "'" . $endDate->format("Y-m-d") . "' as ref_date\n";
+            $innerSQL .= "select '" . $endDate->format("d/m/Y") . "' as day_date,\n";
+            $innerSQL .= "'" . $endDate->format("Y-m-d") . "' as ref_date\n,\n";
+            $innerSQL .= "DAYOFWEEK('" . $endDate->format("Y-m-d") . "') as day_of_week\n";
         } else {
             // Sunday...
         }
+
 // #endregion Calendar
 
 // #region Check Calendar
-        // checks if we have working days in selected period...
+        // checks if we have working days in the selected period...
         if ($innerSQL == '') {
-            // no day to export
+            // no day to export!
             return '';
         }
 // #endregion Check Calendar
 
 // #region Main SQL Query
         /* Creates the main SQL query, than
-            > starts from calendar to get all days in the selected period
+            > starts from calendar to get all the days in the selected period
             > joins attendances table and abscences table to get attendances and abscences by day and worker
             > where there's no attencance and no abscence, it consider worker abscente
             > calculates worked minutes, abscence minutes and total
+            > joins extraordinaries table to get extraordinaries worked hours
+            > join working_days_calendar to get contracted daily working hours for each worker
+              or - if data is missing - for a "generic" worker (id: 0)
             > rounds worked minutes and abscence minutes by env('MINUTE_ROUND')
         */
                 $sql = "
@@ -693,8 +625,18 @@ public function exportNotes(Request $request) {
                                                     era     IFNULL(att.id, 0) id, calendar.ref_date,
                                                     diventa IFNULL(att.id, concat(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
                                                 */
-                                                IFNULL(att.id, CONCAT(REPLACE(calendar.ref_date, '-', ''), w.id)) id, calendar.ref_date,
-                                                w.id worker_id, w.nome, w.cognome, w.codice_fiscale, w.matricola, w.stato worker_status, w.pausa_orario,
+                                                IFNULL(att.id, CONCAT(REPLACE(calendar.ref_date, '-', ''), w.id)) id,
+                                                calendar.ref_date,
+                                                w.id worker_id,
+                                                calendar.day_of_week,
+                                                /* ottiene ore lavorative del giorno corrente, dal calendario ore del dipendente o generale */
+                                                IFNULL(wdc.working_hours, wdc_gen.working_hours) worker_day_hours,
+                                                w.nome,
+                                                w.cognome,
+                                                w.codice_fiscale,
+                                                w.matricola,
+                                                w.stato worker_status,
+                                                w.pausa_orario,
                                                 calendar.day_date,
                                                 att.entrance_date, att.entrance_ip,
                                                 att.exit_date, att.exit_ip,
@@ -713,7 +655,10 @@ public function exportNotes(Request $request) {
                                                 /* ore_settimanali: necessarie per calcolare ore straordinarie giornaliere */
                                                 w.ore_settimanali
                                             from
-                                            (   /* seleziona i giorni del periodo dal calendario */
+                                            (   /*
+                                                    seleziona i giorni del periodo dal calendario
+                                                    NOTA: qui, i giorni della settimana sono ottenuti con DAYOFWEEK: Sunday=1
+                                                */
                                                 {$innerSQL}
                                             ) calendar
                                             /* CROSS join con table workers per moltiplicare i record del calendario su ogni lavoratore */
@@ -722,6 +667,14 @@ public function exportNotes(Request $request) {
                                             left outer join export_v_attendances att
                                                 on att.day_date = calendar.day_date
                                                 and att.worker_id = w.id
+
+                                            /* LEFT join con calendario giorni lavorativi (x specifico dipendente e generali) */
+                                            left outer join working_days_calendar wdc
+                                                on wdc.worker_id = w.id
+                                                and wdc.day_of_week = calendar.day_of_week
+                                            left outer join working_days_calendar wdc_gen
+                                                on wdc_gen.worker_id = 0
+                                                and wdc_gen.day_of_week = calendar.day_of_week
                                         ) presenze
                                     where
                                         /*  a) 	include i soli dipendenti il cui rapporto di lavoro è ancora in corso, o è cessato DOPO della data di riferimento:
@@ -764,7 +717,7 @@ public function exportNotes(Request $request) {
                 /* search query */
                 (nome like '%" . $searchQuery . "%'
                 or cognome like '%" . $searchQuery . "%'
-                or nome + ' ' + cognome like '%" . $searchQuery . "%'
+                or concat(nome, ' ', cognome) like '%" . $searchQuery . "%'
                 or codice_fiscale like '%" . $searchQuery . "%'
                 )
             ";

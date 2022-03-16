@@ -162,6 +162,7 @@
                     <tr>
                       <th></th>
                       <th>Data</th>
+                      <th><!-- day name --></th>
                       <th>Nome</th>
                       <th>Cognome</th>
                       <th><!-- Presenza --></th>
@@ -169,13 +170,13 @@
                       <th>Uscita</th>
                       <th>Rientro</th>
                       <th>Uscita</th>
-                      <th>Presenza</th>
-                      <th>Lavorate</th>
-                      <th>Assenza</th>
-                      <th>Ordinarie</th>
-                      <th>Straordinarie</th>
+                      <th class="ore">Presenza</th>
+                      <th class="ore">Lavorate</th>
+                      <th class="ore">Da Contratto</th>
+                      <th class="ore">Assenza</th>
+                      <th class="ore">Straordinarie</th>
                       <th><!-- giustificativo assenza/straordinari --></th>
-                      <th>Totali</th>
+                      <!-- <th>Totali</th> -->
                       <th>Azioni</th>
                     </tr>
                   </thead>
@@ -189,8 +190,9 @@
                                 :class="(item.worker_status==1 ? 'green' : 'orange')"></i>
                         </td>
                         <td>{{ item.day_date }}</td>
-                        <td>{{ item.nome }}</td>
-                        <td>{{ item.cognome }}</td>
+                        <td>{{ dayName(item) }}</td>
+                        <td><a :href="linkWorker(item)">{{ item.nome }}</a></td>
+                        <td><a :href="linkWorker(item)">{{ item.cognome }}</a></td>
                         <td><!-- stato presenza -->
                             <span class="badge"
                             :class="presenzaToClass(item)"
@@ -205,6 +207,10 @@
                         <!-- ore presenza, lavorate -->
                         <td class="ore">{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m) }}</td>
                         <td class="ore">{{ $root.utils.generic.padZero(item.duration_h_int) + ':' + $root.utils.generic.padZero(item.residual_m_int) }}</td>
+                        <!-- ore da contratto -->
+                        <td class="ore">
+                            <span>{{ $root.utils.generic.padZero(item.worker_day_hours) + ':00' }}</span>
+                        </td>
                         <!-- ore Assenza (giustificata) -->
                         <td class="ore">
                             <span
@@ -212,10 +218,7 @@
                             >{{ $root.utils.generic.padZero(item.abscence_h_int) + ':' + $root.utils.generic.padZero(item.abscence_minutes_int) }}
                             </span>
                         </td>
-                        <!-- ore Ordinarie -->
-                        <td class="ore">
-                            <span>{{ $root.utils.generic.padZero(item.ordinary_h_int) + ':' + $root.utils.generic.padZero(item.ordinary_minutes_int) }}</span>
-                        </td>
+
                         <!-- ore Straordinario (giustificato) -->
                         <td class="ore">
                             <span
@@ -223,9 +226,12 @@
                             :title="item.extraordinary_justification_desc"
                             >{{ $root.utils.generic.padZero(item.extraordinary_h_int) + ':' + $root.utils.generic.padZero(item.extraordinary_minutes_int) }}
                             </span>
-
+                            <!-- abilita pulsante gestione straordinari,
+                                 se i minuti lavorati eccedono le ore di lavoro da contratto
+                                 e NON è presente un giustificativo dello straordinario
+                            -->
                             <a href="#"
-                                v-if="item.cont_m > parseFloat(item.avg_minutes_per_day) && item.extraordinary_justification === ''"
+                                v-if="item.cont_m > (item.worker_day_hours*60) && item.extraordinary_justification === ''"
                                 class="action"
                                 title="Gestisci Straordinari"
                                 @click="addEditExtra(item)"
@@ -244,8 +250,9 @@
                                 :class="straordinarioToClass(item)"
                             >{{ item.extraordinary_justification_desc }}</span>
                         </td>
-                        <!-- ore totali -->
+                        <!-- ore totali
                         <td class="ore">{{ $root.utils.generic.padZero(item.total_h_int) + ':' + $root.utils.generic.padZero(item.total_minutes_int) }}</td>
+                         -->
 
                         <!-- actions -->
                         <td>
@@ -274,10 +281,12 @@
                                     :class="(item.abscence_justification != '') ? `blue` : `gray`"
                                 ></i>
                             </a>
-                            <!-- gestione straordinari: mostra se i minuti contabili
-                            eccedono i minuti medi giornalieri ordinari -->
+                            <!-- abilita pulsante gestione straordinari,
+                                 se i minuti lavorati eccedono le ore di lavoro da contratto
+                                 e NON è presente un giustificativo dello straordinario
+                            -->
                             <a href="#"
-                                v-if="item.cont_m > parseFloat(item.avg_minutes_per_day)"
+                                v-if="item.cont_m > (item.worker_day_hours*60)"
                                 class="action"
                                 title="Gestisci Straordinari"
                                 @click="addEditExtra(item)"
@@ -298,6 +307,32 @@
                         </td>
                     </tr>
                   </tbody>
+
+                  <!-- table footer -->
+                  <tfoot
+                    v-show="items.data.length > 0"
+                  >
+                    <tr>
+                      <td></td>
+                      <td><!-- Data --></td>
+                      <td><!-- Day Name --></td>
+                      <td><!-- Nome --></td>
+                      <td><!-- Cognome --></td>
+                      <td><!-- Presenza --></td>
+                      <td><!-- Entrata --></td>
+                      <td><!-- Uscita --></td>
+                      <td><!-- Rientro --></td>
+                      <td><!-- Uscita --></td>
+                      <td class="ore total">{{ totalPresenza() }}</td>
+                      <td class="ore total">{{ totalLavorate() }}</td>
+                      <td class="ore total">{{ totalContratto() }}</td>
+                      <td class="ore total">{{ totalAssenza() }}</td>
+                      <td class="ore total">{{ totalStaordinarie() }}</td>
+                      <td class=""><!-- giustificativo assenza/straordinari --></td>
+                      <!-- <td class="ore total">Totali</td> -->
+                      <td><!-- Azioni --></td>
+                    </tr>
+                  </tfoot>
                 </table>
                 <!-- #endregion DataTable -->
               </div>
@@ -585,9 +620,16 @@ i.big {
 table {
     font-size: .9em;
 }
+th.ore {
+    background-color:rgba(0, 0, 0, 0.135);
+    text-align: center;
+}
 td.ore {
     background-color:rgba(0, 0, 0, 0.035);
     text-align: center;
+}
+td.ore.total {
+    background-color:rgba(0, 0, 0, 0.135);
 }
 .btn-green, .btn-green:focus, .btn-green:active {
     /* overwrite some styles */
@@ -602,6 +644,7 @@ textarea.notes {
 <script>
 import VueTagsInput from '@johmun/vue-tags-input';
 import Vue from 'vue'
+import moment from 'moment'
 
 export default {
     components: {
@@ -717,8 +760,9 @@ export default {
             // calculates extraordinary_time
             let extra_time = '00:00'                    // extra time predefinito
 
-            // calcola ore e minuti straordinari da rilevamento ore
-            let extra = parseInt(item.cont_m - item.avg_minutes_per_day)
+            // calcola ore e minuti straordinari da rilevamento ore,
+            // basandosi sulle ore lavorative da calendario
+            let extra = parseInt(item.cont_m - (item.worker_day_hours*60))
             if (extra > 0) {
                 const extra_h = Math.floor(extra / 60)
                 const extra_m = extra % 60
@@ -752,7 +796,6 @@ export default {
             const r = this.items.data.filter((item) => {
                 return ((item.cont_m > parseFloat(item.avg_minutes_per_day)) && (item.extraordinary_justification === ''))
             })
-            console.log(r)
             return (r.length > 0)
         },
         createItem(){
@@ -1007,6 +1050,71 @@ export default {
 
         // #endregion CRUD Functions
 
+        // #region Total Functions
+        totalPresenza() {
+            // restituisce ore:minuti totali presenza
+            let mins = 0
+
+            this.items.data.forEach((element) => {
+                mins += (element.duration_h_int * 60) + element.residual_m
+            })
+
+            const h = Math.floor(mins / 60)
+            const m = (mins % 60)
+            return `${this.$root.utils.generic.padZero(h)}:${this.$root.utils.generic.padZero(m)}`
+        },
+        totalLavorate() {
+            // restituisce ore:minuti totali lavorate
+            let mins = 0
+
+            this.items.data.forEach((element) => {
+                mins += (element.duration_h_int * 60) + element.residual_m_int
+            })
+
+            const h = Math.floor(mins / 60)
+            const m = (mins % 60)
+            return `${this.$root.utils.generic.padZero(h)}:${this.$root.utils.generic.padZero(m)}`
+        },
+        totalContratto() {
+            // restituisce ore:minuti totali lavorate
+            let mins = 0
+
+            this.items.data.forEach((element) => {
+                mins += (element.worker_day_hours * 60) + 0
+            })
+
+            const h = Math.floor(mins / 60)
+            const m = (mins % 60)
+            return `${this.$root.utils.generic.padZero(h)}:${this.$root.utils.generic.padZero(m)}`
+        },
+        totalAssenza() {
+            // restituisce ore:minuti totali assenze
+            let mins = 0
+
+            this.items.data.forEach((element) => {
+                if (element.abscence_justification !== '')
+                    mins += (element.abscence_h_int * 60) + element.abscence_minutes_int
+            })
+
+            const h = Math.floor(mins / 60)
+            const m = (mins % 60)
+            return `${this.$root.utils.generic.padZero(h)}:${this.$root.utils.generic.padZero(m)}`
+        },
+        totalStaordinarie() {
+            // restituisce ore:minuti totali assenze
+            let mins = 0
+
+            this.items.data.forEach((element) => {
+                if (element.extraordinary_justification !== '')
+                    mins += (element.extraordinary_h_int * 60) + element.extraordinary_minutes_int
+            })
+
+            const h = Math.floor(mins / 60)
+            const m = (mins % 60)
+            return `${this.$root.utils.generic.padZero(h)}:${this.$root.utils.generic.padZero(m)}`
+        },
+        // #endregion Total Functions
+
         // #region Other Data Functions
         listGiustificativiAssenze() {
             axios.get('api/attendances/giustificativi-assenze', {}).then(({ data }) => {
@@ -1044,14 +1152,14 @@ export default {
         },
         exportXML() {
             if (this.hasToJustifyExtraOrdinaries()) {
-                const msg = "Risultano ore di lavoro straordinarie nell'\intervallo di date selezionato, per le quali è necessario inserire i giustificativi.";
+                const msg = "Sono richieste correzioni. Nell'\intervallo di date selezionato sono presenti ore di lavoro straordinarie non giustificate.<br><br>Correggere il foglio presenze giustificando le ore straordinarie, o modificando le timbrate fino al raggiungimento delle ore lavorative previste da contratto.";
 
                 Swal.fire({
                     title: 'Attenzione',
                     icon:'warning',
                     html: msg,
                     showCancelButton: true,
-                    confirmButtonText: 'Procedi comunque',
+                    confirmButtonText: 'Esporta senza correzioni',
                     cancelButtonText: 'Annulla'
                     }).then((result) => {
                         // Exports XML
@@ -1233,6 +1341,14 @@ export default {
         // #endregion Filters Functions
 
         // #region Utils
+        linkWorker(item) {
+            return `attendances?search=${item.nome}%20${item.cognome}`
+        },
+        dayName(item) {
+            let dn = moment(item.ref_date).locale("it").format('dddd')
+            dn = dn.substr(0, 3) + '.'
+            return dn
+        },
         presenzaString(item) {
             // returns presenza description
             switch (item.chk) {

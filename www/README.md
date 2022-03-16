@@ -36,7 +36,20 @@
     npm run watch
     '''
 
+## Access
+    user    info@webartigiani.it
+    pwd     <il solito cammello>
+    
 ## Ionic APP API
 - get   api/app/workers/list/
 - get   api/app/veichles/list/
 - post  api/app/devices/add/
+
+## Rsync
+    '''
+    cd www
+    rsync -avPzh www/ <username>@mgnservice.it:/var/www/html/gestionale-mgn
+    ssh <username>@mgnservice.it:/var/www/html/gestionale-mgn
+    php artisan migrate
+    '''
+
