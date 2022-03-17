@@ -32,7 +32,7 @@ Route::get('/download-dump/', function() {
 Route::group([
     'middleware' => ['api', 'cors'],
     'namespace' => 'App\\Http\\Controllers\\API\\APP'
-], function ($router) {
+], function ($router) {continueTracking
     Route::get('app/update/', 'ApiController@autoUpdate');                                          // returns AppUpdate XML
     Route::get('api/app/ping/', 'ApiController@ping');                                              // APP/API Routes
     Route::get('api/app/workers/list/', 'ApiController@listWorkers');

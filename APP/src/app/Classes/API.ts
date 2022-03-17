@@ -95,7 +95,7 @@ export class ApiService {
             "serial": "20c8bef9-3f86-4ddc-a8c6-xxx",
             "uuid": "x1234",
             "connection_type": "wifi",
-            "app_version": "1.0.0"
+            "app_version": "1.0.0",
             "latitude": "41.19317221071111",
             "longitude": "16.599785497822222",
             "accuracy": "10"
@@ -182,9 +182,11 @@ export class ApiService {
                 "longitude": 10.9308673,
                 "accuracy": 12,
                 "timestamp": 1621246509939,
+                "distance": 0,
                 "valid": true
             },
-            "session_id": "20210518140719-1-1-2"
+            "session_id": "20210518140719-1-1-2",
+            "navigation_status": "pause" || "running"
         }
        */
       const payload = {

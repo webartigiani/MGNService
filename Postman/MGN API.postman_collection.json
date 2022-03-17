@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "968acd6f-b12a-4e70-b44d-6fc715ff268e",
+		"name": "MGN API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "APP",
+			"item": [
+				{
+					"name": "Tracking",
+					"item": [
+						{
+							"name": "startTrackingSession",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{app_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"device\":{\n          \"platform\":\"browser\",\n          \"version\":\"0.0.0\",\n          \"manufacter\":\"manufacter\",\n          \"model\":\"model\",\n          \"isVirtual\":false,\n          \"serial\":\"unknown\",\n          \"uuid\":\"debug_browser\",\n          \"connection_type\":\"ethernet\"\n        },\n        \"gps\":{\n          \"latitude\":44.6466223,\n          \"longitude\":10.9308673,\n          \"accuracy\":20,\n          \"timestamp\":1621246509939,\n          \"distance\": 0,\n          \"valid\":true\n        },\n        \"worker\":{\n          \"id\":27,\n          \"name\":\"_DEMO\",\n          \"surname\":\"_DEMO\"\n        },\n        \"veichle\":{\n          \"id\":5,\n          \"manufacter\":\"Citroen\",\n          \"model\":\"BERLINGO\",\n          \"licence_plate\":\"ER141AD\"\n        },\n        \"password\":\"1234\"\n      }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}api/app/workers/startTrackingSession",
+									"host": [
+										"{{base_url}}api"
+									],
+									"path": [
+										"app",
+										"workers",
+										"startTrackingSession"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "continueTracking",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{app_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"gps\": {\n        \"latitude\": 44.6466223,\n        \"longitude\": 10.9308673,\n        \"accuracy\": 12,\n        \"timestamp\": 1621246509939,\n        \"distance\": 0,\n        \"valid\": true\n    },\n    \"session_id\": \"6232f829-27-5-14\",\n    \"navigation_status\": \"running\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}api/app/workers/continueTracking",
+									"host": [
+										"{{base_url}}api"
+									],
+									"path": [
+										"app",
+										"workers",
+										"continueTracking"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "stopTrackingSession",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{app_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"session_id\": \"6232f829-27-5-14\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}api/app/workers/stopTrackingSession",
+									"host": [
+										"{{base_url}}api"
+									],
+									"path": [
+										"app",
+										"workers",
+										"stopTrackingSession"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "List Workers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{app_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}api/app/workers/list/",
+							"host": [
+								"{{base_url}}api"
+							],
+							"path": [
+								"app",
+								"workers",
+								"list",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Veichles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{app_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}api/app/veichles/list/",
+							"host": [
+								"{{base_url}}api"
+							],
+							"path": [
+								"app",
+								"veichles",
+								"list",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "auto-update info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}app/update/",
+							"host": [
+								"{{base_url}}app"
+							],
+							"path": [
+								"update",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddUpdateDevice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{app_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"platform\": \"Android\",\n    \"version\": \"10.0.0\",\n    \"manufacter\": \"Samsung\",\n    \"model\": \"S8\",\n    \"is_virtual\": false,\n    \"serial\": \"20c8bef9-3f86-4ddc-a8c6-xxx\",\n    \"uuid\": \"x1234\",\n    \"connection_type\": \"wifi\",\n    \"app_version\": \"1.0.0\",\n    \"latitude\": \"41.19317221071111\",\n    \"longitude\": \"16.599785497822222\",\n    \"accuracy\": \"10\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}api/app/devices/add/",
+							"host": [
+								"{{base_url}}api"
+							],
+							"path": [
+								"app",
+								"devices",
+								"add",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API Status (ping)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}api/app/ping/",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"app",
+						"ping",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
